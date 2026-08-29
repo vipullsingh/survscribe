@@ -17,6 +17,7 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 ├── documentation/
 │   ├── Requirement.MD                                # Comprehensive Software Requirements Specification (SRS)
 │   ├── User Stories.md                               # 16 Epics & Acceptance Criteria mapped to the 15 stages
+│   ├── Visual Theme & Design System.md               # Complete Visual Design System, Tokens, Typography & Components
 │   └── Screens/                                      # 18 Dedicated Screen Specification Folders
 │       ├── 00_auth_login/screen_description.md
 │       ├── 00_auth_signup/screen_description.md
@@ -44,6 +45,7 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 ## 🚀 Key Architectural Features
 
 - **Mobile-First Architecture**: Designed as a **dedicated Mobile Application (iOS & Android)** with touch-first ergonomics, bottom action bars, single-hand usability, and native mobile views everywhere across all 15 stages.
+- **Visual Design System**: Complete forensic precision design system with Deep Cobalt (`#1E40AF`), Electric Azure (`#3B82F6`), high-contrast sunlight readability, monospace number formatting, and glassmorphic micro-surfaces.
 - **Offline-First Resilience**: Full field data, photo capture, voice notes, and damage calculations with local SQLite caching and automatic bi-directional synchronization.
 - **On-Device / Local AI Slot**: Modular `AIProviderInterface` designed for cloud LLMs online and quantized on-device SLM/Whisper models when offline.
 - **5 Core AI Touchpoints**:
@@ -60,4 +62,5 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 ## 📖 Documentation Quick Links
 - [Software Requirements Specification (Requirement.MD)](documentation/Requirement.MD)
 - [User Stories & Acceptance Criteria](documentation/User%20Stories.md)
+- [Visual Theme & Design System](documentation/Visual%20Theme%20&%20Design%20System.md)
 - [Screen Specifications](documentation/Screens/)
