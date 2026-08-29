@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#1E293B" />
+    </linearGradient>
+
+    <!-- Shield Primary Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E40AF" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+
+    <!-- Scribe / Quill Gradient -->
+    <linearGradient id="quillGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#6EE7B7" />
+    </linearGradient>
+
+    <!-- AI Sparkle Gradient -->
+    <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#FCD34D" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Outer Protective Shield / Lens Frame -->
+  <path d="M256 44 C340 44 416 80 416 172 C416 304 316 404 256 448 C196 404 96 304 96 172 C96 80 172 44 256 44 Z" 
+        fill="url(#shieldGrad)" 
+        opacity="0.15" />
+  
+  <path d="M256 64 C328 64 396 96 396 176 C396 292 308 380 256 420 C204 380 116 292 116 176 C116 96 184 64 256 64 Z" 
+        fill="none" 
+        stroke="url(#shieldGrad)" 
+        stroke-width="8" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Inner Dynamic Document / Survey Sheet Geometric Fold -->
+  <path d="M180 140 L300 140 C313.2 140 324 150.8 324 164 L324 330 C324 343.2 313.2 354 300 354 L180 354 C166.8 354 156 343.2 156 330 L156 164 C156 150.8 166.8 140 180 140 Z" 
+        fill="#FFFFFF" 
+        fill-opacity="0.95" 
+        filter="drop-shadow(0 12px 24px rgba(15, 23, 42, 0.25))" />
+
+  <!-- Document Header & Forensic Inspection Lines -->
+  <rect x="184" y="174" width="64" height="10" rx="5" fill="#1E40AF" />
+  <rect x="184" y="202" width="112" height="6" rx="3" fill="#94A3B8" />
+  <rect x="184" y="222" width="96" height="6" rx="3" fill="#CBD5E1" />
+  <rect x="184" y="242" width="104" height="6" rx="3" fill="#CBD5E1" />
+  <rect x="184" y="262" width="80" height="6" rx="3" fill="#CBD5E1" />
+
+  <!-- Verified Shield Checkmark on Document -->
+  <circle cx="204" cy="308" r="16" fill="#ECFDF5" />
+  <path d="M196 308 L202 314 L214 302" fill="none" stroke="#10B981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Dynamic Scribe Nib / Pen Cutting Across Elegantly -->
+  <g transform="translate(230, 160) rotate(35)">
+    <!-- Pen Body -->
+    <path d="M0 0 L24 -24 L160 112 L136 136 Z" fill="url(#shieldGrad)" />
+    <!-- Golden Nib Section -->
+    <path d="M0 0 L-28 28 L-44 12 L-12 -4 Z" fill="url(#sparkGrad)" />
+    <!-- Nib Tip -->
+    <path d="M-28 28 L-40 40 L-44 12 Z" fill="#D97706" />
+    <!-- Nib Split Line -->
+    <line x1="-34" y1="34" x2="-10" y2="10" stroke="#78350F" stroke-width="2" />
+  </g>
+
+  <!-- AI Scribe Sparkle / Intelligence Ray -->
+  <g transform="translate(356, 120)" filter="url(#glow)">
+    <path d="M0 -28 Q0 0 28 0 Q0 0 0 28 Q0 0 -28 0 Q0 0 0 -28 Z" fill="url(#sparkGrad)" />
+    <circle cx="0" cy="0" r="4" fill="#FFFFFF" />
+  </g>
+  <g transform="translate(388, 172) scale(0.6)">
+    <path d="M0 -24 Q0 0 24 0 Q0 0 0 24 Q0 0 -24 0 Q0 0 0 -24 Z" fill="url(#quillGrad)" />
+  </g>
+</svg>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 180" width="100%" height="100%">
+  <defs>
+    <!-- Brand Primary Gradient -->
+    <linearGradient id="brandGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E40AF" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+
+    <!-- Gold Accent Gradient -->
+    <linearGradient id="goldGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#FBBF24" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Icon Emblem (Scale & Position) -->
+  <g transform="translate(30, 20) scale(0.27)">
+    <!-- Outer Shield Outline -->
+    <path d="M256 44 C340 44 416 80 416 172 C416 304 316 404 256 448 C196 404 96 304 96 172 C96 80 172 44 256 44 Z" 
+          fill="url(#brandGradLight)" 
+          opacity="0.12" />
+    
+    <path d="M256 64 C328 64 396 96 396 176 C396 292 308 380 256 420 C204 380 116 292 116 176 C116 96 184 64 256 64 Z" 
+          fill="none" 
+          stroke="url(#brandGradLight)" 
+          stroke-width="12" 
+          stroke-linecap="round" />
+
+    <!-- Central Document -->
+    <path d="M180 140 L300 140 C313.2 140 324 150.8 324 164 L324 330 C324 343.2 313.2 354 300 354 L180 354 C166.8 354 156 343.2 156 330 L156 164 C156 150.8 166.8 140 180 140 Z" 
+          fill="#FFFFFF" 
+          filter="drop-shadow(0 8px 16px rgba(15,23,42,0.25))" />
+
+    <!-- Document Lines -->
+    <rect x="184" y="174" width="64" height="12" rx="6" fill="#1E40AF" />
+    <rect x="184" y="204" width="112" height="8" rx="4" fill="#94A3B8" />
+    <rect x="184" y="228" width="96" height="8" rx="4" fill="#CBD5E1" />
+    <rect x="184" y="252" width="104" height="8" rx="4" fill="#CBD5E1" />
+
+    <!-- Verified Badge -->
+    <circle cx="204" cy="308" r="18" fill="#ECFDF5" />
+    <path d="M194 308 L202 316 L216 300" fill="none" stroke="#10B981" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Pen / Scribe Nib -->
+    <g transform="translate(230, 160) rotate(35)">
+      <path d="M0 0 L24 -24 L160 112 L136 136 Z" fill="url(#brandGradLight)" />
+      <path d="M0 0 L-28 28 L-44 12 L-12 -4 Z" fill="url(#goldGradLight)" />
+      <path d="M-28 28 L-40 40 L-44 12 Z" fill="#D97706" />
+    </g>
+
+    <!-- AI Sparkle -->
+    <g transform="translate(360, 120)">
+      <path d="M0 -32 Q0 0 32 0 Q0 0 0 32 Q0 0 -32 0 Q0 0 0 -32 Z" fill="url(#goldGradLight)" />
+    </g>
+  </g>
+
+  <!-- Typography: SurvScribe -->
+  <text x="180" y="98" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="64" font-weight="800" fill="#0F172A" letter-spacing="-1.5">Surv<tspan fill="#1E40AF">Scribe</tspan></text>
+
+  <!-- Tagline -->
+  <text x="184" y="132" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="16" font-weight="600" fill="#64748B" letter-spacing="1.2">AI-POWERED INSURANCE LOSS ASSESSMENT</text>
+
+  <!-- AI Scribe Badge -->
+  <rect x="546" y="58" width="56" height="24" rx="12" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5" />
+  <text x="574" y="74" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" fill="#1E40AF" text-anchor="middle">PRO</text>
+</svg>

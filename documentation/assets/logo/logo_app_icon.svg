@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient: Deep Slate to Royal Obsidian -->
+    <linearGradient id="appBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="50%" stop-color="#1E293B" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- Shield Primary Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+
+    <!-- Scribe Golden Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+
+    <!-- Emerald Success Gradient -->
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+
+    <!-- Shadow Filter -->
+    <filter id="appShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+  </defs>
+
+  <!-- Squircle Base for Mobile App (iOS / Android Adaptive Standard) -->
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#appBgGrad)" stroke="#334155" stroke-width="3" filter="url(#appShadow)" />
+
+  <!-- Subtle Radial Glow Behind Emblem -->
+  <circle cx="256" cy="240" r="160" fill="#3B82F6" opacity="0.12" />
+
+  <!-- Outer Protective Shield -->
+  <path d="M256 90 C320 90 376 116 376 186 C376 280 300 354 256 388 C212 354 136 280 136 186 C136 116 192 90 256 90 Z" 
+        fill="url(#shieldGrad)" 
+        opacity="0.25" />
+  
+  <path d="M256 106 C310 106 360 130 360 190 C360 270 294 336 256 368 C218 336 152 270 152 190 C152 130 202 106 256 106 Z" 
+        fill="none" 
+        stroke="#3B82F6" 
+        stroke-width="6" 
+        stroke-linecap="round" />
+
+  <!-- Central Report Document -->
+  <rect x="190" y="150" width="132" height="175" rx="14" fill="#FFFFFF" filter="drop-shadow(0 8px 16px rgba(0,0,0,0.3))" />
+  
+  <!-- Report Line Placeholders -->
+  <rect x="210" y="176" width="56" height="8" rx="4" fill="#1E40AF" />
+  <rect x="210" y="198" width="92" height="5" rx="2.5" fill="#94A3B8" />
+  <rect x="210" y="214" width="80" height="5" rx="2.5" fill="#CBD5E1" />
+  <rect x="210" y="230" width="86" height="5" rx="2.5" fill="#CBD5E1" />
+  <rect x="210" y="246" width="68" height="5" rx="2.5" fill="#CBD5E1" />
+
+  <!-- Verified Badge -->
+  <circle cx="225" cy="288" r="14" fill="#ECFDF5" />
+  <path d="M218 288 L223 293 L233 283" fill="none" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Scribe Pen Cutting Through -->
+  <g transform="translate(245, 175) rotate(38)">
+    <path d="M0 0 L20 -20 L130 90 L110 110 Z" fill="url(#shieldGrad)" />
+    <path d="M0 0 L-22 22 L-36 10 L-10 -4 Z" fill="url(#goldGrad)" />
+    <path d="M-22 22 L-32 32 L-36 10 Z" fill="#D97706" />
+  </g>
+
+  <!-- AI Scribe Sparkle -->
+  <g transform="translate(352, 130)">
+    <path d="M0 -22 Q0 0 22 0 Q0 0 0 22 Q0 0 -22 0 Q0 0 0 -22 Z" fill="url(#goldGrad)" />
+  </g>
+</svg>
