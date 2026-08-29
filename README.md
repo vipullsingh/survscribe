@@ -19,24 +19,24 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 │   ├── User Stories.md                               # 16 Epics & Acceptance Criteria mapped to the 15 stages
 │   ├── Visual Theme & Design System.md               # Complete Visual Design System, Tokens, Typography & Components
 │   └── Screens/                                      # 18 Dedicated Screen Specification Folders
-│       ├── 00_auth_login/screen_description.md
-│       ├── 00_auth_signup/screen_description.md
-│       ├── 01_dashboard/screen_description.md
-│       ├── 02_appointment_claim_intake/screen_description.md
-│       ├── 03_policy_coverage_review/screen_description.md
-│       ├── 04_insured_contact_schedule/screen_description.md
-│       ├── 05_risk_location_verification/screen_description.md
-│       ├── 06_cause_investigation/screen_description.md
-│       ├── 07_damage_inspection_studio/screen_description.md
-│       ├── 08_ownership_document_locker/screen_description.md
-│       ├── 09_preliminary_survey_report_psr/screen_description.md
-│       ├── 10_followup_investigation/screen_description.md
-│       ├── 11_document_verification_audit/screen_description.md
-│       ├── 12_loss_assessment_quantification/screen_description.md
-│       ├── 13_salvage_disposal_manager/screen_description.md
-│       ├── 14_coverage_liability_opinion/screen_description.md
-│       ├── 15_final_survey_report_generator/screen_description.md
-│       └── 16_internal_review_submission/screen_description.md
+│       ├── 00_auth_login/00_auth_login.md
+│       ├── 00_auth_signup/00_auth_signup.md
+│       ├── 01_dashboard/01_dashboard.md
+│       ├── 02_appointment_claim_intake/02_appointment_claim_intake.md
+│       ├── 03_policy_coverage_review/03_policy_coverage_review.md
+│       ├── 04_insured_contact_schedule/04_insured_contact_schedule.md
+│       ├── 05_risk_location_verification/05_risk_location_verification.md
+│       ├── 06_cause_investigation/06_cause_investigation.md
+│       ├── 07_damage_inspection_studio/07_damage_inspection_studio.md
+│       ├── 08_ownership_document_locker/08_ownership_document_locker.md
+│       ├── 09_preliminary_survey_report_psr/09_preliminary_survey_report_psr.md
+│       ├── 10_followup_investigation/10_followup_investigation.md
+│       ├── 11_document_verification_audit/11_document_verification_audit.md
+│       ├── 12_loss_assessment_quantification/12_loss_assessment_quantification.md
+│       ├── 13_salvage_disposal_manager/13_salvage_disposal_manager.md
+│       ├── 14_coverage_liability_opinion/14_coverage_liability_opinion.md
+│       ├── 15_final_survey_report_generator/15_final_survey_report_generator.md
+│       └── 16_internal_review_submission/16_internal_review_submission.md
 └── README.md
 ```
 
