@@ -41,16 +41,16 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 
 ## 🚀 Key Architectural Features
 
-- **Cross-Platform**: Web Desktop (Audit & FSR compilation) + Mobile Apps (iOS & Android on-site field surveys).
-- **Offline-First Resilience**: Full field data and photo capture with local SQLite caching and automatic bi-directional synchronization.
+- **Mobile-First Architecture**: Designed as a **dedicated Mobile Application (iOS & Android)** with touch-first ergonomics, bottom action bars, single-hand usability, and native mobile views everywhere across all 15 stages.
+- **Offline-First Resilience**: Full field data, photo capture, voice notes, and damage calculations with local SQLite caching and automatic bi-directional synchronization.
 - **On-Device / Local AI Slot**: Modular `AIProviderInterface` designed for cloud LLMs online and quantized on-device SLM/Whisper models when offline.
 - **5 Core AI Touchpoints**:
-  1. *Voice-to-Text Field Assistant*
-  2. *Document & Invoice OCR*
-  3. *Cross-Checking & Fraud / Discrepancy Audit*
-  4. *Report Draft Generator (PRIMARY FOCUS)*
-  5. *Loss Assessment & Depreciation Calculator*
-- **Standardized Editable Output**: Native compilation and export of **Preliminary Survey Reports (PSR)** and **Final Survey Reports (FSR)** into editable Microsoft Word (`.docx`) files with calculation tables and photo annexure plates.
+  1. *Voice-to-Text Field Assistant* (Transcribes field speech on mobile into structured damage items)
+  2. *Document & Invoice OCR* (Extracts line items from camera scans & PDFs)
+  3. *Cross-Checking & Fraud / Discrepancy Audit* (Flags duplicate claims, rate inflation, and unlisted items)
+  4. *Report Draft Generator (PRIMARY FOCUS)* (Generates formal PSR and FSR narrative drafts)
+  5. *Loss Assessment & Depreciation Calculator* (Deterministic mobile financial calculator)
+- **Standardized Editable Output**: Direct export of **Preliminary Survey Reports (PSR)** and **Final Survey Reports (FSR)** into editable Microsoft Word (`.docx`) files with calculation tables and photo annexure plates.
 - **Future-Ready RBAC Schema**: Built-in multi-tenant and role metadata without blocking MVP UI complexity.
 
 ---

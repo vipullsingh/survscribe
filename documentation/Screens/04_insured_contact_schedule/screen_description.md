@@ -9,22 +9,19 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Two-Column Workflow View**:
-  - **Left Column (50% width)**:
-    - Insured Contact Card (Quick Call/Email/WhatsApp action buttons).
-    - Survey Visit Scheduling Form (Date, Time, Location picker, Surveyor Assignment).
-    - Initial Incident Statement Log (Surveyor’s notes from initial phone discussion).
-  - **Right Column (50% width)**:
-    - Formal Evidence Preservation Notice Generator (Live template preview with customizable clauses).
-    - Historical Communication & Call Log Timeline.
-
-### 2.2 Mobile App Layout (iOS & Android)
-- **Mobile Action Hub**:
-  - Floating Quick-Call and WhatsApp buttons for direct one-tap communication.
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Field Communications Hub**:
+  - Top: Insured Quick-Action Bar with prominent one-tap Call (`tel:`) and WhatsApp (`whatsapp:`) buttons.
   - Interactive Date-Time Picker for inspection scheduling with "Add to Device Calendar" toggle.
-  - Instant Dispatch button for Evidence Preservation Notice via WhatsApp/Email.
-  - Collapsible Call Log history.
+  - One-Tap Dispatch Sheet for Evidence & Loss Preservation Notice (Direct share via WhatsApp, SMS, or Email).
+  - Voice memo button for speaking call notes.
+  - Collapsible chronological Call Log stream.
+  - Sticky bottom CTA: "Schedule Visit & Proceed to Site".
+
+### 2.2 Responsive Desktop Web View
+- **Two-Column Workflow View**:
+  - **Left Column (50% width)**: Insured Contact Card, Survey Visit Scheduling Form, and Initial Incident Statement Log.
+  - **Right Column (50% width)**: Formal Evidence Preservation Notice Generator (Live template preview with customizable clauses) and Historical Communication & Call Log Timeline.
 
 ---
 

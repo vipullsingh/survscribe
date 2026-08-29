@@ -9,21 +9,18 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Two-Column Master-Audit Layout**:
-  - **Left Pane (40% width)**: Structured Ownership Document Repository organized by folders:
-    - *Folder 1: Purchase Invoices & Capital Vouchers*
-    - *Folder 2: Fixed Asset Register (FAR) & Depreciation Schedules*
-    - *Folder 3: Stock Registers, GST Invoices & Delivery Challans*
-    - *Folder 4: Bank Stock Statements & Hypothecation Deeds*
-    - *Folder 5: Maintenance & AMC Records*
-  - **Right Pane (60% width)**: Document Viewer & Ownership Checklist Verification Matrix linking documents directly to damage items cataloged in Stage 6.
-
-### 2.2 Mobile App Layout (iOS & Android)
-- **Mobile Document Checklist**:
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Document Checklist & Scanner**:
   - Checklist cards for each ownership verification requirement (*Purchase Invoices*, *Asset Register*, *Stock Books*, *Bank Statements*).
   - Multi-page document scanner using device camera to quickly snap physical invoice copies.
+  - Quick-link sheet connecting captured invoices directly to Stage 6 damage items.
   - Ownership Verification Status Toggle (*Verified & Established / Disputed / Pending Invoices*).
+  - Bottom CTA: "Confirm Ownership & Next: PSR".
+
+### 2.2 Responsive Desktop Web View
+- **Two-Column Master-Audit Layout**:
+  - **Left Pane (40% width)**: Structured Ownership Document Repository organized by folders (Purchase Invoices, FAR, Stock Registers, Bank Statements, AMC Records).
+  - **Right Pane (60% width)**: Document Viewer & Ownership Checklist Verification Matrix linking documents directly to damage items cataloged in Stage 6.
 
 ---
 

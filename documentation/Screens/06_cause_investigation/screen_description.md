@@ -9,21 +9,18 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Two-Column Forensic Workspace**:
-  - **Left Pane (55% width)**:
-    - Interactive **Incident Chronology Timeline Builder** (Occurrence $\rightarrow$ Discovery $\rightarrow$ Response $\rightarrow$ Extinguishment/Containment).
-    - Detailed Narration of Cause and Sequence of Events (Rich text editor with AI narrative assistant).
-  - **Right Pane (45% width)**:
-    - Statutory & Third-Party Reports Vault (Police FIR, Fire Brigade, Weather report, Factory logbook).
-    - AI Chronology & Cause Consistency Auditor widget.
-
-### 2.2 Mobile App Layout (iOS & Android)
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
 - **Timeline-Centric Mobile Flow**:
-  - Quick-add timeline buttons (+ Add Event: Discovery, Fire Brigade Arrival, etc.).
-  - Voice Note recorder for surveyor to speak the chronological cause narrative on-site.
-  - Attachment tabs for photographing FIR copy, Fire Brigade certificate, and witness statements.
-  - Sticky "Run AI Consistency Check" button.
+  - Quick-add timeline buttons (+ Add Event: Loss Occurrence, Discovery, Fire Service Arrival, Extinguishment).
+  - Push-to-Talk Voice Note recorder for speaking the chronological cause narrative directly into the phone microphone.
+  - Multi-document mobile camera scanner for snapping Police FIR copy, Fire Brigade report, and witness statements.
+  - Anomaly Alert Badge (triggers if Fire Brigade call time is hours after reported discovery).
+  - Bottom CTA: "Save Chronology & Next: Damage Studio".
+
+### 2.2 Responsive Desktop Web View
+- **Two-Column Forensic Workspace**:
+  - **Left Pane (55% width)**: Interactive Incident Chronology Timeline Builder and Detailed Narration of Cause and Sequence of Events (Rich text editor with AI narrative assistant).
+  - **Right Pane (45% width)**: Statutory & Third-Party Reports Vault (Police FIR, Fire Brigade, Weather report, Factory logbook) and AI Chronology & Cause Consistency Auditor widget.
 
 ---
 

@@ -9,27 +9,18 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Two-Column Master Document Studio**:
-  - **Left Pane (30% width)**: 9-Section Document Navigator:
-    - *Section A: Basic Claim Information*
-    - *Section B: Brief Description of Risk*
-    - *Section C: Cause and Circumstances of Loss*
-    - *Section D: Survey Findings & Inspection*
-    - *Section E: Documents Considered*
-    - *Section F: Claim Assessment Statement Table*
-    - *Section G: Policy Terms & Conditions*
-    - *Section H: Discrepancies & Observations*
-    - *Section I: Surveyor’s Opinion & Recommendation*
-    - *Annexure: Photo Plates & Supporting Documents*
-  - **Right Pane (70% width)**: Full-featured Rich Text & Table Editor for the active section, with live AI Narrative Regeneration tools and Word Document Export Toolbar.
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Report Studio & Exporter**:
+  - Horizontal Section Drawer / Stepper to navigate through Sections A to I + Photo Annexure.
+  - Section-by-section preview with inline touch-to-edit capabilities.
+  - Prominent "Regenerate AI Draft" floating button for Sections C, D, H, and I with custom tone selection.
+  - Mobile Photo Annexure Organizer (Drag-to-reorder photos, edit captions).
+  - Sticky Bottom Action Bar: "Export Editable Word (.docx)" and "Proceed to Pre-Submission Review".
 
-### 2.2 Mobile App Layout (iOS & Android)
-- **Mobile Report Reviewer**:
-  - Section Drawer / Carousel to navigate between Sections A through I.
-  - Section-by-section preview and quick inline text editor.
-  - Prominent "Regenerate AI Draft" button for narrative sections.
-  - Sticky bottom action: "Export Editable Word (.docx)" and "Send via Email/Share".
+### 2.2 Responsive Desktop Web View
+- **Two-Column Master Document Studio**:
+  - **Left Pane (30% width)**: 9-Section Document Navigator (Sections A through I + Photo Annexure).
+  - **Right Pane (70% width)**: Full-featured Rich Text & Table Editor for active section, with live AI Narrative Regeneration tools and Word Document Export Toolbar.
 
 ---
 

@@ -9,22 +9,19 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Two-Column Verification Layout**:
-  - **Left Pane (50% width)**:
-    - Policy Risk Address Card vs. Actual Physical Loss Location Card.
-    - Side-by-side comparison table with automated discrepancy indicator.
-    - Interactive Satellite Map showing Policy Location pin vs. Actual Loss GPS pin.
-  - **Right Pane (50% width)**:
-    - Occupancy & Operational Profile Form (Nature of manufacturing/storage, neighboring exposures).
-    - Location Discrepancy & Material Change Log (Mandatory if mismatch detected).
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Field Geo-Tagging Hub**:
+  - Top prominent "Capture GPS Location" one-tap hardware GPS button (captures Lat/Lng with $\pm$ accuracy radius).
+  - Native map snippet with current surveyor pin, policy risk pin, and reverse-geocoded address display.
+  - Live Location Match Status Card (*Green: Address Matched / Red: Address Discrepancy Detected*).
+  - Quick-fill occupancy form and surrounding hazard checklist.
+  - Camera button to photograph the factory entrance/premises signboard as location proof.
+  - Sticky bottom CTA: "Confirm Location & Proceed to Cause Investigation".
 
-### 2.2 Mobile App Layout (iOS & Android)
-- **Field Geo-Tagging Hub**:
-  - Top "Capture Current GPS Location" button (one-tap hardware GPS reading).
-  - Map snippet with active surveyor pin and reverse-geocoded address.
-  - Location Match Status Banner (*Green: Address Matched / Red: Address Discrepancy Detected*).
-  - Quick-fill occupancy form and neighbor exposure checklist.
+### 2.2 Responsive Desktop Web View
+- **Two-Column Verification Layout**:
+  - **Left Pane (50% width)**: Policy Risk Address Card vs. Actual Physical Loss Location Card, side-by-side comparison table with automated discrepancy indicator, and interactive Satellite Map.
+  - **Right Pane (50% width)**: Occupancy & Operational Profile Form and Location Discrepancy & Material Change Log.
 
 ---
 

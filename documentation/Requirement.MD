@@ -29,11 +29,12 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 
 ## 2. Target Platforms & Technical Architecture
 
-### 2.1 Target Platforms & Form Factors
-1. **Mobile Application (iOS & Android)**:
-   - Optimized for field surveys, physical site inspections, voice-to-text notes, GPS-stamped multi-photo capture, and offline recording.
-2. **Web Desktop Application (Responsive Web)**:
-   - Optimized for office desk operations: appointment intake, bulk invoice OCR verification, complex loss quantification matrices, narrative review, and Final Survey Report `.docx` generation.
+### 2.1 Target Platforms & Form Factors (Mobile App First)
+1. **Primary Platform: Native / Responsive Mobile Application (iOS & Android)**:
+   - Built with a **Mobile-First paradigm** ensuring **every single stage and screen has a dedicated, touch-optimized Mobile View**.
+   - Ergonomically designed for on-the-go single-hand and two-hand field operations: bottom navigation bars, swipe gestures, floating action buttons (FAB), hardware GPS integration, native camera photo studio with automatic watermarking, push-to-talk voice memo recording, offline SQLite database, and on-device report preview/export.
+2. **Companion Web Desktop Application**:
+   - Secondary desktop web interface for in-office bulk document OCR analysis, multi-column loss quantification spreadsheets, and administrative oversight.
 
 ### 2.2 System Architecture Overview
 

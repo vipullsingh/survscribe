@@ -9,19 +9,21 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Three-Pane Studio Layout**:
-  - **Left Pane (30% width)**: Damaged Property Item Tree / Category Selector (Building, Plant & Machinery, Electrical, FFF, Stocks) with item counts and total damaged values.
-  - **Middle Pane (45% width)**: Damaged Item Specification Editor & Voice Note Transcript Reviewer.
-  - **Right Pane (25% width)**: Photo & Media Gallery (Grid of categorized, watermarked photos linked to the active item).
-
-### 2.2 Mobile App Layout (iOS & Android)
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
 - **Field Inspection Hub**:
-  - Top: Category Pills (*Building*, *Machinery*, *Stock*, *Electrical*, *Furniture*).
-  - Prominent "Smart Camera" Button (Opens native camera with real-time GPS & timestamp watermark overlay).
-  - Prominent "Voice Field Note" Button (Hold-to-record voice observations with live AI transcription).
-  - Item List Cards with swipe actions: *Add Photos*, *Mark Repairable*, *Mark Total Loss*, *Delete*.
+  - Top: Horizontal Asset Category Carousel (*Building*, *Plant & Machinery*, *Stock*, *Electrical*, *Furniture*).
+  - Prominent "Smart Camera" Button: Opens native camera with automatic GPS, timestamp, and surveyor ID watermark overlay.
+  - Prominent "Voice Field Note" Button: Hold-to-record voice observations with live AI transcription into item descriptions.
+  - Item List Cards with swipe gestures: *Add Photos*, *Mark Repairable*, *Mark Total Loss*, *Delete*.
   - Floating Quick-Add Item (`+`) button.
+  - Offline thumbnail gallery showing cached photos pending cloud sync.
+  - Bottom Action Bar: "Proceed to Ownership Locker".
+
+### 2.2 Responsive Desktop Web View
+- **Three-Pane Studio Layout**:
+  - **Left Pane (30% width)**: Damaged Property Item Tree / Category Selector with item counts and total damaged values.
+  - **Middle Pane (45% width)**: Damaged Item Specification Editor & Voice Note Transcript Reviewer.
+  - **Right Pane (25% width)**: Photo & Media Gallery (Grid of categorized, watermarked photos linked to active item).
 
 ---
 

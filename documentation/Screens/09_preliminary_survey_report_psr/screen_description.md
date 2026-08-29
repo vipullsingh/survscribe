@@ -9,22 +9,19 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Two-Tab Dual Output Workspace**:
-  - **Tab 1: Document Requisition Checklist & Dispatch**:
-    - Peril-based smart document checklist selector (Fire, Flood, Burglary, Machinery Breakdown).
-    - Live Document Requisition Notice preview with editable custom clauses.
-    - Multi-channel dispatch controls (Email, WhatsApp, PDF/Docx download).
-  - **Tab 2: Preliminary Survey Report (PSR) Builder**:
-    - Pre-populated structured sections (Basic claim info, inspection date, preliminary cause, damage overview, estimated loss exposure reserve).
-    - Live Word `.docx` preview and instant export button.
-
-### 2.2 Mobile App Layout (iOS & Android)
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
 - **Mobile Requisition & PSR Hub**:
-  - Segmented toggle: *1. Request Documents* vs. *2. Preliminary Report (PSR)*.
-  - Interactive document checklist with tap-to-toggle requirements.
-  - "Send Requisition to Insured" action button via native WhatsApp/Email share.
+  - Segmented toggle at top: *1. Request Documents* vs. *2. Preliminary Report (PSR)*.
+  - Interactive document checklist with tap-to-toggle requirements and peril presets.
+  - "Send Requisition to Insured" action button via native WhatsApp/Email share sheet.
+  - PSR Preview card with estimated exposure reserve input.
   - "Generate & Export PSR (.docx)" one-tap compilation button.
+  - Bottom CTA: "Save & Proceed to Follow-Up Visits".
+
+### 2.2 Responsive Desktop Web View
+- **Two-Tab Dual Output Workspace**:
+  - **Tab 1: Document Requisition Checklist & Dispatch**: Peril-based smart document checklist selector, live Document Requisition Notice preview, and multi-channel dispatch controls.
+  - **Tab 2: Preliminary Survey Report (PSR) Builder**: Pre-populated structured sections (Basic claim info, inspection date, preliminary cause, damage overview, estimated loss reserve) with live Word `.docx` preview and export.
 
 ---
 

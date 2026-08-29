@@ -9,17 +9,19 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Salvage Tracker**:
+  - Top: Salvage Disposal Mode Toggle (*Retained by Insured* vs. *Sold to Scrap Buyer*).
+  - Salvage Item Cards with mobile camera button for snapping scrap piles, weighbridge slips, and buyer GST receipts.
+  - Quick Salvage Value calculator (Weight $\times$ Scrap Rate/Kg).
+  - Auto-Deduct sync toggle to push salvage credit into Section F assessment.
+  - Bottom CTA: "Save Salvage & Proceed to Liability Review".
+
+### 2.2 Responsive Desktop Web View
 - **Two-Column Salvage Hub**:
   - **Left Pane (50% width)**: Salvage Inventory & Segregation Register (Item description, scrap weight/quantity, condition, storage location, estimated scrap value).
   - **Right Pane (50% width)**: Salvage Disposal Mode & Buyer Tender Manager (Tender quotations, highest bidder details, sale proceeds invoice, GST payment proof).
 - **Bottom Summary**: Total Salvage Realization Banner with one-click "Sync to Assessment Matrix" button.
-
-### 2.2 Mobile App Layout (iOS & Android)
-- **Mobile Salvage Tracker**:
-  - Top: Salvage Disposal Mode Toggle (*Retained by Insured* vs. *Sold via Tender*).
-  - Salvage Item Cards with photo capture for scrap piles, weight slips, and buyer receipts.
-  - Quick Salvage Value calculator (Weight $\times$ Scrap Rate/Kg).
 
 ---
 

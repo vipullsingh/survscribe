@@ -9,17 +9,19 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Forensic Audit Reviewer**:
+  - Top Document Selector Pills (Claim Bill, Repair Estimate, Original Invoices).
+  - Floating Discrepancy Alert Banner (e.g., "⚠️ 3 Potential Rate/Duplicate Discrepancies Detected").
+  - Card-by-Card line item review with swipe gestures: *Accept Rate*, *Flag Rate Inflation*, *Disallow Item*.
+  - Inline voice memo button to record disallowance remarks on mobile.
+  - Bottom Action Sheet: "Proceed to Loss Quantification Matrix".
+
+### 2.2 Responsive Desktop Web View
 - **Three-Pane Forensic Audit Workspace**:
-  - **Left Pane (30% width)**: Claim Bill & Invoice Document List with OCR status chips (*Processed / Discrepancy Flagged / Verified*).
+  - **Left Pane (30% width)**: Claim Bill & Invoice Document List with OCR status chips (Processed / Discrepancy Flagged / Verified).
   - **Middle Pane (45% width)**: Side-by-Side Line Item Cross-Check Grid (Claimed Line Item vs. Supporting Purchase Invoice vs. Physical Damage Register).
   - **Right Pane (25% width)**: AI Discrepancy Inspector & Betterment / Rate Variance Flag Panel.
-
-### 2.2 Mobile App Layout (iOS & Android)
-- **Mobile Audit Reviewer**:
-  - Top: Document selector dropdown (Claim Bill, Repair Estimate, Original Invoices).
-  - Discrepancy Alert Banner (e.g., "⚠️ 3 Potential Discrepancies Detected").
-  - Card-by-Card line item review with swipe actions: *Accept Rate*, *Flag Inflation*, *Disallow Item*.
 
 ---
 

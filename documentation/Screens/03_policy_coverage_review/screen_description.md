@@ -9,20 +9,18 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Split Screen**:
-  - **Left Pane (45% width)**: Policy Document Viewer (Multi-page PDF viewer with search, zoom, and clause highlighter).
-  - **Right Pane (55% width)**: Tabbed Policy Schedule & Terms Breakdown:
-    - *Tab 1: Basic Coverage & Validity*
-    - *Tab 2: Section-Wise Sums Insured (Priced Breakdown)*
-    - *Tab 3: Deductibles, Warranties & Endorsements*
-    - *Tab 4: Claim Intimation & Estimate*
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Policy Review Hub**:
+  - Sticky Policy Summary Card at top (Policy Type, Inception/Expiry validity badge with active status).
+  - Horizontal swipeable tabs: *Sums Insured*, *Deductibles/Excess*, *Warranties*, *Claim Intimation*.
+  - Touch-optimized Sums Insured card list with expandable line items.
+  - Quick AI Highlights Banner (Applicable warranties & deductibles for reported peril).
+  - Bottom Action Sheet: "View Policy PDF Document" and "Save & Proceed to Contact".
 
-### 2.2 Mobile App Layout (iOS & Android)
-- **Stacked Tabbed Form**:
-  - Policy summary card at top (Policy Type, Validity status: *Active / Expired*).
-  - Collapsible cards for *Sums Insured by Section*, *Policy Excess Rules*, *Key Warranties*, and *Claim Intimation*.
-  - Floating "View Original Policy PDF" viewer button.
+### 2.2 Responsive Desktop Web View
+- **Split Screen Layout**:
+  - **Left Pane (45% width)**: Policy Document Viewer (Multi-page PDF viewer with search, zoom, and clause highlighter).
+  - **Right Pane (55% width)**: Tabbed Policy Schedule & Terms Breakdown (Basic Coverage, Section-Wise Sums Insured, Deductibles/Warranties, Claim Intimation).
 
 ---
 

@@ -9,22 +9,20 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Full-Width Financial Spreadsheet Workspace**:
-  - **Top Summary Banner**: Real-time KPI cards:
-    - *Total Claimed Amount (₹)*
-    - *Total Gross Assessed (₹)*
-    - *Total Deductions (Depreciation + Betterment + Underinsurance + Salvage + Excess) (₹)*
-    - *Net Recommended Amount (₹)*
-  - **Head-Wise Calculation Tabs**: *Building / Civil*, *Plant & Machinery*, *Furniture/Fixtures*, *Stocks*, *Consolidated Grand Summary*.
-  - **Multi-Column Financial Grid**: High-precision grid with formula auto-computation and inline remarks cells.
-
-### 2.2 Mobile App Layout (iOS & Android)
-- **Mobile Financial Summary & Line Editor**:
-  - Sticky bottom bar showing live `Net Recommended Amount (₹)`.
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Financial Calculator & Line Editor**:
+  - Sticky bottom bar showing live updated `Net Recommended Amount (₹)` and total deductions.
   - Head Selector pills (*Building*, *Machinery*, *Stock*, *Summary*).
-  - Expandable Item Cards with calculation sliders for Depreciation %, Betterment, and Salvage.
-  - Quick "Remarks" input for every deduction.
+  - Expandable Touch-Friendly Item Cards with precision sliders/steppers for Depreciation %, Betterment deduction, and Salvage.
+  - Value at Risk (VAR) quick-input card with live Underinsurance / Average Clause badge.
+  - Quick-voice button to speak mandatory deduction remarks.
+  - Bottom CTA: "Save Assessment & Next: Salvage Manager".
+
+### 2.2 Responsive Desktop Web View
+- **Full-Width Financial Spreadsheet Workspace**:
+  - **Top Summary Banner**: Real-time KPI cards (Total Claimed, Gross Assessed, Total Deductions, Net Recommended).
+  - **Head-Wise Calculation Tabs**: Building / Civil, Plant & Machinery, Furniture/Fixtures, Stocks, Consolidated Grand Summary.
+  - **Multi-Column Financial Grid**: High-precision grid with formula auto-computation and inline remarks cells.
 
 ---
 

@@ -9,21 +9,22 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Mobile Intake Flow**:
+  - Top: "Scan Appointment Letter" prominent camera card (opens camera to scan physical paper letter or pick PDF from mobile files).
+  - OCR Processing progress bottom sheet with live extraction chips.
+  - Stepped touch-friendly accordion cards:
+    1. *Insurer Particulars*
+    2. *Policy & Insured Basics* (with one-tap phone/WhatsApp link icons)
+    3. *Loss Particulars* (with native Date/Time pickers)
+    4. *Insurer Specific Instructions*
+  - Sticky bottom action bar: "Save & Next: Policy Review" with offline badge indicator.
+
+### 2.2 Responsive Desktop Web View
 - **Two-Column Master-Detail Layout**:
   - **Left Pane (40% width)**: Document Intake Dropzone (Drag-and-drop insurer appointment letter PDF/Email/Image) with live OCR extraction status and preview.
   - **Right Pane (60% width)**: Structured Multi-Section Form pre-filled by OCR parser with edit/confirmation controls.
 - **Top Actions**: "Save Draft", "AI Auto-Extract", "Save & Proceed to Policy Review".
-
-### 2.2 Mobile App Layout (iOS & Android)
-- **Single-Column Stepped Form**:
-  - Top: "Scan / Upload Appointment Letter" button (uses camera/gallery).
-  - Collapsible Accordion Sections:
-    1. *Insurer Particulars*
-    2. *Policy & Insured Basics*
-    3. *Loss Particulars*
-    4. *Insurer Specific Instructions*
-  - Bottom Sticky Action Bar: "Save & Next: Policy Review".
 
 ---
 

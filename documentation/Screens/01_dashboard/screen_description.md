@@ -9,22 +9,20 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Top App Bar**: App Logo (`SurveyAssist`), Global Search Bar (by Claim #, Policy #, Insured Name, Insurer), Sync Status Indicator, Quick "New Survey" CTA Button, User Profile Chip.
-- **Metric Summary Cards (4 Cards)**:
-  1. *Active Surveys in Progress* (Count & Total Claimed Amount)
-  2. *Field Visits Scheduled Today* (Count with Quick Route Link)
-  3. *Pending Document Audits / OCR* (Count)
-  4. *Final Reports Ready for Submission* (Count)
-- **15-Stage Pipeline Stepper Bar / Kanban View**: Horizontal scrolling visual pipeline showing claim distribution across Stages 1 to 15.
-- **Main Data Grid / Claim List**: Searchable, filterable table with columns: `Claim Ref ID`, `Insured Name`, `Insurer`, `Peril`, `Loss Date`, `Current Stage`, `Inspection Date`, `Est. Loss (₹)`, `Sync Status`, and `Action`.
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
+- **Compact Mobile Top Bar**: App branding (`SurveyAssist`), Offline/Online sync badge with tap-to-sync button, Search icon, and Notification bell.
+- **Daily Field Focus Carousel**: Horizontally swipeable cards showing today’s scheduled field visits with one-tap "Start Field Survey" and "Navigate via GPS" buttons.
+- **Segmented Stage Filter Pills**: Touch-friendly chips: *All (15)*, *In Field*, *Audit/Quantification*, *Report Drafting*, *Ready to Submit*.
+- **Card-Based Claim Feed**: Touch-optimized cards displaying Claim #, Insured Name, Risk City, Stage Badge (e.g., "Stage 6 of 15"), and sync status dot.
+- **Swipe Actions**: Swiping left on a card reveals quick-action triggers: *Call Insured*, *Open Maps*, *Add Quick Photo*.
+- **Floating Action Button (FAB)**: Prominent bottom-right `+` button to start a new claim survey or record an instant voice field note.
+- **Bottom Navigation Bar**: *Dashboard*, *Field Camera*, *Loss Calculator*, *Reports*, *Profile/Settings*.
 
-### 2.2 Mobile App Layout (iOS & Android)
-- **Compact Top Bar**: Offline/Online Badge with sync button, Search icon, Notification bell.
-- **Daily Focus Carousel**: Swipeable cards showing today’s scheduled field visits with direct "Start Inspection" and "Navigate (GPS)" action buttons.
-- **Segmented Stage Filter**: *All*, *In Field*, *Audit/Quantification*, *Report Drafting*, *Ready to Submit*.
-- **Card-Based Claim Feed**: Touch-friendly claim cards displaying Claim #, Insured Name, Location, Stage Badge, and progress bar (e.g., "Stage 6 of 15").
-- **Floating Action Button (FAB)**: `+` icon to quickly create a new survey or start a rapid field note.
+### 2.2 Responsive Desktop Web View
+- **Top App Bar**: Global Search Bar (by Claim #, Policy #, Insured Name, Insurer), Sync Status Indicator, "New Survey" CTA Button, User Profile Chip.
+- **Metric Summary Cards (4 Cards)**: Active Surveys, Today's Field Visits, Pending Audits, Reports Ready to Submit.
+- **15-Stage Pipeline Stepper Bar / Kanban View**: Visual horizontal pipeline showing claim distribution across all 15 stages.
+- **Main Data Grid**: Multi-column searchable table with column-level sorting and batch export actions.
 
 ---
 

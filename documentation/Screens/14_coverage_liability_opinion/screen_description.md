@@ -9,26 +9,21 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Two-Column Professional Review Layout**:
-  - **Left Pane (50% width)**:
-    - Policy Perils & Scope of Coverage Verification Checklist.
-    - Warranties & Endorsements Compliance Review Grid.
-    - Exclusions Review Matrix.
-  - **Right Pane (50% width)**:
-    - Surveyor Professional Liability Opinion Editor (Rich text editor with AI legal clause suggestions).
-    - Claim Admissibility Recommendation Selector (*Admissible / Non-Admissible / Subject to Insurer Liability Decision*).
-    - Standard "Without Prejudice" Legal Disclaimer Block.
-
-### 2.2 Mobile App Layout (iOS & Android)
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
 - **Mobile Liability Assessment**:
   - Top: Admissibility Status Segmented Control (*Admissible*, *Repudiation Recommended*, *Insurer Discretion*).
   - Collapsible Accordions:
-    1. *Operative Peril Evaluation*
-    2. *Warranty Compliance Status*
+    1. *Operative Peril Evaluation* (with voice notes)
+    2. *Warranty Compliance Checklist*
     3. *Exclusions Check*
     4. *Surveyor Conclusion & Remarks*
-  - Bottom: Save & Next button.
+  - AI "Draft Opinion" button for instant Section I synthesis.
+  - Bottom CTA: "Save Opinion & Proceed to FSR Builder".
+
+### 2.2 Responsive Desktop Web View
+- **Two-Column Professional Review Layout**:
+  - **Left Pane (50% width)**: Policy Perils & Scope of Coverage Verification Checklist, Warranties & Endorsements Compliance Review Grid, Exclusions Review Matrix.
+  - **Right Pane (50% width)**: Surveyor Professional Liability Opinion Editor (Rich text editor with AI legal clause suggestions), Claim Admissibility Recommendation Selector, and Standard Without Prejudice Disclaimer Block.
 
 ---
 

@@ -2,7 +2,16 @@
 # Project: SurveyAssist MVP (AI-Assisted Claim Surveyor Platform)
 **Version:** 1.0.0-MVP  
 **Document Status:** Approved Baseline  
-**Scope:** 15-Stage Claim Survey Lifecycle + Offline Sync & AI Core
+**Scope:** 15-Stage Claim Survey Lifecycle + Offline Sync & AI Core  
+**Design Paradigm:** **Mobile-First Application** (Native mobile views, touch ergonomics, offline storage, hardware camera, and push-to-talk voice everywhere)
+
+---
+
+## 📱 Global Mobile-First UX Baseline
+Every Epic and User Story below is implemented with a **primary native Mobile View** featuring:
+1. **Single-Hand & Field Ergonomics**: Sticky bottom action sheets, large touch targets ($\ge 48\text{px}$), swipe gestures for quick actions (Call, Navigate, Photo, Delete).
+2. **Native Device Hardware Integration**: Direct hardware GPS geotagging, integrated camera with instant watermark overlay, native microphone for voice memos.
+3. **100% Offline Field Usability**: Full local SQLite database persistence; all 15 survey steps operate with zero cellular connectivity.
 
 ---
 

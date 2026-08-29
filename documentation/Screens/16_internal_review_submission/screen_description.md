@@ -9,22 +9,18 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Two-Column QA & Submission Hub**:
-  - **Left Pane (50% width)**:
-    - Automated Pre-Submission Audit Checklist (Live validation engine checking 6 core compliance gates).
-    - Discrepancy & Warning Resolver (Direct links to fix any detected inconsistencies).
-  - **Right Pane (50% width)**:
-    - Final Surveyor Sign-Off & SLA Certification Block.
-    - Insurer Submission & Dispatch Log (Email dispatch, insurer portal upload link, dispatch timestamp).
-    - Archive Snapshot & Version Lock Button.
-
-### 2.2 Mobile App Layout (iOS & Android)
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
 - **Mobile Submission Dashboard**:
-  - Audit Result Card (*Green Checkmark: 100% Audit Passed / Yellow Warning: Action Required*).
-  - One-tap "Resolve Warnings" action chips.
-  - Digital Signature Pad / Biometric sign-off.
-  - "Submit & Send Report to Insurer" action button with confirmation sheet.
+  - Audit Result Card with live compliance badges (*Green Checkmark: 100% Audit Passed / Yellow: Warnings requiring attention*).
+  - One-tap "Resolve Warnings" action chips (direct deep links to fix discrepancies).
+  - In-app Digital Signature Pad (draw signature on touchscreen or upload stored image).
+  - "Submit & Dispatch Report to Insurer" action button with confirmation modal.
+  - Final submitted status screen with instant download link for `.docx` and sharing options.
+
+### 2.2 Responsive Desktop Web View
+- **Two-Column QA & Submission Hub**:
+  - **Left Pane (50% width)**: Automated Pre-Submission Audit Checklist (Live validation engine checking 6 core compliance gates) and Discrepancy/Warning Resolver.
+  - **Right Pane (50% width)**: Final Surveyor Sign-Off & SLA Certification Block, Insurer Submission & Dispatch Log, and Archive Snapshot & Version Lock Button.
 
 ---
 

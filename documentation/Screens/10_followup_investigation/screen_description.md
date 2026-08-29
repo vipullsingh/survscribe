@@ -9,20 +9,19 @@
 
 ## 2. Layout & UI Architecture
 
-### 2.1 Desktop Web Layout
-- **Multi-Visit Log & Audit Workspace**:
-  - **Left Pane (35% width)**: Visit History Timeline (List of logged survey visits: *Visit #1 Initial Survey, Visit #2 Dismantling & Internal Damage Inspection, Visit #3 Post-Repair Testing*).
-  - **Right Pane (65% width)**: Active Visit Details & Investigation Findings:
-    - Visit Purpose & Personnel Present (Insured, OEM Engineer, Repair Contractor).
-    - Physical Verification Notes (Measurements, Technical findings, Stock reconciliation counts).
-    - Follow-Up Photo & Evidence Gallery with comparison to initial damage photos.
-
-### 2.2 Mobile App Layout (iOS & Android)
+### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
 - **Mobile Re-Inspection Log**:
-  - "+ Add Follow-Up Visit" floating button.
-  - Visit Cards with date, purpose, and findings summary.
-  - In-app camera to snap follow-up photos (e.g., dismantled gearbox, repaired motor, new replacement invoice tag).
-  - Quick-record voice notes for technical observations.
+  - Top: "+ Add Follow-Up Visit" prominent button.
+  - Horizontally swipeable Visit Cards (Visit #1 Initial, Visit #2 Dismantling Inspection, Visit #3 Post-Repair Testing).
+  - In-app camera to snap follow-up photos (e.g., dismantled gearbox, repaired motor, replacement nameplate).
+  - Quick-record voice notes for technical observations during physical dismantling.
+  - Side-by-side Before/After damage comparison viewer.
+  - Bottom CTA: "Save Visits & Proceed to Document Audit".
+
+### 2.2 Responsive Desktop Web View
+- **Multi-Visit Log & Audit Workspace**:
+  - **Left Pane (35% width)**: Visit History Timeline (List of logged survey visits).
+  - **Right Pane (65% width)**: Active Visit Details & Investigation Findings (Visit Purpose, Persons Present, Technical findings, Stock reconciliation counts, Follow-Up Photo Gallery).
 
 ---
 
