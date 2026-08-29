@@ -25,6 +25,15 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 - **Future-Proof RBAC Schema**: Database schema embeds tenancy, user ownership, and role scopes (`SURVEYOR`, `REVIEWER`, `ADMIN`, `INSURER_VIEWER`) to support future multi-tier firm and insurer portals without complicating the MVP UI.
 - **Editable Word Document (`.docx`) Export**: Native compilation of comprehensive, formatted `.docx` reports containing tables, deduction justification matrices, and high-resolution photo annexures.
 
+### 1.3 Regulatory & Professional Responsibility Framework
+> **Regulatory & Professional Responsibility**
+> 
+> **SurvScribe is a technology-assisted workflow platform and does not independently act as an Insurance Surveyor and Loss Assessor, insurer, insurance intermediary, or claims decision-maker.** All survey findings, loss assessments, coverage observations, recommendations, and reports generated or assisted by the platform shall be subject to review, validation, and professional approval by an appropriately licensed and authorised professional. Final claim liability and settlement decisions remain the responsibility of the relevant insurer in accordance with applicable policy terms and regulatory requirements.
+
+- **Platform Representation Baseline**: The platform is strictly positioned as *"A technology platform designed to assist licensed Insurance Surveyors and Loss Assessors in their professional workflow."* The platform and its marketing materials shall never claim or imply that it is an "IRDAI-approved" platform or an autonomous claims-adjudicating entity.
+- **Professional Responsibility Retention**: The licensed surveyor retains full legal, professional, and ethical responsibility for all survey findings, reports, and loss assessments generated with assistance from the software.
+- **Decision-Support Guardrails**: All automated calculations, clause extractions, and AI draft narratives serve exclusively as decision support for the licensed surveyor's expert review.
+
 ---
 
 ## 2. Target Platforms & Technical Architecture
@@ -91,19 +100,20 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 
 ### Stage 0: Authentication, Registration & Mobile Access Gate (Screens 00_auth_login & 00_auth_signup)
 - **FR-0.1 (Surveyor Sign In - Screen 00_auth_login)**: The system shall provide secure surveyor authentication supporting:
-  - Email/Password credentials with "Remember Me".
-  - Mobile Phone Number + 6-digit One-Time Password (OTP) with 30-second resend timer.
-  - Native On-Device Biometrics (FaceID / TouchID / Fingerprint) for rapid $<1\text{s}$ unlocking.
+  - Universal Identifier (Email / Custom Username / Mobile Phone) + Password credentials with "Remember Me".
+  - Mobile Phone Number + 6-digit One-Time Password (OTP) with 30-second resend timer, and Work Email OTP verification modal.
   - Password recovery and reset link dispatch.
   - Direct switch link to `00_auth_signup`.
 - **FR-0.2 (Surveyor Registration / Sign Up - Screen 00_auth_signup)**: The system shall provide a dedicated onboarding screen capturing:
   - Full Legal Name, Surveyor Firm Name, Contact Number, Email Address.
-  - SLA / IRDAI License Number (e.g., `SLA-XXXXX`) and License Category (*Fellow, Associate, Licentiate, Trainee*).
+  - SLA / IRDAI License Number and License Category (*Fellow, Associate, Licentiate, Trainee*).
+  - **Syntax / Format Validation Only**: The system shall validate that the license number conforms to expected alphanumeric format rules (e.g., regex pattern `SLA-[0-9]{4,8}`). The system shall explicitly document that this is syntax validation only and does not constitute regulatory license verification or endorsement.
+  - **Mandatory Registration Disclaimer**: The registration screen shall display an explicit disclaimer: *"License details are provided by the user and are subject to independent verification. Platform registration does not constitute regulatory approval or endorsement."*
   - Secure Password creation with complexity meter and Terms of Service consent.
   - Direct switch link back to `00_auth_login`.
 - **FR-0.3 (Offline Authentication & Security)**:
   - The mobile app shall securely cache an encrypted session token in hardware keystore / keychain.
-  - When disconnected from cellular network, the surveyor shall authenticate via local Biometrics/PIN to access cached claims.
+  - When disconnected from cellular network, the surveyor shall authenticate via cached session token / device passcode to access cached claims.
   - Automatic session lock after 15 minutes of background inactivity.
 
 ### Stage 1: Receipt of Survey Appointment
@@ -223,12 +233,14 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
   - **Mode B (Disposed via Buyer / Tender)**: Record tender bids, buyer details, delivery confirmation, sale invoice, and realized cash value.
 - **FR-12.3**: Salvage values feed directly into the Head-wise quantification sheet.
 
-### Stage 13: Coverage and Liability Consideration
-- **FR-13.1**: The system shall structure the surveyor’s professional liability remarks:
-  - Operative Peril evaluation (e.g., Short circuit vs. Overheating; Accidental Fire vs. Arson).
-  - Policy terms, exclusions, and warranty compliance (e.g., Maintenance warranty, Fire fighting appliances warranty).
+### Stage 13: Coverage and Liability Consideration (Decision Support)
+- **FR-13.1 (Decision Support Architecture)**: The system shall provide structured decision-support analysis for surveyor review. The AI assistant and platform shall strictly assist the surveyor and shall NEVER make autonomous, binding liability decisions (e.g., the platform shall never autonomously declare "Claim Approved" or "Claim Rejected"):
+  - Operative Peril evaluation (e.g., Short circuit vs. Overheating; Accidental Fire vs. Arson) connecting physical evidence to policy definitions.
+  - Policy terms, exclusions, and warranty compliance review (e.g., Maintenance warranty, Fire fighting appliances warranty).
   - Identification of any breach or material fact requiring insurer special consideration.
-- **FR-13.2**: Surveyor recommendation status: *Admissible / Non-Admissible / Subject to Insurer Liability Determination*.
+- **FR-13.2 (Surveyor Recommendation & Disclaimer)**:
+  - Surveyor recommendation status options: *Admissible as Assessed / Subject to Insurer Liability Determination / Non-Admissible / Repudiation Recommended*.
+  - Every coverage remark and recommendation generated by or stored in the system shall explicitly bear the notice: *"Decision-support analysis for surveyor review. Final liability determination remains with the insurer."*
 
 ### Stage 14: Final Survey Report (FSR) Generation
 - **FR-14.1**: The system shall compile the standard 9-Section Final Survey Report:
@@ -243,15 +255,23 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
   - **Section I**: Surveyor’s Opinion and Final Net Recommendation (Without Prejudice)
 - **FR-14.2**: **AI Report Narrative Drafter (Primary AI Feature)**:
   - Transforms structured field notes, timeline events, and audit findings into formal, objective, surveyor-grade prose for Sections C, D, H, and I.
+  - All AI narrative drafts require explicit human surveyor review, editing, and inline confirmation before report compilation.
 - **FR-14.3**: **Editable Document Engine (`.docx`)**:
-  - Compiles the complete FSR into a beautifully styled `.docx` file complete with header/footer, surveyor sign-off blocks, formatted calculation tables, and high-resolution photo plates with captions.
+  - Compiles the complete FSR into a beautifully styled `.docx` file complete with header/footer, surveyor sign-off blocks, formatted calculation tables, high-resolution photo plates with captions, and standard Without Prejudice disclaimers.
+- **FR-14.4**: **Mandatory AI Disclaimer & Human Approval Gate (Pre-Export)**:
+  - Prior to enabling the `.docx` document generation or download for any PSR/FSR, the platform enforces a mandatory 4-point Human Approval Gate:
+    1. `[x]` Surveyor has thoroughly reviewed all AI-generated narrative content and text.
+    2. `[x]` Surveyor confirms factual accuracy of site observations, timelines, and damage items.
+    3. `[x]` Surveyor confirms calculations, depreciation scales, and policy terms interpretation.
+    4. `[x]` Final professional and legal responsibility for the survey report remains with the licensed surveyor.
 
 ### Stage 15: Internal Review, Pre-Submission Audit & Submission
-- **FR-15.1**: **Automated Consistency Auditor**:
+- **FR-15.1**: **Automated Consistency Auditor & Compliance Gates**:
   - Verifies math totals: Claimed, Depreciation, Salvage, Excess, and Net Recommended.
   - Validates cross-section data: Policy number, Claim number, Insured name, Loss date.
   - Ensures every photo has a caption, timestamp, and location tag.
-- **FR-15.2**: Final sign-off record, report archiving, and dispatch tracking log.
+  - Verifies that all 4 checkboxes of the Mandatory AI Review & Human Approval Gate are signed and recorded in the audit log.
+- **FR-15.2**: Final sign-off record, report archiving, immutable hash snapshot, and dispatch tracking log.
 
 ---
 
@@ -291,17 +311,31 @@ interface IAssistantService {
 - When network status is `ONLINE`, requests route to `CloudAssistantService` (invoking cloud LLM/OCR APIs with goroutines).
 - When network status is `OFFLINE`, requests route to `LocalAssistantService` (integrating local on-device small models e.g., local Whisper STT).
 
+### 4.3 Human-in-the-Loop Governance & AI Safeguards
+- **Non-Autonomous Principle**: AI modules never autonomously dispatch reports, never approve/repudiate claims, and never make binding coverage determinations.
+- **Mandatory Review & Gatekeeping**: Every narrative sentence, OCR-extracted invoice item, or depreciation calculation suggested by the system requires affirmative human interaction (edit, accept, or reject) by the licensed surveyor.
+- **Deterministic Number Processing**: AI narrative components are forbidden from generating or altering numerical values independently. All monetary assessments are computed by the deterministic math engine.
+- **Mandatory Export Disclaimers**: All generated `.docx` and exported summaries automatically embed the standard regulatory disclaimer stating that the report was compiled under the direct supervision and assessment of the licensed surveyor.
+
 ---
 
 ## 5. Data Model & RBAC-Ready Schema
 
-### 5.1 RBAC Schema Metadata (Zero UI Gates in MVP)
+### 5.1 RBAC Schema & Insurer Viewer Governance
 All database entities include standard multi-tenant and role management columns:
 - `tenant_id`: UUID (Surveyor firm / organization)
 - `created_by_user_id`: UUID (Author)
 - `assigned_surveyor_id`: UUID (Field surveyor)
 - `reviewer_id`: UUID (Senior surveyor / partner)
 - `access_role_scope`: Enum (`['SURVEYOR', 'REVIEWER', 'ADMIN', 'INSURER_VIEWER']`)
+
+#### Insurer Viewer Access & Data Governance Controls
+To ensure regulatory compliance and maintain professional independence prior to enabling `INSURER_VIEWER` access:
+1. **Explicit Surveyor / Firm Authorization**: Insurer access to any claim file requires affirmative grant by the assigned surveyor or survey firm admin.
+2. **Claim-Level Granular Permissions**: Insurers are granted read-only access strictly scoped to individual assigned claims, never broad firm-wide access.
+3. **Immutable Access & Audit Trails**: Every document view, download, or status inspection by an insurer user is recorded in an immutable audit log (Timestamp, User ID, Claim ID, Action).
+4. **Data Ownership & Boundary Rules**: Claim survey files, draft notes, and unverified photos remain the exclusive work product of the surveyor until formally submitted.
+5. **Contractual Data-Sharing Compliance**: Insurer portal access operates under bilateral data-sharing terms respecting confidentiality and applicable data protection regulations.
 
 ### 5.2 Core Entities Schema Definition
 1. **`claims`**: `id`, `tenant_id`, `claim_ref_no`, `policy_no`, `insurer_name`, `insured_name`, `loss_date`, `peril`, `status`, `current_stage`, `created_at`, `updated_at`.

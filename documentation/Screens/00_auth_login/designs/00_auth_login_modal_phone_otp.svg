@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812" width="375" height="812" style="background-color: #0F172A; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Modal Drop Shadow -->
+    <filter id="bottomSheetShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="-8" stdDeviation="16" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
+  </defs>
+
+  <!-- ==================== ARTBOARD FRAME: 00_auth_login_modal_phone_otp (375 × 812) ==================== -->
+  <rect id="Dimmed-Canvas-Backdrop" width="375" height="812" fill="#0F172A" />
+
+  <!-- Layer: Dimmed Parent UI (Background Screen Preview) -->
+  <g id="Parent-Screen-Dimmed" opacity="0.18">
+    <g transform="translate(24, 78)">
+      <rect width="40" height="40" rx="8" fill="#FFFFFF" />
+      <text x="50" y="24" font-size="21" font-weight="800" fill="#FFFFFF">SurvScribe</text>
+    </g>
+    <rect x="24" y="178" width="327" height="380" rx="8" fill="#FFFFFF" />
+  </g>
+
+  <!-- Layer: iOS Native Status Bar (Dark Background) -->
+  <g id="Status-Bar-Dark" transform="translate(24, 14)">
+    <text id="Time-Dark" x="6" y="14" font-size="13" font-weight="700" fill="#FFFFFF">09:41</text>
+    <g id="System-Icons-Dark" transform="translate(270, 4)" fill="#FFFFFF">
+      <rect x="0" y="6" width="2.5" height="4" rx="0.5" />
+      <rect x="4" y="4" width="2.5" height="6" rx="0.5" />
+      <rect x="8" y="2" width="2.5" height="8" rx="0.5" />
+      <rect x="12" y="0" width="2.5" height="10" rx="0.5" />
+      <rect x="22" y="0" width="20" height="10" rx="2.5" fill="none" stroke="#FFFFFF" stroke-width="1.2" />
+      <rect x="24" y="2" width="13" height="6" rx="1" fill="#059669" />
+      <path d="M43 3.5 C43.5 3.5 44 4 44 5 L44 5 C44 6 43.5 6.5 43 6.5" fill="#FFFFFF" />
+    </g>
+  </g>
+
+  <!-- Layer: Bottom Sheet Modal (Verify Phone SMS OTP) -->
+  <g id="Bottom-Sheet-Modal" transform="translate(0, 310)" filter="url(#bottomSheetShadow)">
+    <path id="Modal-Sheet-Surface" d="M0 20 C0 8.95 8.95 0 20 0 L355 0 C366.05 0 375 8.95 375 20 L375 502 L0 502 Z" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" />
+    
+    <!-- Drag Handle Indicator -->
+    <rect id="Drag-Handle" x="167" y="10" width="40" height="4" rx="2" fill="#CBD5E1" />
+
+    <!-- Modal Header Block -->
+    <g id="Modal-Header" transform="translate(24, 28)">
+      <rect id="Icon-Container" x="0" y="0" width="34" height="34" rx="6" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1" />
+      <g id="Icon-Phone" transform="translate(10, 8)" stroke="#1E3A8A" stroke-width="1.5" fill="none">
+        <rect x="0" y="0" width="14" height="18" rx="2.5" />
+        <circle cx="7" cy="14.5" r="0.8" fill="#1E3A8A" />
+      </g>
+      
+      <text id="Modal-Title" x="44" y="22" font-size="16" font-weight="800" fill="#0F172A">Verify Phone OTP</text>
+      <text id="Modal-Subheading" x="0" y="52" font-size="11.5" font-weight="500" fill="#64748B">Enter 6-digit verification code sent via SMS to</text>
+      <text id="Phone-Number-Mask" x="0" y="70" font-size="13.5" font-weight="700" fill="#0F172A">+91 98201 •••••</text>
+    </g>
+
+    <!-- 6-Digit Auto-Advancing PIN Boxes -->
+    <g id="PIN-Input-Group" transform="translate(24, 116)">
+      <!-- Digit 1 -->
+      <g id="Box-Digit-1" transform="translate(0, 0)">
+        <rect width="46" height="48" rx="6" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="1.5" />
+        <text x="23" y="32" font-size="20" font-weight="700" font-family="'JetBrains Mono', monospace" fill="#0F172A" text-anchor="middle">5</text>
+      </g>
+
+      <!-- Digit 2 -->
+      <g id="Box-Digit-2" transform="translate(56, 0)">
+        <rect width="46" height="48" rx="6" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="1.5" />
+        <text x="23" y="32" font-size="20" font-weight="700" font-family="'JetBrains Mono', monospace" fill="#0F172A" text-anchor="middle">8</text>
+      </g>
+
+      <!-- Digit 3 -->
+      <g id="Box-Digit-3" transform="translate(112, 0)">
+        <rect width="46" height="48" rx="6" fill="#F8FAFC" stroke="#1E3A8A" stroke-width="1.5" />
+        <text x="23" y="32" font-size="20" font-weight="700" font-family="'JetBrains Mono', monospace" fill="#0F172A" text-anchor="middle">2</text>
+      </g>
+
+      <!-- Digit 4 (Active Focus Box with Cursor) -->
+      <g id="Box-Digit-4" transform="translate(168, 0)">
+        <rect width="46" height="48" rx="6" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" />
+        <line x1="23" y1="12" x2="23" y2="36" stroke="#2563EB" stroke-width="2" stroke-linecap="round" />
+      </g>
+
+      <!-- Digit 5 -->
+      <g id="Box-Digit-5" transform="translate(224, 0)">
+        <rect width="46" height="48" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" />
+      </g>
+
+      <!-- Digit 6 -->
+      <g id="Box-Digit-6" transform="translate(280, 0)">
+        <rect width="46" height="48" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" />
+      </g>
+    </g>
+
+    <!-- Resend Countdown Timer -->
+    <g id="Resend-Timer-Group" transform="translate(24, 182)">
+      <rect id="Timer-Pill" x="0" y="0" width="168" height="24" rx="4" fill="#FFFBEB" stroke="#FDE68A" stroke-width="1" />
+      <g id="Icon-Clock" transform="translate(10, 5)" stroke="#D97706" stroke-width="1.2" fill="none">
+        <circle cx="7" cy="7" r="6" />
+        <path d="M7 4 L7 7 L9 7" />
+      </g>
+      <text id="Timer-Text" x="28" y="16" font-size="11" font-weight="600" fill="#92400E">Resend SMS in <tspan font-weight="800">00:24s</tspan></text>
+    </g>
+
+    <!-- Verify Primary CTA Button -->
+    <g id="Button-Verify-OTP" transform="translate(24, 222)">
+      <rect id="Btn-Verify-Bg" x="0" y="0" width="327" height="44" rx="6" fill="#1E3A8A" />
+      <text id="Btn-Verify-Text" x="163" y="27" font-size="13.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">Verify &amp; Open Workspace</text>
+    </g>
+
+    <!-- Edit Phone Number Link -->
+    <g id="Link-Edit-Phone" transform="translate(24, 284)">
+      <text x="163" y="12" font-size="11.5" font-weight="600" fill="#64748B" text-anchor="middle">
+        Wrong mobile number? <tspan fill="#1E3A8A" font-weight="700">Change Phone</tspan>
+      </text>
+    </g>
+
+    <!-- Security Gateway Card -->
+    <g id="Security-Gateway-Info" transform="translate(24, 316)">
+      <rect id="Security-Card-Bg" x="0" y="0" width="327" height="54" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+      <g id="Icon-Shield-Check" transform="translate(12, 18)" stroke="#059669" stroke-width="1.5" fill="none">
+        <circle cx="8" cy="8" r="7" />
+        <path d="M5 8 L7 10 L11 6" stroke-linecap="round" />
+      </g>
+      <text id="Sec-Title" x="34" y="22" font-size="10.5" font-weight="700" fill="#0F172A">Official SMS Security Gateway</text>
+      <text id="Sec-Subtitle" x="34" y="36" font-size="9.5" font-weight="500" fill="#64748B">One-time code expires in 10 minutes (3 attempts max)</text>
+    </g>
+
+    <!-- iOS Home Indicator -->
+    <rect id="Home-Bar" x="122" y="476" width="130" height="4" rx="2" fill="#0F172A" opacity="0.8" />
+  </g>
+</svg>

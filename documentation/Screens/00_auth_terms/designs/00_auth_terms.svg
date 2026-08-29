@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812" width="375" height="812" style="background-color: #FFFFFF; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Footer Gradient Fade -->
+    <linearGradient id="bottomFade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1" />
+    </linearGradient>
+    
+    <filter id="btnElevation" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1E3A8A" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- ==================== ARTBOARD CANVAS ==================== -->
+  <rect width="375" height="812" fill="#FFFFFF" />
+
+  <!-- ==================== SCROLLABLE CONTENT ==================== -->
+  <g id="Scrollable-Content" transform="translate(24, 112)">
+    
+    <!-- Title Area -->
+    <text y="16" font-size="22" font-weight="800" fill="#0F172A" letter-spacing="-0.4">SurvScribe Enterprise EULA</text>
+    <text y="40" font-size="12" font-weight="600" fill="#64748B">EFFECTIVE DATE: <tspan font-weight="400">OCTOBER 2026</tspan></text>
+    
+    <path d="M0 60 L327 60" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="4 4" />
+
+    <!-- Section 1 -->
+    <g transform="translate(0, 88)">
+      <text font-size="14" font-weight="700" fill="#0F172A">1. Service Scope &amp; Liability</text>
+      <text font-size="13" font-weight="400" fill="#334155" line-height="1.5">
+        <tspan x="0" y="24">SurvScribe is provided exclusively as a workflow management,</tspan>
+        <tspan x="0" y="44">documentation, and reporting tool for licensed Insurance</tspan>
+        <tspan x="0" y="64">Surveyors and Loss Assessors. Final claim liability</tspan>
+        <tspan x="0" y="84">determination and settlement authority remain strictly</tspan>
+        <tspan x="0" y="104">with the appointing insurer.</tspan>
+      </text>
+    </g>
+
+    <!-- Section 2 -->
+    <g transform="translate(0, 224)">
+      <text font-size="14" font-weight="700" fill="#0F172A">2. Data Sovereignty &amp; Offline Security</text>
+      
+      <!-- Highlight Box -->
+      <g transform="translate(0, 16)">
+        <rect width="327" height="92" rx="8" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1" />
+        <g transform="translate(16, 16)" stroke="#059669" stroke-width="1.5" fill="none">
+          <rect x="0" y="5" width="12" height="10" rx="2" />
+          <path d="M3 5 V3 C3 1.5 9 1.5 9 3 V5" />
+          <circle cx="6" cy="10" r="1.5" fill="#059669" stroke="none" />
+        </g>
+        <text x="36" y="28" font-size="12" font-weight="700" fill="#059669">AES-256 Local Encryption</text>
+        <text font-size="12" font-weight="500" fill="#475569">
+          <tspan x="36" y="48">All field data captured offline is heavily encrypted</tspan>
+          <tspan x="36" y="66">on this device until synchronized with our secure,</tspan>
+          <tspan x="36" y="84">IRDAI-compliant domestic cloud servers.</tspan>
+        </text>
+      </g>
+    </g>
+
+    <!-- Section 3 -->
+    <g transform="translate(0, 368)">
+      <text font-size="14" font-weight="700" fill="#0F172A">3. Acceptable Use Policy</text>
+      <text font-size="13" font-weight="400" fill="#334155" line-height="1.5">
+        <tspan x="0" y="24">You agree not to reverse-engineer the proprietary loss</tspan>
+        <tspan x="0" y="44">estimation engine, nor upload falsified claim photographs.</tspan>
+        <tspan x="0" y="64">Account sharing is strictly prohibited under surveyor</tspan>
+        <tspan x="0" y="84">licensing mandates.</tspan>
+      </text>
+    </g>
+    
+    <!-- Section 4 -->
+    <g transform="translate(0, 488)">
+      <text font-size="14" font-weight="700" fill="#0F172A">4. Hardware Secure Enclave</text>
+      <text font-size="13" font-weight="400" fill="#334155" line-height="1.5">
+        <tspan x="0" y="24">Biometric authentication keys and local session tokens</tspan>
+        <tspan x="0" y="44">are stored directly within your device's hardware enclave</tspan>
+        <tspan x="0" y="64">and are never transmitted to our servers.</tspan>
+      </text>
+    </g>
+    
+  </g>
+
+  <!-- ==================== STICKY HEADER ==================== -->
+  <g id="Sticky-Header">
+    <rect x="0" y="0" width="375" height="88" fill="#FFFFFF" opacity="0.95" />
+    <!-- Blur simulation overlay -->
+    <rect x="0" y="0" width="375" height="88" fill="#FFFFFF" opacity="0.8" />
+    
+    <!-- Status Bar -->
+    <g transform="translate(24, 16)">
+      <text x="4" y="14" font-size="13" font-weight="700" fill="#0F172A">09:41</text>
+      <g transform="translate(270, 4)" fill="#0F172A">
+        <rect x="0" y="6" width="2.5" height="4" rx="0.5" />
+        <rect x="4" y="4" width="2.5" height="6" rx="0.5" />
+        <rect x="8" y="2" width="2.5" height="8" rx="0.5" />
+        <rect x="12" y="0" width="2.5" height="10" rx="0.5" />
+        <rect x="22" y="0" width="20" height="10" rx="2.5" fill="none" stroke="#0F172A" stroke-width="1.2" />
+        <rect x="24" y="2" width="13" height="6" rx="1" fill="#059669" />
+        <path d="M43 3.5 C43.5 3.5 44 4 44 5 L44 5 C44 6 43.5 6.5 43 6.5" />
+      </g>
+    </g>
+
+    <!-- Header Controls -->
+    <g transform="translate(0, 44)">
+      <!-- Close Icon (X) -->
+      <g transform="translate(24, 8)" stroke="#0F172A" stroke-width="2" stroke-linecap="round">
+        <path d="M2 2 L14 14 M14 2 L2 14" />
+      </g>
+      <!-- Title -->
+      <text x="187.5" y="20" font-size="16" font-weight="700" fill="#0F172A" text-anchor="middle">Terms &amp; Privacy Policy</text>
+    </g>
+    <path d="M0 88 L375 88" stroke="#E2E8F0" stroke-width="1" />
+  </g>
+
+  <!-- ==================== STICKY FOOTER ACTION ==================== -->
+  <g id="Sticky-Footer">
+    <!-- Gradient Fade above footer -->
+    <rect x="0" y="640" width="375" height="40" fill="url(#bottomFade)" />
+    
+    <!-- Solid Footer Background -->
+    <rect x="0" y="680" width="375" height="132" fill="#FFFFFF" />
+    <path d="M0 680 L375 680" stroke="#F1F5F9" stroke-width="1" />
+
+    <!-- Primary Action CTA -->
+    <g transform="translate(24, 696)" filter="url(#btnElevation)">
+      <rect width="327" height="46" rx="6" fill="#1E3A8A" />
+      <g transform="translate(86, 15)">
+        <text y="14" font-size="14" font-weight="700" fill="#FFFFFF">I Agree &amp; Continue</text>
+        <path d="M148 7 L153 11 L148 15" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </g>
+    </g>
+
+    <!-- Secondary Action -->
+    <text x="187.5" y="768" font-size="13" font-weight="600" fill="#64748B" text-anchor="middle">Decline &amp; Exit</text>
+
+    <!-- iOS Home Indicator -->
+    <rect x="122" y="796" width="131" height="4" rx="2" fill="#0F172A" opacity="0.8" />
+  </g>
+</svg>

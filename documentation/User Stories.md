@@ -7,6 +7,14 @@
 
 ---
 
+## ⚖️ Regulatory & Professional Responsibility Framework
+> **Platform Legal Positioning Notice**:  
+> **SurvScribe is a technology-assisted workflow platform and does not independently act as an Insurance Surveyor and Loss Assessor, insurer, insurance intermediary, or claims decision-maker.** All survey findings, loss assessments, coverage observations, recommendations, and reports generated or assisted by the platform shall be subject to review, validation, and professional approval by an appropriately licensed and authorised professional. Final claim liability and settlement decisions remain the responsibility of the relevant insurer in accordance with applicable policy terms and regulatory requirements.  
+> 
+> *Positioning Rule*: The platform is exclusively represented as *"A technology platform designed to assist licensed Insurance Surveyors and Loss Assessors in their professional workflow."*
+
+---
+
 ## 📱 Global Mobile-First UX Baseline
 Every Epic and User Story below is implemented with a **primary native Mobile View** featuring:
 1. **Single-Hand & Field Ergonomics**: Sticky bottom action sheets, large touch targets ($\ge 48\text{px}$), swipe gestures for quick actions (Call, Navigate, Photo, Delete).
@@ -15,18 +23,18 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 
 ---
 
-## Epic 0: Surveyor Authentication, Registration & Biometric Access
+## Epic 0: Surveyor Authentication & Registration Access Gate
 
-### Story 0.1: Surveyor Sign In & Mobile OTP (Screen 00_auth_login)
+### Story 0.1: Surveyor Sign In & Mobile/Email OTP (Screen 00_auth_login)
 **As a** Licensed Claim Surveyor,  
-**I want to** sign in using my email/password, mobile phone with OTP, or biometric FaceID,  
-**So that** I can securely access my assigned surveys and reports with a single tap.
+**I want to** sign in using my email/password, custom username, or mobile phone/work email with OTP,  
+**So that** I can securely access my assigned surveys and reports rapidly.
 
 #### Acceptance Criteria
-- **AC 0.1.1 (Email/Password Login)**: Entering valid email and password directs the surveyor to `01_dashboard`.
-- **AC 0.1.2 (Mobile Phone + OTP Login)**: Entering a 10-digit mobile number sends a 6-digit SMS OTP; entering the valid OTP completes authentication.
-- **AC 0.1.3 (Biometric Unlock)**: On mobile devices with FaceID / TouchID enabled, clicking the biometric icon unlocks the app in $< 1\text{ second}$ without requiring password re-entry.
-- **AC 0.1.4 (Offline Biometric Session)**: In remote field sites with zero cellular coverage, cached biometric authentication permits offline survey creation and editing.
+- **AC 0.1.1 (Universal Identifier Login)**: Entering a valid email address, username, or mobile number with password directs the surveyor to `01_dashboard`.
+- **AC 0.1.2 (Mobile Phone SMS OTP Login)**: Entering a 10-digit mobile number sends a 6-digit SMS OTP; entering the valid OTP completes authentication.
+- **AC 0.1.3 (Work Email OTP Verification)**: Allows one-tap login via official work email OTP modal with 6-digit token and 45s resend timer.
+- **AC 0.1.4 (Offline Field Session)**: In remote field sites with zero cellular coverage, cached session credentials permit offline survey creation and editing.
 - **AC 0.1.5 (Switch to Sign Up)**: Clicking "Register as Surveyor" seamlessly navigates to `00_auth_signup`.
 
 ### Story 0.2: New Surveyor Registration & Profile Setup (Screen 00_auth_signup)
@@ -36,7 +44,7 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 
 #### Acceptance Criteria
 - **AC 0.2.1 (Surveyor Profile Capture)**: Captures Full Name, Survey Firm Name, SLA License Number, and Category (*Fellow / Associate / Licentiate / Trainee*).
-- **AC 0.2.2 (SLA License Validation)**: Validates that the SLA license number matches standard formatting (`SLA-XXXXX`).
+- **AC 0.2.2 (SLA License Format Validation & Disclaimer)**: Validates that the entered SLA license number matches expected formatting (regex `SLA-[0-9]{4,8}`). The UI displays an explicit disclaimer: *"License details are provided by the user and are subject to independent verification. Platform registration does not constitute regulatory approval or endorsement."*
 - **AC 0.2.3 (Immediate Dashboard Access)**: Upon successful sign-up, the surveyor is redirected to the dashboard with initial onboarding guidance.
 - **AC 0.2.4 (Switch to Sign In)**: Clicking "Already have an account? Sign In" navigates back to `00_auth_login`.
 
@@ -232,16 +240,17 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 
 ## Epic 13: Coverage & Liability Consideration (Stage 13)
 
-### Story 13.1: Formulate Professional Coverage Opinion
+### Story 13.1: Formulate Professional Coverage Opinion (Decision Support)
 **As a** Claim Surveyor,  
 **I want to** record my factual analysis on peril applicability, policy warranties, and exclusions,  
-**So that** the insurer has a clear basis to determine final liability.
+**So that** I provide clear decision-support observations for the insurer's final liability determination without the AI making autonomous coverage decisions.
 
 #### Acceptance Criteria
-- **AC 13.1.1 (Peril Applicability)**: Record whether the cause falls within the policy's insured perils.
+- **AC 13.1.1 (Peril Applicability)**: Record whether the proximate cause falls within the policy's insured perils based on physical evidence.
 - **AC 13.1.2 (Warranty Compliance)**: Checklist verifying compliance with key warranties (e.g., Fire protection appliances, housekeeping, security).
-- **AC 13.1.3 (Surveyor Recommendation Status)**: Select: *Admissible / Non-Admissible / Subject to Insurer Liability Determination*.
-- **AC 13.1.4 (Without Prejudice Disclaimer)**: Report automatically includes the standard legal declaration: *"This assessment is issued without prejudice, subject to the terms and conditions of the policy and final acceptance by the insurer."*
+- **AC 13.1.3 (Surveyor Recommendation Status)**: Select: *Admissible as Assessed / Subject to Insurer Liability Determination / Non-Admissible / Repudiation Recommended*.
+- **AC 13.1.4 (Decision-Support Notice)**: Screen and report sections display the mandatory notice: *"Decision-support analysis for surveyor review. Final liability determination remains with the insurer."*
+- **AC 13.1.5 (Without Prejudice Declaration)**: Report automatically includes the standard legal declaration: *"This assessment is issued without prejudice, subject to the terms and conditions of the policy and final acceptance by the insurer."*
 
 ---
 
@@ -259,16 +268,21 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 - **AC 14.1.4 (Section I Drafting)**: Generates surveyor opinion linking cause, physical proof, and quantification rationale.
 - **AC 14.1.5 (Full In-Place Editing)**: Surveyor can directly edit, rewrite, or accept/reject AI draft text with a live word count.
 
-### Story 14.2: Editable Word Document (`.docx`) Compilation
+### Story 14.2: Editable Word Document (`.docx`) Compilation & Human Approval Gate
 **As a** Claim Surveyor,  
-**I want to** export the complete 9-section Final Survey Report into an editable `.docx` file,  
-**So that** I can share it with the insurer or make final office adjustments.
+**I want to** complete a mandatory review verification before exporting the complete 9-section Final Survey Report into an editable `.docx` file,  
+**So that** I maintain complete professional oversight and regulatory compliance over the generated report.
 
 #### Acceptance Criteria
 - **AC 14.2.1 (Standard 9 Sections)**: Document contains all sections: Section A (Basic Info), B (Risk Description), C (Cause & Circumstances), D (Survey Findings), E (Documents Considered), F (Loss Assessment Table), G (Policy Terms), H (Discrepancies), I (Surveyor Opinion & Recommendation).
 - **AC 14.2.2 (Mathematical Tables)**: Section F is rendered as a clean, bordered table matching Claimed vs. Assessed figures with exact totals.
 - **AC 14.2.3 (Photo Annexure Plates)**: Appends a dedicated Photo Annexure with 2 or 4 photos per page, complete with watermarks, captions, timestamps, and GPS coordinates.
 - **AC 14.2.4 (Letterhead & Sign-Off)**: Includes surveyor firm header metadata and formal signature blocks.
+- **AC 14.2.5 (Mandatory AI Review & Human Approval Gate)**: Before the `.docx` download/export is unlocked, the surveyor must check and confirm:
+  1. `[x]` Surveyor has reviewed the AI-generated content.
+  2. `[x]` Surveyor confirms factual accuracy of damage, timelines, and cause.
+  3. `[x]` Surveyor confirms calculations, depreciation schedules, and policy interpretation.
+  4. `[x]` Final professional responsibility remains with the licensed surveyor.
 
 ---
 
@@ -276,14 +290,15 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 
 ### Story 15.1: Automated Consistency Audit & Dispatch Log
 **As a** Claim Surveyor,  
-**I want to** run an automated audit across all report sections before submission,  
-**So that** errors, math mismatches, and missing documentation are caught beforehand.
+**I want to** run an automated audit across all report sections and verify my sign-off before submission,  
+**So that** errors, math mismatches, missing documentation, and unverified AI content are caught beforehand.
 
 #### Acceptance Criteria
 - **AC 15.1.1 (Arithmetic Verification)**: Verifies that Section F table totals match line item sums exactly to the rupee.
 - **AC 15.1.2 (Metadata Consistency)**: Verifies that Policy Number, Claim Number, and Date of Loss match across all sections and photo captions.
 - **AC 15.1.3 (Mandatory Document Gate)**: Flags missing required attachments (e.g., missing FIR copy for a fire claim).
-- **AC 15.1.4 (Submission Log)**: Records report dispatch date, recipient insurer email/portal, and archives a read-only snapshot.
+- **AC 15.1.4 (Human Approval Gate Audit)**: Validates that all 4 points of the Human Approval Gate have been affirmatively accepted and logged in the immutable audit trail.
+- **AC 15.1.5 (Submission Log & Hash Lock)**: Records report dispatch date, recipient insurer email/portal, generates an immutable SHA-256 hash snapshot, and archives a read-only record.
 
 ---
 
@@ -299,11 +314,12 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 - **AC 16.1.2 (Auto-Sync on Reconnect)**: When device regains internet connection, local records sync to server with background media upload.
 - **AC 16.1.3 (Conflict Resolution)**: Uses field-level timestamp merging with surveyor confirmation if a desk user edited the same claim concurrently.
 
-### Story 16.2: Future RBAC Data Tagging
+### Story 16.2: Future RBAC & Insurer Data Governance
 **As a** System Architect,  
-**I want** all claim entities tagged with `tenant_id`, `created_by`, `assigned_surveyor_id`, and `role_scopes`,  
-**So that** the platform can support multi-tier firm permissions in future releases without database migration friction.
+**I want** all claim entities tagged with `tenant_id`, `created_by`, `assigned_surveyor_id`, and `role_scopes` with explicit insurer access governance rules,  
+**So that** the platform supports multi-tier firm permissions and secure insurer portals without compromising surveyor independence.
 
 #### Acceptance Criteria
 - **AC 16.2.1 (Schema Tagging)**: Every created record is populated with active user ID and firm tenant ID.
 - **AC 16.2.2 (Role Scopes)**: Role scopes (`SURVEYOR`, `REVIEWER`, `ADMIN`, `INSURER_VIEWER`) are stored as valid metadata without restricting MVP UI actions.
+- **AC 16.2.3 (Insurer Access Controls)**: Access for `INSURER_VIEWER` requires explicit surveyor authorization, is strictly scoped to individual assigned claims, maintains immutable audit trails of all file accesses, and enforces surveyor data ownership boundaries.

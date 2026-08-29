@@ -1,6 +1,9 @@
 # SurvScribe: AI-Assisting Insurance Claim Surveyor Platform (MVP)
 
-**SurvScribe** is a specialized, zero-hallucination, offline-first mobile platform designed for licensed General Insurance Claim Surveyors and Loss Assessors (SLA).
+> **Regulatory & Professional Positioning**:  
+> **SurvScribe is a technology platform designed to assist licensed Insurance Surveyors and Loss Assessors in their professional workflow.** SurvScribe does not independently act as an Insurance Surveyor and Loss Assessor, insurer, insurance intermediary, or claims decision-maker. All survey findings, loss assessments, coverage observations, recommendations, and reports generated or assisted by the platform are subject to review, validation, and professional approval by an appropriately licensed surveyor. Final claim liability and settlement decisions remain the responsibility of the relevant insurer.
+
+**SurvScribe** is a specialized, zero-hallucination, offline-first mobile platform engineered for licensed General Insurance Claim Surveyors and Loss Assessors (SLA).
 
 The platform manages the complete **15-Stage General Claim Survey Process** (from Appointment Intake to Final Survey Report Submission) answering the 5 foundational loss assessment questions:
 1. **What happened?** *(Cause & circumstances)*
@@ -19,7 +22,9 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 │   ├── User Stories.md                               # 16 Epics & Acceptance Criteria mapped to the 15 stages
 │   ├── Visual Theme & Design System.md               # Complete Visual Design System, Tokens, Typography & Components
 │   └── Screens/                                      # 18 Dedicated Screen Specification Folders
-│       ├── 00_auth_login/00_auth_login.md
+│       ├── 00_auth_login/                            # designs/ (4 vector artboards) + description/
+│       │   ├── description/00_auth_login.md
+│       │   └── designs/
 │       ├── 00_auth_signup/00_auth_signup.md
 │       ├── 01_dashboard/01_dashboard.md
 │       ├── 02_appointment_claim_intake/02_appointment_claim_intake.md

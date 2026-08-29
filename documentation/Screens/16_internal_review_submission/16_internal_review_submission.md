@@ -25,16 +25,18 @@
 ---
 
 ## 3. Detailed UI Component Hierarchy
-1. **Automated Pre-Submission Audit Engine (6 Gates)**:
+1. **Automated Pre-Submission Audit Engine (7 Compliance Gates)**:
    - `Gate1_ArithmeticCheck`: Verifies that Section F table totals match line item sums exactly to the rupee.
    - `Gate2_MetadataConsistency`: Confirms Policy No, Claim No, Insured Name, and Date of Loss are 100% consistent across all 9 sections.
    - `Gate3_DeductionRemarks`: Flags any rate cut, depreciation deduction, or salvage deduction lacking a justification remark.
    - `Gate4_PhotoAnnexureCompliance`: Ensures all attached photos have timestamps, GPS tags, and descriptive captions.
    - `Gate5_DocumentCompleteness`: Verifies that all mandatory documents for the reported peril have been accounted for.
    - `Gate6_ContradictionScanner`: AI checks for contradictory statements between Section C (Cause), Section D (Findings), and Section I (Opinion).
-2. **Surveyor Sign-Off & Declaration**:
+   - `Gate7_HumanApprovalAndAIGate`: Verifies that all 4 mandatory points of the Human Approval Gate have been reviewed, accepted, and timestamped by the licensed surveyor.
+2. **Surveyor Sign-Off & Regulatory Declaration**:
    - `SurveyorNameAndLicenseDisplay` (SLA No., Category, Validity).
-   - `WithoutPrejudiceDeclarationCheckbox` (Mandatory confirmation).
+   - `HumanApprovalConfirmationNotice` (4-point AI review & professional responsibility verification summary).
+   - `WithoutPrejudiceDeclarationCheckbox` (Mandatory confirmation: *"This assessment is issued without prejudice, subject to policy terms and final acceptance by the insurer."*).
    - `DigitalSignatureUpload` or `DrawSignaturePad`.
    - `SignOffDateInput`.
 3. **Insurer Submission & Dispatch Dispatcher**:

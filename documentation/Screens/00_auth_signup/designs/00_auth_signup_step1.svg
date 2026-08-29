@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812" width="375" height="812" style="background-color: #F8FAFC; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Ultra-subtle, unboxed shadow for a premium feel -->
+    <filter id="surfaceElevation" x="-10%" y="-5%" width="120%" height="115%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#0F172A" flood-opacity="0.02" />
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0F172A" flood-opacity="0.01" />
+    </filter>
+    <filter id="btnElevation" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1E3A8A" flood-opacity="0.08" />
+    </filter>
+  </defs>
+
+  <!-- ==================== ARTBOARD CANVAS ==================== -->
+  <rect width="375" height="812" fill="#F8FAFC" />
+
+  <!-- 1. iOS Native Status Bar -->
+  <g transform="translate(24, 16)">
+    <text x="4" y="14" font-size="13" font-weight="700" fill="#0F172A">09:41</text>
+    <g transform="translate(270, 4)" fill="#0F172A">
+      <rect x="0" y="6" width="2.5" height="4" rx="0.5" />
+      <rect x="4" y="4" width="2.5" height="6" rx="0.5" />
+      <rect x="8" y="2" width="2.5" height="8" rx="0.5" />
+      <rect x="12" y="0" width="2.5" height="10" rx="0.5" />
+      <rect x="22" y="0" width="20" height="10" rx="2.5" fill="none" stroke="#0F172A" stroke-width="1.2" />
+      <rect x="24" y="2" width="13" height="6" rx="1" fill="#059669" />
+      <path d="M43 3.5 C43.5 3.5 44 4 44 5 L44 5 C44 6 43.5 6.5 43 6.5" />
+    </g>
+  </g>
+
+  <!-- 2. Brand Header -->
+  <g transform="translate(24, 60)">
+    <!-- Row 1: Logo & Name -->
+    <rect width="36" height="36" rx="8" fill="#1E3A8A" />
+    <path d="M18 7 C24 7 28 10.5 28 16.5 C28 24 21.5 29 18 32 C14.5 29 8 24 8 16.5 C8 10.5 12 7 18 7 Z" fill="none" stroke="#FFFFFF" stroke-width="2" />
+    <path d="M14 17.5 L17 20.5 L22 14" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="48" y="24" font-size="20" font-weight="800" fill="#0F172A" letter-spacing="-0.5">Surv<tspan fill="#1E3A8A">Scribe</tspan></text>
+    
+    <!-- Row 2: Subtitle -->
+    <text y="52" font-size="9" font-weight="700" fill="#64748B" letter-spacing="0.5">INSURANCE SURVEY &amp; LOSS ASSESSMENT</text>
+    
+    <!-- Row 3: Security Badge -->
+    <g transform="translate(0, 64)">
+      <circle cx="3" cy="4" r="3" fill="#10B981" />
+      <text x="12" y="8" font-size="10.5" font-weight="500" fill="#64748B">Secure workspace</text>
+    </g>
+  </g>
+
+  <!-- 3. Page Introduction -->
+  <g transform="translate(24, 156)">
+    <text y="16" font-size="22" font-weight="800" fill="#0F172A" letter-spacing="-0.4">Register as Surveyor</text>
+    <text y="40" font-size="13" font-weight="500" fill="#475569">
+      Step 1 of 2: <tspan font-weight="400">Personal &amp; Firm Particulars</tspan>
+    </text>
+  </g>
+
+  <!-- Progress Bar (Step 1 of 2) -->
+  <g transform="translate(24, 212)">
+    <rect width="327" height="4" rx="2" fill="#E2E8F0" />
+    <rect width="163" height="4" rx="2" fill="#1E3A8A" />
+  </g>
+
+  <!-- 4. Registration Card (Step 1) -->
+  <g transform="translate(24, 236)" filter="url(#surfaceElevation)">
+    <!-- Card Container Height: 390px -->
+    <rect width="327" height="390" rx="10" fill="#FFFFFF" stroke="#F1F5F9" stroke-width="1.5" />
+
+    <!-- Field 1: Full Legal Name -->
+    <g transform="translate(16, 16)">
+      <text font-size="12" font-weight="600" fill="#334155">
+        Full Legal Name <tspan fill="#DC2626">*</tspan>
+      </text>
+      <rect y="8" width="295" height="44" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" />
+      <!-- User Icon -->
+      <g transform="translate(14, 22)" stroke="#64748B" stroke-width="1.5" fill="none">
+        <circle cx="6" cy="4" r="3" />
+        <path d="M0 14 C0 10 3 9 6 9 C9 9 12 10 12 14" />
+      </g>
+      <text x="38" y="35" font-size="13" font-weight="500" fill="#94A3B8">e.g. Ramesh Sharma</text>
+    </g>
+
+    <!-- Field 2: Firm Name -->
+    <g transform="translate(16, 92)">
+      <text font-size="12" font-weight="600" fill="#334155">
+        Surveyor Firm Name <tspan fill="#DC2626">*</tspan>
+      </text>
+      <rect y="8" width="295" height="44" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" />
+      <!-- Building Icon -->
+      <g transform="translate(14, 22)" stroke="#64748B" stroke-width="1.5" fill="none">
+        <rect x="0" y="2" width="12" height="12" rx="1" />
+        <path d="M4 14 V10 H8 V14" />
+      </g>
+      <text x="38" y="35" font-size="13" font-weight="500" fill="#94A3B8">e.g. Sharma Loss Assessors</text>
+    </g>
+
+    <!-- Field 3: Mobile Phone Number -->
+    <g transform="translate(16, 168)">
+      <text font-size="12" font-weight="600" fill="#334155">
+        Mobile Phone Number <tspan fill="#DC2626">*</tspan>
+      </text>
+      <!-- Country Code Prefix Box -->
+      <rect y="8" width="56" height="44" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1" />
+      <text x="28" y="35" font-size="13" font-weight="600" fill="#334155" text-anchor="middle">+91</text>
+      
+      <rect x="64" y="8" width="231" height="44" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" />
+      <text x="76" y="35" font-size="13" font-weight="500" fill="#94A3B8">10-digit mobile number</text>
+    </g>
+
+    <!-- Field 4: Official Email Address -->
+    <g transform="translate(16, 244)">
+      <text font-size="12" font-weight="600" fill="#334155">
+        Official Email Address <tspan fill="#DC2626">*</tspan>
+      </text>
+      <rect y="8" width="295" height="44" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" />
+      <!-- Mail Icon -->
+      <g transform="translate(12, 22)" stroke="#64748B" stroke-width="1.5" fill="none">
+        <rect x="0" y="0" width="16" height="12" rx="2" />
+        <path d="M0 1 L8 7 L16 1" />
+      </g>
+      <text x="38" y="35" font-size="13" font-weight="500" fill="#94A3B8">work@company.in</text>
+    </g>
+
+    <!-- Primary Action CTA -->
+    <g transform="translate(16, 320)" filter="url(#btnElevation)">
+      <rect width="295" height="46" rx="6" fill="#1E3A8A" />
+      <g transform="translate(74, 15)">
+        <text y="14" font-size="14" font-weight="700" fill="#FFFFFF">Continue to Step 2</text>
+        <path d="M136 7 L141 11 L136 15" fill="none" stroke="#93C5FD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </g>
+    </g>
+  </g>
+
+  <!-- 5. Secondary Switch Section -->
+  <g transform="translate(187.5, 660)">
+    <text font-size="13" fill="#475569" text-anchor="middle">
+      <tspan x="0" y="0" font-weight="500">Already have an account?</tspan>
+      <tspan x="0" y="20" font-weight="700" fill="#1E3A8A">Sign In here →</tspan>
+    </text>
+  </g>
+
+  <!-- 6. Footer Disclaimer -->
+  <g transform="translate(187.5, 712)">
+    <text font-size="11" font-weight="500" fill="#475569" text-anchor="middle">
+      <tspan x="0" y="0">SurvScribe is a workflow platform designed to assist</tspan>
+      <tspan x="0" y="16">licensed Insurance Surveyors and Loss Assessors. Final</tspan>
+      <tspan x="0" y="32">claim liability determination remains with the insurer.</tspan>
+    </text>
+  </g>
+
+  <!-- 7. iOS Home Indicator -->
+  <rect x="122" y="796" width="131" height="4" rx="2" fill="#0F172A" opacity="0.8" />
+</svg>
