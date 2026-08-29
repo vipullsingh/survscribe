@@ -274,6 +274,7 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 │   ├── Visual Theme & Design System.md  # Design system v2.0.0-Enterprise
 │   ├── decisions/                    # ADR log — README index + ADR-0001 (2026-08-30 decisions)
 │   ├── architecture/                 # README placeholder — physical schema, API contract, diagrams (not started)
+│   ├── sprints/                      # Master MVP roadmap + 17 individual sprint execution plans
 │   ├── assets/logo/                  # 4 brand SVGs + README (brand colors, symbolism)
 │   └── Screens/                      # 17 screen spec folders
 │       ├── 00_auth/        (00_auth_login.md, 00_auth_signup.md, 00_auth_terms.md + designs/ 8 SVGs)

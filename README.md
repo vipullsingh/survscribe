@@ -27,6 +27,7 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 │   ├── Visual Theme & Design System.md               # Complete Visual Design System, Tokens, Typography & Components
 │   ├── decisions/                                    # Architecture Decision Records (one file per decision)
 │   ├── architecture/                                 # Physical schema, API contract, system diagrams
+│   ├── sprints/                                      # Master MVP roadmap + 17 individual sprint execution plans
 │   └── Screens/                                      # 17 Dedicated Screen Specification Folders
 │       ├── 00_auth/                                  # 00_auth_login.md, 00_auth_signup.md, 00_auth_terms.md + designs/ (8 vector artboards)
 │       ├── 01_dashboard/01_dashboard.md
