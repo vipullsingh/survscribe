@@ -17,7 +17,8 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 ├── documentation/
 │   ├── Requirement.MD                                # Comprehensive Software Requirements Specification (SRS)
 │   ├── User Stories.md                               # 16 Epics & Acceptance Criteria mapped to the 15 stages
-│   └── Screens/                                      # 16 Dedicated Screen Specification Folders
+│   └── Screens/                                      # 17 Dedicated Screen Specification Folders
+│       ├── 00_auth_login_signup/screen_description.md
 │       ├── 01_dashboard/screen_description.md
 │       ├── 02_appointment_claim_intake/screen_description.md
 │       ├── 03_policy_coverage_review/screen_description.md
