@@ -5,6 +5,10 @@
 
 **SurvScribe** is a specialized, zero-hallucination, offline-first mobile platform engineered for licensed General Insurance Claim Surveyors and Loss Assessors (SLA).
 
+> **Naming note**: The product name is **SurvScribe** (code, packages, UI). The git repository directory (`SurveyAssist`) and the internal claim-reference prefix `SA-` (e.g. `SA-2026-00101`) are retained as fixed internal codes and are *not* renamed.
+>
+> **MVP client**: A single **React Native (TypeScript)** mobile application (iOS & Android). A companion desktop web app is **post-MVP** — the "Responsive Desktop Web View" sections in the screen specs are forward-looking design, not MVP build targets.
+
 The platform manages the complete **15-Stage General Claim Survey Process** (from Appointment Intake to Final Survey Report Submission) answering the 5 foundational loss assessment questions:
 1. **What happened?** *(Cause & circumstances)*
 2. **What was damaged?** *(Physical inspection & damaged property register)*
@@ -21,11 +25,14 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 │   ├── Requirement.MD                                # Comprehensive Software Requirements Specification (SRS)
 │   ├── User Stories.md                               # 16 Epics & Acceptance Criteria mapped to the 15 stages
 │   ├── Visual Theme & Design System.md               # Complete Visual Design System, Tokens, Typography & Components
-│   └── Screens/                                      # 18 Dedicated Screen Specification Folders
-│       ├── 00_auth_login/                            # designs/ (4 vector artboards) + description/
+│   ├── decisions/                                    # Architecture Decision Records (one file per decision)
+│   ├── architecture/                                 # Physical schema, API contract, system diagrams
+│   └── Screens/                                      # 19 Dedicated Screen Specification Folders
+│       ├── 00_auth_login/                            # designs/ (5 vector artboards) + description/
 │       │   ├── description/00_auth_login.md
 │       │   └── designs/
-│       ├── 00_auth_signup/00_auth_signup.md
+│       ├── 00_auth_signup/00_auth_signup.md          # + designs/ (2 vector artboards)
+│       ├── 00_auth_terms/00_auth_terms.md            # + designs/ (1 vector artboard)
 │       ├── 01_dashboard/01_dashboard.md
 │       ├── 02_appointment_claim_intake/02_appointment_claim_intake.md
 │       ├── 03_policy_coverage_review/03_policy_coverage_review.md
@@ -42,16 +49,23 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 │       ├── 14_coverage_liability_opinion/14_coverage_liability_opinion.md
 │       ├── 15_final_survey_report_generator/15_final_survey_report_generator.md
 │       └── 16_internal_review_submission/16_internal_review_submission.md
+│
+├── apps/                                             # Monorepo apps (scaffold — no code yet)
+│   ├── backend/                                      # Go + Gin REST API, state machine, server .docx engine
+│   └── mobile/                                       # React Native (TypeScript) field app
+├── packages/                                         # Shared workspace packages (scaffold): api-contracts, config, types, ui
 └── README.md
 ```
+
+> **Repo status**: `apps/` and `packages/` are empty directory scaffolds. Tooling target: **pnpm workspaces + Turborepo** for the TypeScript packages; the Go backend keeps its own `go.mod` and is built separately.
 
 ---
 
 ## 🚀 Key Architectural Features
 
-- **Mobile-First Architecture**: Designed as a **dedicated Mobile Application (iOS & Android)** with touch-first ergonomics, bottom action bars, single-hand usability, and native mobile views everywhere across all 15 stages.
-- **High-Performance Golang Backend**: Fast, lightweight REST/gRPC backend microservices in **Go (Golang)** with goroutine-powered concurrent media sync, chunked photo uploads, claim state machine, and PostgreSQL (`pgx`).
-- **Visual Design System**: Complete forensic precision design system with Deep Cobalt (`#1E40AF`), Electric Azure (`#3B82F6`), high-contrast sunlight readability, monospace number formatting, and glassmorphic micro-surfaces.
+- **Mobile-First Architecture**: Delivered as a **dedicated React Native (TypeScript) mobile application (iOS & Android)** with touch-first ergonomics, bottom action bars, single-hand usability, and native mobile views everywhere across all 15 stages.
+- **High-Performance Golang Backend**: Fast, lightweight **REST/JSON** backend in **Go (Golang) + Gin** with goroutine-powered concurrent media sync, chunked photo uploads, claim state machine, and PostgreSQL (`pgx`). (gRPC is out of scope for the MVP.)
+- **Visual Design System**: Complete forensic-precision design system with Deep Cobalt primary (`#1E3A8A`, hover `#1E40AF`), Electric Azure accent (`#3B82F6`), high-contrast sunlight readability, monospace number formatting, and solid opaque surfaces (no heavy glassmorphism — see the Design System anti-pattern rules).
 - **Offline-First Resilience**: Full field data, photo capture, voice notes, and damage calculations with local SQLite caching and automatic bi-directional synchronization.
 - **On-Device / Local AI Slot**: Modular `AIProviderInterface` designed for cloud LLMs online and quantized on-device SLM/Whisper models when offline.
 - **5 Core AI Touchpoints**:
@@ -60,7 +74,7 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
   3. *Cross-Checking & Fraud / Discrepancy Audit* (Flags duplicate claims, rate inflation, and unlisted items)
   4. *Report Draft Generator (PRIMARY FOCUS)* (Generates formal PSR and FSR narrative drafts)
   5. *Loss Assessment & Depreciation Calculator* (Deterministic mobile financial calculator)
-- **Standardized Editable Output**: Direct export of **Preliminary Survey Reports (PSR)** and **Final Survey Reports (FSR)** into editable Microsoft Word (`.docx`) files with calculation tables and photo annexure plates.
+- **Standardized Editable Output**: Direct export of **Preliminary Survey Reports (PSR)** and **Final Survey Reports (FSR)** into editable Microsoft Word (`.docx`) files with calculation tables and photo annexure plates. Two engines share one template contract: a **client-side (TypeScript) engine** for offline drafts, and an **authoritative server-side Go engine** for the final compiled report (the `< 5 s` / 50-plate benchmark applies to the server engine).
 - **Future-Ready RBAC Schema**: Built-in multi-tenant and role metadata without blocking MVP UI complexity.
 
 ---
@@ -70,3 +84,4 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 - [User Stories & Acceptance Criteria](documentation/User%20Stories.md)
 - [Visual Theme & Design System](documentation/Visual%20Theme%20&%20Design%20System.md)
 - [Screen Specifications](documentation/Screens/)
+- [Architecture Decision Records](documentation/decisions/)

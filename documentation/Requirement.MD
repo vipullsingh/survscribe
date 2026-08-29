@@ -39,11 +39,12 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 ## 2. Target Platforms & Technical Architecture
 
 ### 2.1 Target Platforms & Form Factors (Mobile App First)
-1. **Primary Platform: Native / Responsive Mobile Application (iOS & Android)**:
+1. **Primary Platform (MVP): React Native (TypeScript) Mobile Application (iOS & Android)**:
    - Built with a **Mobile-First paradigm** ensuring **every single stage and screen has a dedicated, touch-optimized Mobile View**.
-   - Ergonomically designed for on-the-go single-hand and two-hand field operations: bottom navigation bars, swipe gestures, floating action buttons (FAB), hardware GPS integration, native camera photo studio with automatic watermarking, push-to-talk voice memo recording, offline SQLite database, and on-device report preview/export.
-2. **Companion Web Desktop Application**:
-   - Secondary desktop web interface for in-office bulk document OCR analysis, multi-column loss quantification spreadsheets, and administrative oversight.
+   - Ergonomically designed for on-the-go single-hand and two-hand field operations: bottom navigation bars, swipe gestures, floating action buttons (FAB), hardware GPS integration, native camera photo studio with automatic watermarking, push-to-talk voice memo recording, an offline **WatermelonDB (over SQLite)** database encrypted with SQLCipher (AES-256), and on-device report preview/export.
+2. **Companion Web Desktop Application — POST-MVP**:
+   - Deferred beyond the MVP. When built: a secondary desktop web interface (React, sharing the monorepo's TypeScript packages) for in-office bulk document OCR analysis, multi-column loss quantification spreadsheets, and administrative oversight.
+   - The "Responsive Desktop Web View" sections in the screen specifications are forward-looking design and are **not** MVP build targets.
 
 ### 2.2 System Architecture Overview
 
@@ -61,18 +62,18 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
                                          v
 +-----------------------------------------------------------------------------------+
 |                        OFFLINE-FIRST CLIENT DATA LAYER                            |
-|   - Local Encrypted Database (SQLite / IndexedDB / WatermelonDB)                  |
+|   - Local Encrypted Database: WatermelonDB over SQLite, SQLCipher AES-256         |
 |   - Local Media File Store (Compressed, Watermarked Photos & Audio)               |
 |   - Bi-Directional Sync Queue & Conflict Resolution (Field-Level Timestamp Merging)|
 +-----------------------------------------------------------------------------------+
                                          | (Sync when connected)
                                          v
 +-----------------------------------------------------------------------------------+
-|                        BACKEND API & MICROSERVICES (GOLANG)                       |
-|   - Go High-Performance REST/gRPC API Engine (Gin / Fiber Framework)              |
+|                        BACKEND API & MICROSERVICES (GOLANG + GIN)                 |
+|   - Go High-Performance REST/JSON API Engine (Gin Framework; no gRPC in MVP)      |
 |   - Goroutine-Powered Concurrent Media Sync & Chunked Upload Pipeline            |
 |   - Claim Pipeline State Machine & Audit Trail Engine (15 Stages)                 |
-|   - Native Go Document Generation Engine (DOCX / XML Report Compiler)             |
+|   - Authoritative Server-Side Go Document Engine (DOCX compiler; final reports)   |
 |   - PostgreSQL Database Layer (pgx Driver with Connection Pooling)               |
 +-----------------------------------------------------------------------------------+
                                          |
@@ -96,18 +97,36 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 
 ---
 
+### 2.3 Confirmed Technology Stack (Decision Baseline — 2026-08-30)
+
+| Concern | Decision |
+| :--- | :--- |
+| Product name | **SurvScribe** across all aspects — code, packages, UI, documentation, and the internal claim-reference prefix (`SS-YYYY-XXXXX`). |
+| Mobile client (MVP) | **React Native + TypeScript**, feature-first source layout. |
+| Mobile local database | **WatermelonDB** (reactive ORM over SQLite), encrypted with **SQLCipher (AES-256)**. |
+| Desktop web | **Deferred to post-MVP.** |
+| Backend | **Go (Golang) + Gin**, **REST/JSON**. gRPC is **out of scope for the MVP**. `pgx` + PostgreSQL. |
+| `.docx` report engine | **Two engines, one shared template contract:** (a) a **client-side TypeScript engine** for offline PSR/FSR drafts on the mobile app; (b) an **authoritative server-side Go engine** for the final compiled report. The `< 5 s` / 50-photo-plate benchmark (§6.3) applies to the server engine. The two engines must produce equivalent output. |
+| External integrations | Accessed through **provider-agnostic interfaces + config-driven adapters** (`AssistantService`, `NotificationService`, `GeocodingService`, …). Concrete vendors (cloud LLM, cloud OCR, SMS, email, WhatsApp, maps) are selected **per integration in an Architecture Decision Record** under `documentation/decisions/`, not fixed in this SRS. |
+| Monorepo tooling | **pnpm workspaces + Turborepo** for the TypeScript packages (`apps/mobile`, future `apps/web`, `packages/*`). The Go backend keeps its own `go.mod` and is built separately. |
+| Documentation root | Single root: **`documentation/`**. ADRs in `documentation/decisions/`; physical schema, API contract, and diagrams in `documentation/architecture/`. |
+| Biometric unlock | **Deferred to post-MVP.** MVP offline re-entry uses a cached encrypted session token + device passcode only. |
+
+---
+
 ## 3. End-to-End Functional Requirements (Auth & 15-Stage Workflow)
 
 ### Stage 0: Authentication, Registration & Mobile Access Gate (Screens 00_auth_login & 00_auth_signup)
 - **FR-0.1 (Surveyor Sign In - Screen 00_auth_login)**: The system shall provide secure surveyor authentication supporting:
   - Universal Identifier (Email / Custom Username / Mobile Phone) + Password credentials with "Remember Me".
-  - Mobile Phone Number + 6-digit One-Time Password (OTP) with 30-second resend timer, and Work Email OTP verification modal.
+  - Mobile Phone Number + 6-digit SMS One-Time Password (OTP) with a **30-second** resend timer.
+  - Work Email + 6-digit Email OTP verification modal with a **45-second** resend timer.
   - Password recovery and reset link dispatch.
   - Direct switch link to `00_auth_signup`.
 - **FR-0.2 (Surveyor Registration / Sign Up - Screen 00_auth_signup)**: The system shall provide a dedicated onboarding screen capturing:
-  - Full Legal Name, Surveyor Firm Name, Contact Number, Email Address.
-  - SLA / IRDAI License Number and License Category (*Fellow, Associate, Licentiate, Trainee*).
-  - **Syntax / Format Validation Only**: The system shall validate that the license number conforms to expected alphanumeric format rules (e.g., regex pattern `SLA-[0-9]{4,8}`). The system shall explicitly document that this is syntax validation only and does not constitute regulatory license verification or endorsement.
+  - Full Legal Name, Surveyor Firm Name, Contact Number, Email Address (**mandatory**).
+  - SLA / IRDAI License Number, License Category (*Fellow, Associate, Licentiate, Trainee*), and Operating Territory / Base Location — **all optional at signup**. The surveyor may use the full field workflow without them, but **Final Survey Report (FSR) generation is blocked until the License Number and Category are supplied** (required for the report sign-off block).
+  - **Syntax / Format Validation Only**: When a license number is entered, the system shall validate that it conforms to expected alphanumeric format rules (e.g., regex pattern `SLA-[0-9]{4,8}`). The system shall explicitly document that this is syntax validation only and does not constitute regulatory license verification or endorsement.
   - **Mandatory Registration Disclaimer**: The registration screen shall display an explicit disclaimer: *"License details are provided by the user and are subject to independent verification. Platform registration does not constitute regulatory approval or endorsement."*
   - Secure Password creation with complexity meter and Terms of Service consent.
   - Direct switch link back to `00_auth_login`.
@@ -123,7 +142,7 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
   - `policy_number`, `insured_name`, `insured_phone`, `insured_email`, `representative_name_designation`.
   - `policy_risk_address`, `date_of_loss`, `time_of_loss`, `reported_nature_of_loss`, `preliminary_loss_estimate`.
   - `insurer_specific_instructions` (e.g., joint survey requirement, specific salvage guidelines, interim report deadlines).
-- **FR-1.3**: The system shall assign an internal tracking reference (e.g., `SA-2026-00101`) and initialize the survey state machine at Stage 1.
+- **FR-1.3**: The system shall assign an internal tracking reference in the format `SS-YYYY-XXXXX` (e.g., `SS-2026-00101`) and initialize the survey state machine at Stage 1. Offline-created claims receive a temporary `TEMP-SS-XXXX` identifier until synced.
 
 ### Stage 2: Preliminary Review of Policy & Claim Intimation
 - **FR-2.1**: The system shall record and structure comprehensive policy schedule parameters:
@@ -145,7 +164,7 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
   - Prohibition of disposal, overhaul, or repair without prior surveyor inspection.
 
 ### Stage 4: Verification of Risk & Loss Location
-- **FR-4.1**: The mobile app shall capture device GPS coordinates (Latitude, Longitude, Accuracy, Altitude, Timestamp) upon arrival at the survey site.
+- **FR-4.1**: The mobile app shall capture device GPS coordinates (Latitude, Longitude, Accuracy, Altitude, Timestamp) upon arrival at the survey site. **Accuracy handling**: a reading with accuracy radius **> 10 m** shall warn the surveyor and prompt a re-capture (target `≤ 10 m`); a reading with accuracy radius **> 50 m** is rejected and the surveyor cannot save the location capture (hard limit `≤ 50 m`).
 - **FR-4.2**: The system shall record the physical Loss Location (Postal Address, Landmarks, Geo-coordinates) and compare it against the Policy Risk Location.
 - **FR-4.3**: **Location Discrepancy Protocol**:
   - If physical location does not match policy schedule, the system shall flag `LOCATION_DISCREPANCY_DETECTED`.
@@ -213,24 +232,29 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
   - Head 3: Furniture, Fixtures & Fittings
   - Head 4: Stocks (Raw Material, WIP, Finished Goods)
   - Head 5: Other Insured Property
-- **FR-11.2**: Line-Item Mathematical Engine:
-  - `Claimed Amount (₹)`
-  - `Assessed Gross / Reinstatement Cost (₹)`
-  - `Depreciation % & Depreciation Deduction (₹)` (Based on age, asset class, and standard surveyor depreciation scales)
-  - `Betterment Deduction (₹)` (New for Old adjustment)
-  - `Sub-Total Assessed Net of Depreciation (₹)`
-  - `Underinsurance / Average Clause Factor & Deduction (₹)`  
-    $$\text{If } \text{Value at Risk (VAR)} > \text{Sum Insured (SI)} \implies \text{Loss Factor} = \frac{\text{Sum Insured}}{\text{Value at Risk}}$$
-  - `Salvage Value Realization (₹)`
-  - `Policy Excess / Deductible (₹)` (Per policy terms: percentage of claim or fixed minimum)
-  - `Net Recommended Loss (₹)`
-- **FR-11.3**: Mandatory justification notes required for every rate reduction, depreciation rate, or disallowed claim item.
+- **FR-11.2**: Line-Item Mathematical Engine. Deductions are applied in this **strict order**:
+  **Gross Assessed → less Depreciation → less Betterment → less Underinsurance → less Salvage → less Policy Excess = Net Recommended.**
+
+  1. `Claimed Amount (₹)` — as claimed by the insured (reference only).
+  2. `Gross Assessed / Reinstatement Cost (₹)` = `Assessed Quantity × Verified Unit Rate`.
+  3. `Depreciation Deduction (₹)` = `Gross Assessed × (Depreciation % / 100)` (based on age, asset class, and standard surveyor depreciation scales).
+  4. `Betterment Deduction (₹)` — New-for-Old adjustment.
+  5. `Net of Depreciation (₹)` = `Gross Assessed − Depreciation Deduction − Betterment Deduction`.
+  6. `Underinsurance / Average Clause Deduction (₹)` — **applied to the Net of Depreciation base**:
+     $$\text{If } \text{Value at Risk (VAR)} > \text{Sum Insured (SI)} \implies \text{Underinsurance Deduction} = \text{Net of Depreciation} \times \left(1 - \frac{\text{SI}}{\text{VAR}}\right)$$
+     (otherwise the deduction is `0`).
+  7. `After Underinsurance (₹)` = `Net of Depreciation − Underinsurance Deduction`.
+  8. `Salvage Value Realization (₹)` — deducted next (linked from Stage 12).
+  9. `Policy Excess / Deductible (₹)` — deducted last (per policy terms: percentage of claim or fixed minimum).
+  10. `Net Recommended Loss (₹)` = `After Underinsurance − Salvage − Policy Excess`.
+- **FR-11.3**: Mandatory justification notes required for every rate reduction, depreciation rate, betterment, salvage figure, or disallowed claim item. Report finalization is blocked if any deduction line item has an empty justification remark.
 
 ### Stage 12: Salvage Verification & Disposal Management
 - **FR-12.1**: The system shall track salvageable inventory (Description, estimated weight/quantity, condition, storage location).
-- **FR-12.2**: The system shall support both disposal modes:
-  - **Mode A (Retained by Insured)**: Agreed salvage value deducted directly from the loss assessment.
-  - **Mode B (Disposed via Buyer / Tender)**: Record tender bids, buyer details, delivery confirmation, sale invoice, and realized cash value.
+- **FR-12.2**: The system shall support three disposal modes:
+  - **Mode A (Retained by Insured)**: Agreed salvage value (percentage of assessed value or lump sum) deducted directly from the loss assessment; record the insured's consent.
+  - **Mode B (Sold to Scrap Buyer)**: Record buyer details, quote amount, delivery confirmation, GST sale invoice, payment receipt, and realized cash value.
+  - **Mode C (Tender floated by Insurer)**: Record the tender bids, highest bidder, sale proceeds invoice, and payment proof.
 - **FR-12.3**: Salvage values feed directly into the Head-wise quantification sheet.
 
 ### Stage 13: Coverage and Liability Consideration (Decision Support)
@@ -266,12 +290,15 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
     4. `[x]` Final professional and legal responsibility for the survey report remains with the licensed surveyor.
 
 ### Stage 15: Internal Review, Pre-Submission Audit & Submission
-- **FR-15.1**: **Automated Consistency Auditor & Compliance Gates**:
-  - Verifies math totals: Claimed, Depreciation, Salvage, Excess, and Net Recommended.
-  - Validates cross-section data: Policy number, Claim number, Insured name, Loss date.
-  - Ensures every photo has a caption, timestamp, and location tag.
-  - Verifies that all 4 checkboxes of the Mandatory AI Review & Human Approval Gate are signed and recorded in the audit log.
-- **FR-15.2**: Final sign-off record, report archiving, immutable hash snapshot, and dispatch tracking log.
+- **FR-15.1**: **Automated Consistency Auditor — 7 Compliance Gates** (all must pass before submission is enabled):
+  1. **Arithmetic Check** — Section F table totals match line-item sums exactly to the rupee.
+  2. **Metadata Consistency** — Policy Number, Claim Number, Insured Name, and Date of Loss are identical across all 9 sections and every photo caption.
+  3. **Deduction Remarks** — every rate cut, depreciation, betterment, and salvage deduction has a non-empty justification remark.
+  4. **Photo Annexure Compliance** — every attached photo has a timestamp, GPS tag, and descriptive caption.
+  5. **Document Completeness** — all mandatory documents for the reported peril are accounted for.
+  6. **Contradiction Scanner** — no contradictory statements between Section C (Cause), Section D (Findings), and Section I (Opinion); no item marked "Repairable" in Stage 6 quantified as "Total Loss" in Stage 11.
+  7. **Human Approval & AI Gate** — all 4 checkboxes of the Mandatory AI Review & Human Approval Gate are accepted, timestamped, and recorded in the immutable audit log.
+- **FR-15.2**: Final sign-off record, report archiving, immutable **SHA-256** hash snapshot, and dispatch tracking log.
 
 ---
 
@@ -311,6 +338,8 @@ interface IAssistantService {
 - When network status is `ONLINE`, requests route to `CloudAssistantService` (invoking cloud LLM/OCR APIs with goroutines).
 - When network status is `OFFLINE`, requests route to `LocalAssistantService` (integrating local on-device small models e.g., local Whisper STT).
 
+**Provider-agnostic integration policy**: All third-party services are accessed through interfaces with config-driven adapters — not only `AssistantService` but also, at minimum, `NotificationService` (SMS OTP, transactional email, WhatsApp dispatch) and `GeocodingService` (reverse geocoding, distance variance for Stage 4). **Concrete vendors are not fixed in this SRS.** Each integration (cloud LLM, cloud OCR, SMS gateway, email service, WhatsApp, maps/geocoding) is selected in its own Architecture Decision Record under `documentation/decisions/`, with SMS OTP and transactional email prioritised because Stage 0 is the first build target.
+
 ### 4.3 Human-in-the-Loop Governance & AI Safeguards
 - **Non-Autonomous Principle**: AI modules never autonomously dispatch reports, never approve/repudiate claims, and never make binding coverage determinations.
 - **Mandatory Review & Gatekeeping**: Every narrative sentence, OCR-extracted invoice item, or depreciation calculation suggested by the system requires affirmative human interaction (edit, accept, or reject) by the licensed surveyor.
@@ -348,6 +377,21 @@ To ensure regulatory compliance and maintain professional independence prior to 
 8. **`assessment_line_items`**: `id`, `claim_id`, `head_category`, `description`, `claimed_amount`, `assessed_gross`, `depreciation_pct`, `depreciation_amount`, `betterment_amount`, `salvage_amount`, `underinsurance_deduction`, `excess_deduction`, `net_recommended`, `justification_remarks`.
 9. **`salvage_records`**: `id`, `claim_id`, `description`, `qty_weight`, `disposal_mode`, `buyer_info`, `realized_amount`.
 10. **`final_survey_reports`**: `id`, `claim_id`, `section_a_json` ... `section_i_json`, `docx_file_uri`, `generated_at`, `status`.
+
+#### Additional Entities (Decision Baseline 2026-08-30 — draft, pending detailed schema review)
+
+The 15-stage workflow requires the following entities beyond the 10 above. Field lists are indicative; the finalised physical schema (types, PK/FK, indexes, enum value lists, JSON shapes) is produced in `documentation/architecture/`.
+
+11. **`users`** (surveyors): `id`, `tenant_id`, `full_name`, `email`, `mobile`, `username`, `password_hash`, `sla_license_no` (nullable), `sla_category` (nullable enum `Fellow|Associate|Licentiate|Trainee`), `base_location` (nullable), `role_scope` (enum), `signature_uri`, `created_at`.
+12. **`tenants`**: `id`, `firm_name`, `firm_type` (sole proprietorship / firm), `letterhead_config_json`, `default_claim_ref_prefix` (default `SS`), `created_at`.
+13. **`sessions`**: `id`, `user_id`, `device_id`, `encrypted_token_ref`, `issued_at`, `expires_at`, `offline_grace_until`, `revoked_flag`.
+14. **`audit_log`** (immutable, append-only): `id`, `tenant_id`, `claim_id` (nullable), `actor_user_id`, `entity`, `entity_id`, `field`, `old_value`, `new_value`, `action`, `occurred_at`. Records every change to loss-assessment figures and every insurer file view/download.
+15. **`sync_queue`**: `id`, `device_id`, `entity`, `entity_local_id`, `operation` (create/update/delete), `payload_json`, `media_refs`, `attempt_count`, `next_retry_at`, `conflict_flag`, `status`.
+16. **`contact_logs`** (Stage 3): `id`, `claim_id`, `contacted_at`, `contact_person`, `phone`, `channel`, `outcome` (enum `Connected|Busy|Site Confirmed|...`), `notes`.
+17. **`follow_up_visits`** (Stage 9): `id`, `claim_id`, `visit_number` (≥ 2), `visit_date`, `purpose` (enum), `persons_attended`, `detailed_findings`, `stock_reconciliation_json`. (May be modelled as an extension of `site_visits` — resolved during schema drafting.)
+18. **`coverage_opinions`** (Stage 13): `id`, `claim_id`, `operative_peril_status` (enum), `peril_justification`, `warranty_compliance_json`, `exclusions_json`, `surveyor_recommendation` (enum `Admissible as Assessed|Subject to Insurer Liability Determination|Non-Admissible|Repudiation Recommended`), `surveyor_opinion_text`.
+19. **`requisition_notices`** (Stage 8): `id`, `claim_id`, `peril_preset`, `required_docs_json`, `custom_requirements`, `due_date`, `dispatch_channel`, `dispatched_at`.
+20. **`preservation_notices`** (Stage 3): `id`, `claim_id`, `template_version`, `custom_instructions`, `dispatch_channel`, `dispatched_at`. *(Candidate — confirm during schema drafting; may be folded into `contact_logs` or `documents`.)*
 
 ---
 

@@ -45,6 +45,8 @@ To maintain enterprise credibility and avoid looking like an AI-generated templa
 
 The color system is conservative, restrained, and purposeful. Color is used exclusively to convey information hierarchy, interactive affordance, or critical operational state.
 
+> **Canonical primary blue (Decision 2026-08-30):** `--color-primary: #1E3A8A`, `--color-primary-hover: #1E40AF`, `--color-primary-active: #172554`. This token scale in this document is authoritative for the UI. The logo/brand-mark assets use `#1E40AF` as an intentional brand shade; do not "correct" the logos to `#1E3A8A`.
+
 ```
 PRIMARY BRAND PALETTE
 -------------------------------------------------------------------------------------------------
@@ -319,7 +321,7 @@ Photo grids and evidence lockers are designed as **traceable, audit-ready case f
 | | [ HIGH-RES CAPTURED PHOTO WITH INDELIBLE WATERMARK STRIP ]          | |
 | |                                                                     | |
 | | +-----------------------------------------------------------------+ | |
-| | | SurvScribe Certified SLA Evidence | Claim: SA-2026-00101        | | |
+| | | SurvScribe Certified SLA Evidence | Claim: SS-2026-00101        | | |
 | | | Lat: 19.0760° N, Lng: 72.8777° E (GPS Acc: ±2.4m) | 2026-08-29  | | |
 | | | Cat: Damage Origin / Close-up | Surveyor SLA: 10294             | | |
 | | +-----------------------------------------------------------------+ | |
@@ -395,7 +397,7 @@ The mobile view is ergonomically optimized for single-handed use during site ins
 +-------------------------------------------------------------------------+
 | [ 09:41 ]                      [ 🟢 Synced ] [ ☁️ Offline Vault Ready ]  |
 +-------------------------------------------------------------------------+
-| CLAIM: SA-2026-00101 • ABC Manufacturing Pvt. Ltd.                      |
+| CLAIM: SS-2026-00101 • ABC Manufacturing Pvt. Ltd.                      |
 | Stage 6 of 15: Damage Documentation Studio                              |
 +-------------------------------------------------------------------------+
 |                                                                         |
@@ -418,17 +420,19 @@ The mobile view is ergonomically optimized for single-handed use during site ins
 - **Sticky Header**: Shows active claim reference ID, insured name, and unobtrusive cloud sync/offline status badge.
 - **Prominent Primary Actions**: High-contrast, large touch targets ($\ge 48\text{px}$) for camera capture, voice recording, and item addition.
 - **Sticky Bottom Action Bar**: Always provides one-tap access to save progress and proceed to the next survey stage.
-- **Bottom Navigation**: 5 core sections (`Dashboard`, `Claims Register`, `Field Studio`, `FSR Reports`, `Profile`).
+- **Bottom Navigation (canonical, 5 tabs)**: `Dashboard` · `Claims` · `Field Studio` · `Reports` · `Profile`. (This is the authoritative label set; screen specs reference it.)
 
 ---
 
-### 6.2 Desktop Companion Application (Professional Workspace)
+### 6.2 Desktop Companion Application (Professional Workspace) — POST-MVP
+
+> **Scope note (2026-08-30):** The desktop companion is **deferred beyond the MVP**. This section and the "Responsive Desktop Web View" blocks in the screen specs are retained as forward-looking design, not MVP build targets. The MVP ships the React Native mobile app only.
 
 The desktop companion provides a dense, multi-pane workstation for detailed loss quantification, document OCR reconciliation, and FSR compilation.
 
 ```
 +-------------------------------------------------------------------------------------------------------------------------+
-| SurvScribe | Claims / SA-2026-00101 / Stage 10: Document Forensic Audit                     [ User: SLA-10294 | Sync: OK ] |
+| SurvScribe | Claims / SS-2026-00101 / Stage 10: Document Forensic Audit                     [ User: SLA-10294 | Sync: OK ] |
 +-------------------------------------------------------------------------------------------------------------------------+
 | SIDEBAR NAV       | MAIN WORKSPACE: SPLIT-SCREEN DOCUMENT RECONCILIATION                                                |
 | • Dashboard       | +-----------------------------------------+-------------------------------------------------------+ |

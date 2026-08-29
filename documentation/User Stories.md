@@ -3,7 +3,7 @@
 **Version:** 1.0.0-MVP  
 **Document Status:** Approved Baseline  
 **Scope:** 15-Stage Claim Survey Lifecycle + Offline Sync & AI Core  
-**Design Paradigm:** **Mobile-First Application** (Native mobile views, touch ergonomics, offline storage, hardware camera, and push-to-talk voice everywhere)
+**Design Paradigm:** **Mobile-First Application** — a single **React Native (TypeScript)** app for iOS & Android (touch ergonomics, offline WatermelonDB storage, hardware camera, push-to-talk voice everywhere). The companion desktop web app is **post-MVP**; the "Responsive Desktop Web View" sections in the screen specs are forward-looking design, not MVP acceptance criteria.
 
 ---
 
@@ -43,8 +43,8 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 **So that** my survey reports automatically include my verified surveyor credentials.
 
 #### Acceptance Criteria
-- **AC 0.2.1 (Surveyor Profile Capture)**: Captures Full Name, Survey Firm Name, SLA License Number, and Category (*Fellow / Associate / Licentiate / Trainee*).
-- **AC 0.2.2 (SLA License Format Validation & Disclaimer)**: Validates that the entered SLA license number matches expected formatting (regex `SLA-[0-9]{4,8}`). The UI displays an explicit disclaimer: *"License details are provided by the user and are subject to independent verification. Platform registration does not constitute regulatory approval or endorsement."*
+- **AC 0.2.1 (Surveyor Profile Capture)**: Captures Full Name, Survey Firm Name, Mobile, and Email as **mandatory**. SLA License Number, Category (*Fellow / Associate / Licentiate / Trainee*), and Operating Territory / Base Location are **optional at signup**. However, **Final Survey Report (FSR) generation is blocked until the License Number and Category are supplied** (they populate the report sign-off block).
+- **AC 0.2.2 (SLA License Format Validation & Disclaimer)**: When a license number is entered, the system validates that it matches expected formatting (regex `SLA-[0-9]{4,8}`) — syntax only, not regulatory verification. The UI displays an explicit disclaimer: *"License details are provided by the user and are subject to independent verification. Platform registration does not constitute regulatory approval or endorsement."*
 - **AC 0.2.3 (Immediate Dashboard Access)**: Upon successful sign-up, the surveyor is redirected to the dashboard with initial onboarding guidance.
 - **AC 0.2.4 (Switch to Sign In)**: Clicking "Already have an account? Sign In" navigates back to `00_auth_login`.
 
@@ -58,7 +58,7 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 **So that** I have a single organized assignment record with all critical policy and insurer instructions.
 
 #### Acceptance Criteria
-- **AC 1.1.1 (Manual Entry)**: Given the surveyor is on the Appointment Intake screen, when they enter the Insurer Name, Claim Reference Number, Policy Number, Insured Legal Name, Risk Address, Date of Loss, and Reported Peril, then the system saves the record and generates an internal Survey Reference ID (e.g., `SA-2026-00101`).
+- **AC 1.1.1 (Manual Entry)**: Given the surveyor is on the Appointment Intake screen, when they enter the Insurer Name, Claim Reference Number, Policy Number, Insured Legal Name, Risk Address, Date of Loss, and Reported Peril, then the system saves the record and generates an internal Survey Reference ID in the format `SS-YYYY-XXXXX` (e.g., `SS-2026-00101`).
 - **AC 1.1.2 (Smart Appointment OCR Parsing)**: Given a PDF/Email appointment letter, when the surveyor uploads the document, then the AI pre-fills the form fields with an accuracy confidence score, allowing the surveyor to review and confirm.
 - **AC 1.1.3 (Special Instructions)**: The system must capture insurer-specific mandates (e.g., "Joint survey required with Forensic team", "Collect salvage quotes immediately") and highlight them prominently in the claim summary banner.
 - **AC 1.1.4 (Offline Creation)**: Given no cellular connection on mobile, when the surveyor creates a new claim assignment, it is stored in the local SQLite database and flagged for synchronization.
@@ -103,7 +103,7 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 **So that** I can verify whether the loss occurred at the policy-specified risk location.
 
 #### Acceptance Criteria
-- **AC 4.1.1 (GPS Auto-Capture)**: On mobile, clicking "Verify Location" captures latitude, longitude, altitude, accuracy radius (< 10 meters), and geocoded street address.
+- **AC 4.1.1 (GPS Auto-Capture)**: On mobile, clicking "Verify Location" captures latitude, longitude, altitude, accuracy radius, timestamp, and geocoded street address. A reading with accuracy worse than **10 m** warns and prompts re-capture (target `≤ 10 m`); a reading worse than **50 m** is rejected and cannot be saved (hard limit `≤ 50 m`).
 - **AC 4.1.2 (Discrepancy Detection)**: If the physical address differs from the policy schedule address, the system prompts: "Address Discrepancy Detected - Is this loss location different from the policy schedule?".
 - **AC 4.1.3 (Discrepancy Justification)**: If flagged, the surveyor must provide mandatory notes: occupancy description, nature of operations, and reason for discrepancy for insurer review.
 - **AC 4.1.4 (Offline Geolocation)**: Works offline using native device GPS hardware without requiring cellular data.
@@ -216,9 +216,10 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 #### Acceptance Criteria
 - **AC 11.1.1 (Head-Wise Breakdown)**: Dedicated calculation rows grouped by Asset Heads (Building, Plant & Machinery, FFF, Stocks).
 - **AC 11.1.2 (Depreciation Calculator)**: Entering asset age and category applies standard surveyor depreciation % or allows manual override with remarks.
-- **AC 11.1.3 (Underinsurance / Average Clause Formula)**: If Value at Risk (VAR) > Sum Insured (SI), system automatically applies the proportionality formula:
-  $$\text{Adjusted Loss} = \text{Assessed Loss} \times \left(\frac{\text{Sum Insured}}{\text{Value at Risk}}\right)$$
-- **AC 11.1.4 (Deductions Sequence)**: Deductions apply in strict regulatory order: Gross Assessed $\rightarrow$ Less: Depreciation $\rightarrow$ Less: Betterment $\rightarrow$ Less: Underinsurance $\rightarrow$ Less: Salvage $\rightarrow$ Less: Policy Excess = **Net Recommended Amount**.
+- **AC 11.1.3 (Underinsurance / Average Clause Formula)**: The Average Clause is applied to the **Net of Depreciation** base (i.e. after depreciation and betterment, before salvage and excess). If Value at Risk (VAR) > Sum Insured (SI):
+  $$\text{Underinsurance Deduction} = \text{Net of Depreciation} \times \left(1 - \frac{\text{SI}}{\text{VAR}}\right); \qquad \text{otherwise } 0$$
+  equivalently, `After Underinsurance = Net of Depreciation × (SI / VAR)`.
+- **AC 11.1.4 (Deductions Sequence)**: Deductions apply in strict regulatory order: Gross Assessed $\rightarrow$ Less: Depreciation $\rightarrow$ Less: Betterment $\rightarrow$ Less: Underinsurance (on Net of Depreciation) $\rightarrow$ Less: Salvage $\rightarrow$ Less: Policy Excess = **Net Recommended Amount**.
 - **AC 11.1.5 (Mandatory Deduction Remarks)**: The system blocks report finalization if any line item deduction has an empty remark field.
 
 ---
@@ -232,7 +233,7 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 
 #### Acceptance Criteria
 - **AC 12.1.1 (Salvage Inventory)**: Record item, weight/quantity, condition, and estimated salvage value.
-- **AC 12.1.2 (Disposal Mode Selection)**: Choose between *Retained by Insured* or *Sold via Tender*.
+- **AC 12.1.2 (Disposal Mode Selection)**: Choose one of three modes — *Mode A: Retained by Insured*, *Mode B: Sold to Scrap Buyer*, or *Mode C: Tender floated by Insurer*.
 - **AC 12.1.3 (Tender / Buyer Record)**: Record buyer name, contact, quote amount, sale invoice number, and payment confirmation.
 - **AC 12.1.4 (Auto-Link to Assessment)**: Total realized salvage amount automatically feeds into the Section F loss assessment table.
 
