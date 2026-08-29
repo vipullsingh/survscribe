@@ -27,7 +27,7 @@ Offline-first is a hard constraint on all 15 stages (`CLAUDE.md` §14.7). Everyt
 | 1 | Encrypted local DB | WatermelonDB schema mirroring the relevant subset of the physical schema; SQLCipher AES-256 initialisation at startup using a key held in Keychain / Keystore. | sprint_0001 schema | Critical | The database file is unreadable without the key (verified, not assumed). |
 | 2 | Secure token storage | React Native Encrypted Storage backed by iOS Keychain / Android Keystore for the access and refresh tokens. | sprint_0003 | Critical | ADR-0003 §2 satisfied. |
 | 3 | Offline authentication | On a no-network launch, unlock using the device passcode and the cached encrypted session token; enforce the 30-day maximum offline duration, after which online re-authentication is required. | Tasks 1, 2 | Critical | AC 0.1.4 |
-| 4 | Idle lock | 15 minutes of background inactivity triggers a local lock screen requiring the device passcode. **Passcode only — biometrics are deferred (D32), pending the Q3 reconciliation of ADR-0003 §3.1.** | Task 3 | Critical | CR-A12 |
+| 4 | Idle lock | 15 minutes of background inactivity triggers a local lock screen requiring the device passcode. **Passcode only — biometrics are deferred (D32). Q3 is closed: ADR-0005 (D41) amended ADR-0003 §3.1 to passcode-only.** | Task 3 | Critical | CR-A12 |
 | 5 | Client audit log | Append-only local `audit_log` table and writer; entries sync upward and are never mutated or deleted locally. | Task 1 | Critical | `CLAUDE.md` §14.10; SRS §5.2 entity 14 |
 | 6 | Network state | A reliable online/offline detector shared across the app, driving the offline banner and sync triggers later. | — | Critical | Single source of truth for connectivity. |
 | 7 | Clarification | Answer **Q7** — recovery when the Keychain/Keystore entry is wiped. Force online re-authentication and re-sync? Is there a local-data-loss risk the user must be warned about? | — | High | Written answer; behaviour implemented and surfaced in the UI. |
@@ -58,7 +58,7 @@ Offline-first is a hard constraint on all 15 stages (`CLAUDE.md` §14.7). Everyt
 | Item | Detail |
 | :-- | :-- |
 | SQLCipher + WatermelonDB on React Native | Native module setup — particularly on iOS — is a known source of integration friction. Allow buffer in this sprint rather than letting it silently consume sprint_0005. |
-| **Q3** | ADR-0003 §3.1 still says the idle lock uses "device biometrics" while ADR-0001 D32 defers biometrics to post-MVP. This must be reconciled **before** task 4 is implemented; the roadmap assumes passcode-only. |
+| ~~**Q3**~~ | **Closed 2026-08-30.** ADR-0005 (D41) amended ADR-0003 §3.1 to device passcode only, matching D32 and the roadmap's assumption. |
 | **Q7** | Key-loss recovery is undocumented. Getting this wrong risks unrecoverable local field data. |
 | Key provisioning | Where the SQLCipher key comes from on first run, and how it survives an app reinstall, must be explicit. |
 

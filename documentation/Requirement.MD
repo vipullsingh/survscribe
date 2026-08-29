@@ -351,12 +351,18 @@ interface IAssistantService {
 ## 5. Data Model & RBAC-Ready Schema
 
 ### 5.1 RBAC Schema & Insurer Viewer Governance
-All database entities include standard multi-tenant and role management columns:
-- `tenant_id`: UUID (Surveyor firm / organization)
-- `created_by_user_id`: UUID (Author)
+All operational database entities include standard multi-tenant and role management columns:
+- `store_id`: UUID (Surveyor firm / parent company — the tenancy boundary)
+- `client_id`: UUID (The employee / user the record belongs to)
 - `assigned_surveyor_id`: UUID (Field surveyor)
 - `reviewer_id`: UUID (Senior surveyor / partner)
 - `access_role_scope`: Enum (`['SURVEYOR', 'REVIEWER', 'ADMIN', 'INSURER_VIEWER']`)
+
+> **Naming amended by ADR-0005 (D38).** The tenancy root is a **store** (`stores` table, `store_id` column), replacing the earlier `tenants` / `tenant_id`; the record's owning employee is the **client** (`client_id`), replacing `created_by_user_id`. There is one name for each — `tenant_id` and `created_by_user_id` are not retained as aliases.
+>
+> **Where the five columns apply.** "All entities" is qualified by ADR-0005: operational tables (claim-workflow entities and surveyor work product) carry all five; identity tables carry `store_id` and `client_id` where an owner exists; global catalogue tables such as `permissions` carry none; `stores` is the tenancy root and carries none. See `architecture/physical-schema.md` §1.
+
+**Role-based access control** is implemented as a database-driven model — `roles`, `permissions`, `role_permissions`, `user_roles` — supporting multiple roles per user, four immutable seeded system roles, and store-defined custom roles composed from a code-defined permission catalogue. `access_role_scope` is retained as the denormalised primary role for display and compatibility; `user_roles` is authoritative for authorization. See ADR-0005 (D39) and `architecture/identity-and-rbac.md`.
 
 #### Insurer Viewer Access & Data Governance Controls
 To ensure regulatory compliance and maintain professional independence prior to enabling `INSURER_VIEWER` access:
@@ -367,7 +373,7 @@ To ensure regulatory compliance and maintain professional independence prior to 
 5. **Contractual Data-Sharing Compliance**: Insurer portal access operates under bilateral data-sharing terms respecting confidentiality and applicable data protection regulations.
 
 ### 5.2 Core Entities Schema Definition
-1. **`claims`**: `id`, `tenant_id`, `claim_ref_no`, `policy_no`, `insurer_name`, `insured_name`, `loss_date`, `peril`, `status`, `current_stage`, `created_at`, `updated_at`.
+1. **`claims`**: `id`, `store_id`, `client_id`, `claim_ref_no`, `policy_no`, `insurer_name`, `insured_name`, `loss_date`, `peril`, `status`, `current_stage`, `created_at`, `updated_at`.
 2. **`policy_details`**: `id`, `claim_id`, `policy_type`, `inception_date`, `expiry_date`, `sum_insured_total`, `excess_clause`, `warranties_json`.
 3. **`site_visits`**: `id`, `claim_id`, `visit_no`, `visit_date`, `gps_lat`, `gps_lng`, `actual_location_address`, `location_discrepancy_flag`.
 4. **`cause_investigations`**: `id`, `claim_id`, `incident_datetime`, `discovery_datetime`, `reported_cause`, `sequence_of_events`, `fir_details`, `fire_report_details`.
@@ -382,16 +388,31 @@ To ensure regulatory compliance and maintain professional independence prior to 
 
 The 15-stage workflow requires the following entities beyond the 10 above. Field lists are indicative; the finalised physical schema (types, PK/FK, indexes, enum value lists, JSON shapes) is produced in `documentation/architecture/`.
 
-11. **`users`** (surveyors): `id`, `tenant_id`, `full_name`, `email`, `mobile`, `username`, `password_hash`, `sla_license_no` (nullable), `sla_category` (nullable enum `Fellow|Associate|Licentiate|Trainee`), `base_location` (nullable), `role_scope` (enum), `signature_uri`, `created_at`.
-12. **`tenants`**: `id`, `firm_name`, `firm_type` (sole proprietorship / firm), `letterhead_config_json`, `default_claim_ref_prefix` (default `SS`), `created_at`.
-13. **`sessions`**: `id`, `user_id`, `device_id`, `encrypted_token_ref`, `issued_at`, `expires_at`, `offline_grace_until`, `revoked_flag`.
-14. **`audit_log`** (immutable, append-only): `id`, `tenant_id`, `claim_id` (nullable), `actor_user_id`, `entity`, `entity_id`, `field`, `old_value`, `new_value`, `action`, `occurred_at`. Records every change to loss-assessment figures and every insurer file view/download.
+11. **`users`** (the client / employee — **finalised, ADR-0005**): `id` *(this is the `client_id` referenced elsewhere)*, `store_id`, `full_name`, `email`, `mobile`, `username` (nullable), `password_hash` (nullable — OTP-only accounts), `password_algo`, `password_updated_at`, `sla_license_no` (nullable), `sla_category` (nullable enum `Fellow|Associate|Licentiate|Trainee`), `base_location` (nullable), `signature_uri`, `access_role_scope` (enum), `permissions_version`, `status` (enum `PENDING_VERIFICATION|ACTIVE|SUSPENDED|DEACTIVATED`), `email_verified_at`, `mobile_verified_at`, `terms_accepted_at`, `terms_version`, **signup provenance** (`signup_source`, `invited_by_user_id`, `invite_id`, `signup_ip`, `signup_user_agent`, `signup_device_id`, `signup_platform`, `signup_app_version`, `signup_country_code`, `signup_region`, `signup_city`, `signup_asn`, `signup_isp`, `signup_timezone`), **login state** (`last_login_at`, `last_login_ip`, `last_login_user_agent`, `last_login_device_id`, `previous_login_at`, `previous_login_ip`, `last_seen_at`, `login_count`), **logout & lockout** (`last_logout_at`, `last_logout_reason`, `failed_login_count`, `last_failed_login_at`, `locked_until`), `created_at`, `updated_at`, `deleted_at`. Identifier uniqueness (`email`, `mobile`, `username`) is **global**, not per-store — required by universal-identifier login (ADR-0005 D43).
+12. **`stores`** (the surveyor firm / parent company — **renames `tenants`, ADR-0005 D38**): `id`, `firm_name` (deliberately not unique), `legal_name`, `firm_type` (enum `SOLE_PROPRIETORSHIP|PARTNERSHIP|LLP|PRIVATE_LIMITED|OTHER`), `owner_user_id`, `status`, `letterhead_config_json`, `default_claim_ref_prefix` (default `SS`), `primary_contact_email`, `primary_contact_phone`, `registered_address`, `created_at`, `updated_at`, `deleted_at`.
+13. **`sessions`** (**finalised, ADR-0005 D41**): `id`, `user_id`, `store_id`, `device_id`, `device_name`, `device_platform`, `app_version`, `os_version`, **`refresh_token_hash`** *(Argon2id — renamed from `encrypted_token_ref`; ADR-0003 §1 requires hashing, not reversible encryption)*, `refresh_token_family_id`, `rotated_from_session_id`, `issued_at`, `expires_at`, `last_used_at`, `last_refreshed_at`, `offline_grace_until`, `remember_device`, `created_ip`, `created_user_agent`, `created_country_code`, `created_region`, `created_city`, `last_ip`, `status` (enum `ACTIVE|LOGGED_OUT|EXPIRED|REVOKED|SUPERSEDED`), `logout_at`, `revoked_at`, `revoked_by_user_id`, `revoke_reason`, `created_at`, `updated_at`. Multi-device is supported: one `ACTIVE` session per `(user_id, device_id)`.
+14. **`audit_log`** (immutable, append-only): `id`, `store_id`, `claim_id` (nullable), `actor_user_id`, `entity`, `entity_id`, `field`, `old_value`, `new_value`, `action`, `occurred_at`. Records every change to loss-assessment figures and every insurer file view/download.
 15. **`sync_queue`**: `id`, `device_id`, `entity`, `entity_local_id`, `operation` (create/update/delete), `payload_json`, `media_refs`, `attempt_count`, `next_retry_at`, `conflict_flag`, `status`.
 16. **`contact_logs`** (Stage 3): `id`, `claim_id`, `contacted_at`, `contact_person`, `phone`, `channel`, `outcome` (enum `Connected|Busy|Site Confirmed|...`), `notes`.
 17. **`follow_up_visits`** (Stage 9): `id`, `claim_id`, `visit_number` (≥ 2), `visit_date`, `purpose` (enum), `persons_attended`, `detailed_findings`, `stock_reconciliation_json`. (May be modelled as an extension of `site_visits` — resolved during schema drafting.)
 18. **`coverage_opinions`** (Stage 13): `id`, `claim_id`, `operative_peril_status` (enum), `peril_justification`, `warranty_compliance_json`, `exclusions_json`, `surveyor_recommendation` (enum `Admissible as Assessed|Subject to Insurer Liability Determination|Non-Admissible|Repudiation Recommended`), `surveyor_opinion_text`.
 19. **`requisition_notices`** (Stage 8): `id`, `claim_id`, `peril_preset`, `required_docs_json`, `custom_requirements`, `due_date`, `dispatch_channel`, `dispatched_at`.
 20. **`preservation_notices`** (Stage 3): `id`, `claim_id`, `template_version`, `custom_instructions`, `dispatch_channel`, `dispatched_at`. *(Candidate — confirm during schema drafting; may be folded into `contact_logs` or `documents`.)*
+
+#### Identity, RBAC & Auth Telemetry Entities (finalised 2026-08-30 — ADR-0005)
+
+Unlike entities 11–20 above, the following are **not draft**. Their complete DDL — types, PK/FK, indexes, partial unique indexes, `CHECK` constraints and enum value lists — is specified in [`architecture/physical-schema.md`](architecture/physical-schema.md), together with the finalised forms of entities 11, 12 and 13.
+
+21. **`permissions`** (seeded catalogue, never written at runtime): `id`, `code` (`resource:action`, e.g. `claim:read`), `resource`, `action`, `description`, `is_assignable`, `created_at`. ~35 codes across store, user, role, claim, evidence, document, assessment, salvage, coverage-opinion, report, audit, AI and insurer groups.
+22. **`roles`**: `id`, `store_id` (NULL ⇒ immutable global system role), `code`, `name`, `description`, `is_system`, `created_at`, `updated_at`, `deleted_at`. Four seeded system roles (`SURVEYOR`, `REVIEWER`, `ADMIN`, `INSURER_VIEWER`); stores may define custom roles composed only from the seeded permission catalogue.
+23. **`role_permissions`**: `role_id`, `permission_id`, `created_at` (composite PK).
+24. **`user_roles`**: `user_id`, `role_id` (composite PK), `store_id`, `granted_by_user_id`, `granted_at`, `expires_at`, `revoked_at`, `revoke_reason`. A user may hold multiple roles.
+25. **`claim_access_grants`** (implements §5.1 insurer governance rule 2): `id`, `store_id`, `claim_id`, `grantee_user_id`, `granted_by_user_id`, `scope`, `granted_at`, `expires_at`, `revoked_at`, `revoked_by_user_id`, `revoke_reason`. Holding `insurer:claim:read` is necessary but **not sufficient** — a live grant for that specific claim is also required, and every read under a grant writes an `audit_log` row.
+26. **`user_devices`**: `id`, `user_id`, `store_id`, `device_id`, `device_name`, `platform`, `model`, `os_version`, `app_version`, `push_token`, `is_trusted`, `first_seen_at`, `last_seen_at`, `revoked_at`, `revoke_reason`. Stable device identity across sessions; the anchor for remote revoke.
+27. **`auth_events`** (immutable, append-only — enforced by trigger *and* `REVOKE UPDATE, DELETE`): `id` (BIGSERIAL), `store_id` (nullable), `user_id` (nullable), `session_id` (nullable), `event_type` (22 values covering signup, login success/failure, OTP, token refresh and reuse, logout, revocation, password changes, lockout, role grants, invites, offline unlock/expiry), `outcome`, `auth_method`, `failure_reason`, `identifier_attempted_hash` (SHA-256 — a failed login may name a non-existent account, so the raw identifier is never stored), `ip_address`, `user_agent`, `device_id`, `device_platform`, `app_version`, `country_code`, `region`, `city`, `asn`, `isp`, `timezone`, `occurred_at`. Deliberately **separate from `audit_log`**: different shape, cardinality, retention and audience.
+28. **`store_invites`** (the only path into an existing store — ADR-0005 D40): `id`, `store_id`, `email`, `mobile`, `role_id`, `invited_by_user_id`, `token_hash` (SHA-256), `status` (enum `PENDING|ACCEPTED|EXPIRED|REVOKED`), `expires_at`, `accepted_at`, `accepted_user_id`, `revoked_at`, `revoked_by_user_id`, `created_ip`, `created_user_agent`, `created_at`, `updated_at`.
+29. **`otp_challenges`** *(defined now, wired in the OTP sprint)*: `id`, `user_id` (nullable), `channel` (`SMS|EMAIL`), `purpose` (`LOGIN|SIGNUP_VERIFY|PASSWORD_RESET`), `destination_hash`, `code_hash` (Argon2id — never the plain code), `attempt_count`, `max_attempts`, `resend_available_at` (SMS 30 s / email 45 s per D33), `expires_at`, `consumed_at`, `request_ip`, `request_user_agent`, `created_at`.
+30. **`password_reset_tokens`** *(defined now, wired when the email vendor is live)*: `id`, `user_id`, `token_hash` (SHA-256), `expires_at`, `consumed_at`, `request_ip`, `request_user_agent`, `created_at`.
 
 ---
 

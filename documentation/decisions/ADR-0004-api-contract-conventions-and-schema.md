@@ -47,10 +47,15 @@ All API endpoints MUST respond using a uniform JSON envelope:
 ### 4. Database Schema Standards
 - **Primary Keys:** UUIDv4 for public entities (`id`); BigInt auto-increment for internal sequence indexing.
 - **Timestamp Strategy:** `created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`, `updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`, `deleted_at TIMESTAMPTZ` (soft deletes for claims & documents).
-- **Tenant Isolation:** Every operational table MUST include `tenant_id UUID NOT NULL REFERENCES tenants(id)`.
+- **Store Isolation:** Every operational table MUST include `store_id UUID NOT NULL REFERENCES stores(id)`.
+
+> **Amended by [ADR-0005](ADR-0005-identity-model-store-client-and-rbac.md) (D38).** This rule originally read `tenant_id UUID NOT NULL REFERENCES tenants(id)`. The tenancy root is now the **store**. `store_id` is always taken from the verified JWT and never from a request body, query string, or path parameter — see `../architecture/identity-and-rbac.md` §3.2.
+>
+> ADR-0005 also qualifies "every operational table": global catalogue tables such as `permissions`, and the `stores` root itself, carry no `store_id`. See `../architecture/physical-schema.md` §1.
 
 ---
 
 ## Consequences
 
 - Go backend middleware and React Native API client (`src/shared/api/client.ts`) will adopt these envelope structures and conventions across all 15 stages.
+- Identity endpoints, error codes, and the permission model built on these conventions are specified in [`../architecture/identity-and-rbac.md`](../architecture/identity-and-rbac.md) §6.

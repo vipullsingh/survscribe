@@ -47,6 +47,30 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 - **AC 0.2.2 (SLA License Format Validation & Disclaimer)**: When a license number is entered, the system validates that it matches expected formatting (regex `SLA-[0-9]{4,8}`) — syntax only, not regulatory verification. The UI displays an explicit disclaimer: *"License details are provided by the user and are subject to independent verification. Platform registration does not constitute regulatory approval or endorsement."*
 - **AC 0.2.3 (Immediate Dashboard Access)**: Upon successful sign-up, the surveyor is redirected to the dashboard with initial onboarding guidance.
 - **AC 0.2.4 (Switch to Sign In)**: Clicking "Already have an account? Sign In" navigates back to `00_auth_login`.
+- **AC 0.2.5 (Store Creation & Founder Role)**: Registration **always creates a new store** and makes the registrant its owner, granting the `ADMIN` role in addition to the `SURVEYOR` role scope. A firm name matching an existing store never joins that store — firm names are neither unique nor verified.
+- **AC 0.2.6 (Signup Provenance Captured)**: Registration records the originating IP address, user agent, device and platform, and best-effort geo-IP enrichment (country, region, city, ASN, ISP, timezone) against the new user. Geo enrichment is best-effort — a lookup failure records NULL and never blocks registration.
+
+### Story 0.3: Inviting a Colleague into the Firm (Post-MVP UI, MVP API)
+**As a** Firm Administrator,  
+**I want to** invite a colleague into my firm by email,  
+**So that** my team shares one claim pipeline without anyone being able to join by guessing our firm name.
+
+#### Acceptance Criteria
+- **AC 0.3.1 (Invite Issue)**: A user holding `user:invite` can issue a single-use, expiring invite naming the recipient's email and the role they will receive.
+- **AC 0.3.2 (Invite Acceptance)**: Accepting a valid invite creates the user inside the **inviting store** with the named role, recording `signup_source = 'INVITE'` and the inviter's identity.
+- **AC 0.3.3 (Invite Integrity)**: An expired, revoked, or already-accepted invite is rejected. Only the token's SHA-256 hash is stored, so the raw token is never recoverable from the database.
+
+### Story 0.4: Session Visibility & Sign Out
+**As a** Licensed Claim Surveyor,  
+**I want to** see where my account is signed in and end any session,  
+**So that** I can secure my account if a device is lost or I notice an unfamiliar sign-in.
+
+#### Acceptance Criteria
+- **AC 0.4.1 (Multi-Device Sessions)**: A surveyor may be signed in on several devices at once; each device holds one active session.
+- **AC 0.4.2 (Session List)**: The surveyor can list their active sessions with device name, platform, origin location, and last-used time, and can end any one of them remotely.
+- **AC 0.4.3 (Last Sign-In Surfaced)**: The app can display the previous sign-in time and approximate location, so an unfamiliar entry is noticeable.
+- **AC 0.4.4 (Sign Out Preserves Local Work)**: Signing out clears cached tokens but does **not** delete unsynced local claim data. If the sync queue is non-empty, the surveyor is warned before signing out.
+- **AC 0.4.5 (Logout Recorded)**: Every sign-out, remote revocation, and token expiry records its reason against the user and an append-only `auth_events` row.
 
 ---
 
@@ -317,10 +341,14 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 
 ### Story 16.2: Future RBAC & Insurer Data Governance
 **As a** System Architect,  
-**I want** all claim entities tagged with `tenant_id`, `created_by`, `assigned_surveyor_id`, and `role_scopes` with explicit insurer access governance rules,  
+**I want** all claim entities tagged with `store_id`, `client_id`, `assigned_surveyor_id`, `reviewer_id`, and `access_role_scope` with explicit insurer access governance rules,  
 **So that** the platform supports multi-tier firm permissions and secure insurer portals without compromising surveyor independence.
 
 #### Acceptance Criteria
-- **AC 16.2.1 (Schema Tagging)**: Every created record is populated with active user ID and firm tenant ID.
-- **AC 16.2.2 (Role Scopes)**: Role scopes (`SURVEYOR`, `REVIEWER`, `ADMIN`, `INSURER_VIEWER`) are stored as valid metadata without restricting MVP UI actions.
-- **AC 16.2.3 (Insurer Access Controls)**: Access for `INSURER_VIEWER` requires explicit surveyor authorization, is strictly scoped to individual assigned claims, maintains immutable audit trails of all file accesses, and enforces surveyor data ownership boundaries.
+- **AC 16.2.1 (Schema Tagging)**: Every created record is populated with the active user's `client_id` and their firm's `store_id`.
+- **AC 16.2.2 (Role Scopes)**: Role scopes (`SURVEYOR`, `REVIEWER`, `ADMIN`, `INSURER_VIEWER`) are stored as valid metadata without restricting MVP UI actions. **Store isolation is not deferred** — every endpoint scopes its queries to the `store_id` carried in the verified token from the first release.
+- **AC 16.2.3 (Insurer Access Controls)**: Access for `INSURER_VIEWER` requires explicit surveyor authorization recorded as a `claim_access_grants` row, is strictly scoped to individual assigned claims, maintains immutable audit trails of all file accesses, and enforces surveyor data ownership boundaries. Holding the `insurer:claim:read` permission is necessary but not sufficient — a live grant for that specific claim is also required.
+- **AC 16.2.4 (Multi-Role Assignment)**: A user may hold more than one role. The founder of a store carries `access_role_scope = 'SURVEYOR'` (their professional role, shown on reports) and is additionally granted the `ADMIN` role, which is what allows them to invite colleagues.
+- **AC 16.2.5 (Immediate Privilege Revocation)**: Changing a user's roles increments their `permissions_version`, causing outstanding access tokens to be rejected within one 15-minute lifetime rather than persisting until refresh-token expiry.
+
+> Naming per ADR-0005 (D38): `store_id` replaces `tenant_id`, `client_id` replaces `created_by_user_id`. RBAC is database-driven (`roles` / `permissions` / `role_permissions` / `user_roles`) per D39.

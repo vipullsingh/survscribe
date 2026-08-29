@@ -23,33 +23,33 @@ At the end of this sprint no product feature exists, but every subsequent sprint
 
 | # | Feature / module | Task | Dependency | Priority | Expected outcome |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| 1 | Physical schema | Write `documentation/architecture/physical-schema.md`: DDL for all 20 entities in SRS §5.2 (10 core + 10 draft) — column types, PK/FK, indexes, enum value lists, JSON payload shapes. Apply ADR-0004 rules (UUIDv4 public PK, `TIMESTAMPTZ` timestamps, soft deletes on claims/documents, `tenant_id UUID NOT NULL` on every operational table). Resolve **Q2**. | SRS §5.2; ADR-0004 | Critical | Reviewed, owner-approved schema document. |
+| 1 | Physical schema | Extend `documentation/architecture/physical-schema.md` with DDL for the **remaining** entities in SRS §5.2 — the 10 core claim-workflow entities plus 15–20 — with column types, PK/FK, indexes, enum value lists, JSON payload shapes. Apply ADR-0004 rules (UUIDv4 public PK, `TIMESTAMPTZ` timestamps, soft deletes on claims/documents, `store_id UUID NOT NULL` on every operational table). Resolve **Q2**. **The identity slice (entities 11–13 and 21–30) is already finalised by ADR-0005 — do not redesign it; extend it.** | SRS §5.2; ADR-0004; **ADR-0005** | Critical | Reviewed, owner-approved schema document. |
 | 2 | Migrations | First migration set under `apps/backend/migrations/` matching the schema document. **Not executed against any shared or production database.** Local `docker-compose` Postgres for development only. | Task 1 | Critical | Migration files + a local database that a developer can create on demand. |
 | 3 | API contract | `documentation/architecture/api-contract/openapi.yaml` v1: auth, claims CRUD, per-stage sub-resources, sync push/pull, media upload. Standard success and error envelopes plus pagination `meta` per ADR-0004. | Task 1 | Critical | Reviewed OpenAPI specification. |
 | 4 | Shared types | Generate `packages/types` from the OpenAPI spec; add `packages/types/package.json` and `tsconfig`. | Task 3 | Critical | `import type { Claim } from "@survscribe/types"` resolves in the workspace. |
 | 5 | Monorepo completion | Add per-package `package.json` for `packages/*`; base `tsconfig`; ESLint + Prettier configuration; commit `pnpm-lock.yaml`; wire Turbo `lint`/`test`/`build` tasks; GitHub Actions CI running lint + typecheck + test. | root scaffold | Critical | `pnpm install && pnpm lint && pnpm test` green in CI. |
 | 6 | Backend skeleton | `cmd/server/main.go`; `internal/{config,server,handler,repository,service,model,pkg}`; Gin router; response-envelope middleware; `pgx` connection pool; `/healthz`; structured logging. | Tasks 1, 2 | Critical | `go run ./cmd/server` serves `/healthz` against local Postgres. |
 | 7 | Mobile skeleton | Initialise the React Native + TypeScript app in `apps/mobile`; feature-first folder layout per ADR-0001 D19; navigation shell with the canonical 5-tab bottom nav placeholder; environment handling; runs on iOS simulator and Android emulator. | Task 5 | Critical | App boots to a placeholder Dashboard on both platforms. |
-| 8 | Conventions ADR | ADR-0005: testing frameworks (Go `testing` + `testify`; mobile Jest + React Native Testing Library; Detox for e2e later), branching strategy, `.editorconfig`, commit conventions. Closes `CLAUDE.md` §13.2 / §16 Q11. | — | High | Accepted ADR. |
-| 9 | Config & secrets | Document the configuration schema and secrets-management approach; add `.env.example` for both apps; decide where the RS256 signing key lives and how it rotates. | — | High | `.env.example` committed; approach documented. Closes `CLAUDE.md` §15 item 8. |
+| 8 | Conventions ADR | **ADR-0007** (renumbered — 0005 and 0006 were taken by the identity model and geo-IP provider): testing frameworks (Go `testing` + `testify`; mobile Jest + React Native Testing Library; Detox for e2e later), branching strategy, `.editorconfig`, commit conventions. Closes `CLAUDE.md` §13.2 / §16 Q11. | — | High | Accepted ADR. |
+| 9 | Config & secrets | Document the configuration schema and secrets-management approach; add `.env.example` for both apps; decide where the RS256 signing key lives and how it rotates (**ADR-0008** — flagged as open by ADR-0005). | — | High | `.env.example` committed; approach documented. Closes `CLAUDE.md` §15 item 8. |
 | 10 | Vendor provisioning | Project owner opens sandbox accounts (Twilio + **start India SMS DLT registration**, SendGrid, Google Maps, Anthropic, AWS Textract) and records key-management ownership. | ADR-0002 | High | A tracker of account and key status. |
-| 11 | Clarifications | Obtain written answers to **Q3** (ADR-0003 biometric wording vs D32), **Q9** (is AI-4 inside the MVP release window?), and confirm the dual-`.docx` scope for MVP. | — | High | Answers appended to the relevant ADRs and `CLAUDE.md` §16. |
+| 11 | Clarifications | Obtain written answers to **Q9** (is AI-4 inside the MVP release window?) and confirm the dual-`.docx` scope for MVP. **Q3 is closed** — ADR-0005 (D41) amended ADR-0003 §3.1 to passcode-only. | — | High | Answers appended to the relevant ADRs and `CLAUDE.md` §16. |
 
 ---
 
 ## 3. Acceptance Criteria
 
-- [ ] `physical-schema.md` covers all 20 entities with types, PK/FK, indexes, enums, and JSON shapes; **reviewed and approved by the project owner**; Q2 answered in writing.
-- [ ] Every operational table carries the five RBAC columns (`tenant_id`, `created_by_user_id`, `assigned_surveyor_id`, `reviewer_id`, `access_role_scope`) per SRS §5.1.
+- [ ] `physical-schema.md` covers all 30 entities with types, PK/FK, indexes, enums, and JSON shapes; **reviewed and approved by the project owner**; Q2 answered in writing.
+- [ ] Every operational table carries the five RBAC columns (`store_id`, `client_id`, `assigned_surveyor_id`, `reviewer_id`, `access_role_scope`) per SRS §5.1 as amended by ADR-0005 (D38). Identity and global catalogue tables follow the narrower rule in `physical-schema.md` §1.
 - [ ] Migration files exist and apply cleanly to a **local** Postgres; the runbook states that migrations are never run automatically.
 - [ ] `openapi.yaml` v1 is reviewed and frozen under an explicit change-control note; it uses the ADR-0004 success/error envelopes and pagination `meta`.
 - [ ] `packages/types` builds from the contract and is importable by `apps/mobile`.
 - [ ] CI is green on the repository: install, lint, typecheck, test.
 - [ ] `go run ./cmd/server` serves `/healthz` and connects to local Postgres via `pgx`.
 - [ ] The React Native app builds and boots on an iOS simulator and an Android emulator.
-- [ ] ADR-0005 (conventions) accepted; `.env.example` committed for both apps.
+- [ ] ADR-0007 (conventions) accepted; `.env.example` committed for both apps.
 - [ ] The vendor tracker exists, with India SMS DLT registration started.
-- [ ] Q3, Q9, and the dual-`.docx` MVP scope have written answers.
+- [ ] Q9 and the dual-`.docx` MVP scope have written answers.
 
 ---
 
@@ -63,10 +63,11 @@ None. This is the entry sprint. Every other sprint depends on tasks 1, 3, 5, 6, 
 
 | Item | Detail |
 | :-- | :-- |
-| **R8** | The 10 draft entities in SRS §5.2 are explicitly "draft, pending detailed schema review". Churn here ripples into migrations, OpenAPI, and types. Mitigation: owner review before sprint_0003 starts; change control on the frozen contract. |
+| **R8** | The remaining draft entities in SRS §5.2 (15–20) are still "draft, pending detailed schema review". Churn ripples into migrations, OpenAPI, and types. Mitigation: owner review before sprint_0003 starts; change control on the frozen contract. **The identity slice (11–13, 21–30) is no longer a churn risk — ADR-0005 finalised it, and it is under change control from now on.** |
 | **R4** | Twilio India SMS DLT registration commonly takes weeks. Starting it now is why OTP login can remain a Should-Have without blocking access. |
 | **Q2** | `follow_up_visits` as a separate table or an extension of `site_visits`; `preservation_notices` as its own table or folded into `contact_logs`/`documents`. Must be decided here. |
-| **Q3** | ADR-0003 §3.1 says the idle lock uses "device biometrics"; ADR-0001 D32 defers biometrics to post-MVP. Needs reconciliation before sprint_0004. |
+| ~~**Q3**~~ | **Closed 2026-08-30.** ADR-0005 (D41) amended ADR-0003 §3.1 to device passcode only; biometrics stay deferred per D32. |
+| **Q13** | RS256 signing-key custody and rotation (task 9) — flagged as open by ADR-0005 and needing its own ADR before sprint_0003 ships. |
 | **Q9** | Whether AI-4 must ship inside the MVP window determines if sprint_0014 is a release gate. |
 | OpenAPI churn | The contract may need changes once stage screens are built. Freeze with an explicit change-control process rather than pretending it is immutable. |
 

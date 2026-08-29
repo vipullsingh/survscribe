@@ -47,6 +47,8 @@ The **Average Clause / underinsurance is applied to the Net-of-Depreciation base
 ### D27 — Data model: expand the SRS entity list
 Add `users`, `tenants`, `sessions`, `audit_log`, `sync_queue`, `contact_logs`, `follow_up_visits`, `coverage_opinions`, `requisition_notices` (candidate: `preservation_notices`) to `Requirement.MD` §5.2 as a draft. The finalized physical schema is produced separately in `documentation/architecture/`.
 
+> **Superseded in part by [ADR-0005](ADR-0005-identity-model-store-client-and-rbac.md) (2026-08-30).** `tenants` is renamed **`stores`**; `users`, `stores` and `sessions` are no longer draft — their finalized DDL is in `architecture/physical-schema.md`, together with the additional identity entities `permissions`, `roles`, `role_permissions`, `user_roles`, `claim_access_grants`, `user_devices`, `auth_events`, `store_invites`, `otp_challenges` and `password_reset_tokens`. The remaining entities in this list stay draft pending `sprint_0001` task 1.
+
 ### D28 — Stage 4 GPS accuracy
 Target **≤ 10 m** (readings worse than 10 m warn and prompt re-capture); hard limit **≤ 50 m** (readings worse than 50 m cannot be saved).
 

@@ -79,7 +79,9 @@ Regulatory positioning; AI never autonomous on numbers, decisions, or dispatch; 
 
 | Item | Detail | Action |
 | :-- | :-- | :-- |
-| Biometric unlock | ADR-0001 D32 and SRS §2.3 defer biometrics; **ADR-0003 §3.1 still says the 15-min idle lock uses "device biometrics"**. | Needs Clarification (Q3) — reconcile ADR-0003 wording. |
+| ~~Biometric unlock~~ | ADR-0001 D32 and SRS §2.3 defer biometrics; ADR-0003 §3.1 said the 15-min idle lock uses "device biometrics". | **Resolved 2026-08-30** — ADR-0005 (D41) amended ADR-0003 §3.1 to device passcode only. |
+| ~~`tenant_id` naming~~ | SRS §5.1 and ADR-0004 §4 specified `tenant_id` / `tenants` / `created_by_user_id`. | **Renamed 2026-08-30** by ADR-0005 (D38) to `store_id` / `stores` / `client_id`, before any migration existed. All documents reconciled. |
+| ~~`encrypted_token_ref`~~ | SRS §5.2 entity 13 implied a reversible token reference; ADR-0003 §1 requires an Argon2id **hash**. | **Resolved 2026-08-30** — renamed to `sessions.refresh_token_hash` (ADR-0005 D41). |
 | Insurable-interest enum | Screen spec `08` and ADR-0001 D34 define 4 states; **AC 7.1.2 still lists only 3**. | Needs Clarification (Q4) — treat D34 (4-state) as authoritative per `CLAUDE.md` §3 CR-W10. |
 | Stage 15 gate count | SRS and ADR say **7 gates**; earlier screen prose said "6". Reported reconciled in `CLAUDE.md` §19. | Use 7. |
 | Physical repo directory | Still named `SurveyAssist`; the product is `SurvScribe`. | Manual owner task (cannot be done from inside the working directory). |
@@ -246,7 +248,7 @@ Applies to every feature sprint. Individual sprints add deltas in their own READ
 - Data persists to the local encrypted DB **and** survives an app restart offline; it syncs and round-trips when back online.
 - The offline path works with zero network (airplane-mode test) for every field action.
 - Error, empty, and loading states handled; no unhandled promise rejections or panics.
-- Tenant scoping and audit-log entries written wherever the feature touches claim data or loss figures.
+- Store scoping (`store_id` from the verified token) and audit-log entries written wherever the feature touches claim data or loss figures.
 - No design-system anti-pattern (`Visual Theme & Design System.md` §2 / §8 checklist).
 - Unit tests for logic; at least one offline→online integration test for stateful features. Lint, typecheck, and tests green in CI.
 - The completion report distinguishes **Implemented vs Reviewed vs Tested vs Verified**, and states what was not verified and why.
@@ -334,7 +336,7 @@ The MVP is releasable when **all** of the following are true:
 5. **Governance gates:** the 4-point Human Approval Gate blocks every PSR/FSR `.docx` export until all four boxes are checked, timestamped, and written to the immutable audit log; Stage 15's 7 compliance gates all enforce and block submission on failure with a specific reason.
 6. **Report output:** the authoritative **server-side Go `.docx`** engine produces the 9-section FSR with the Section F table, photo annexure, sign-off block, and mandatory disclaimers; it matches the client draft within the parity spec; 9 sections with 50 plates generate in `< 5 s` on production infrastructure.
 7. **Submission lock:** on Stage 15 pass, a SHA-256 snapshot is stored, the dispatch log is recorded, and the report record is immutable thereafter.
-8. **Security:** SQLCipher AES-256 at rest (verified), Keychain/Keystore for tokens, TLS 1.3 enforced, the audit log proven append-only, tenant scoping on every endpoint, no secrets in the repository, and a signed-off security review.
+8. **Security:** SQLCipher AES-256 at rest (verified), Keychain/Keystore for tokens, TLS 1.3 enforced, the audit log and `auth_events` proven append-only, store scoping on every endpoint, no secrets in the repository, and a signed-off security review.
 9. **RBAC schema:** all entities carry the five RBAC columns, populated (enforcement deferred, and that deferral documented).
 10. **Positioning:** no screen, export, or store listing implies SurvScribe is an insurer, intermediary, IRDAI-approved body, or autonomous decision-maker; the required disclaimers appear on every export.
 11. **Quality:** zero open Critical or High defects; device-matrix regression passed; accessibility report clean or Low-only; UAT executed and signed by a licensed surveyor.
@@ -373,21 +375,24 @@ The MVP is releasable when **all** of the following are true:
 | :-- | :-- | :-- | :-- |
 | Q1 | **Rounding policy** for the loss engine — round per line item, or only at section/grand totals? Section F must reconcile to the rupee. | sprint_0005 / sprint_0011 | SRS FR-11.2; `12_*.md` §4 (not specified) |
 | Q2 | **`follow_up_visits` vs `site_visits`** — separate table or extension? Is `preservation_notices` its own table or folded into `contact_logs`/`documents`? | sprint_0001 | SRS §5.2 entities 17, 20 (marked unresolved) |
-| Q3 | **ADR-0003 biometric contradiction** — the idle-lock text says "device biometrics"; D32 defers biometrics. Passcode-only for MVP? | sprint_0004 | ADR-0003 §3.1 vs ADR-0001 D32 |
+| ~~Q3~~ | ~~ADR-0003 biometric contradiction~~ — **CLOSED 2026-08-30.** ADR-0005 (D41) amended ADR-0003 §3.1 to **device passcode only**; biometrics stay deferred per D32. | — | ADR-0005 |
 | Q4 | **Insurable-interest enum** — 4-state (D34 / screen `08`) vs 3-state (AC 7.1.2). Confirm 4-state. | sprint_0009 | conflicting documents |
 | Q5 | **Stage 15 gate 6 (Contradiction Scanner)** — the exact deterministic rule list, or AI-assisted? Determines whether it is MVP-deterministic or depends on AI-4. | sprint_0013 | FR-15.1 (rules not enumerated) |
 | Q6 | **Depreciation / IRDAI / engineering scale data source** — no authoritative table provided. Blocks AI-5 suggestions (not MVP math). | Post-MVP | `CLAUDE.md` §4 item 3, §16 Q6 |
 | Q7 | **Session-key loss recovery** — if the Keychain/Keystore entry is wiped, force online re-auth and full re-sync? Any local-data-loss risk to warn about? | sprint_0004 | not documented |
-| Q8 | **`REVIEWER` / `ADMIN` firm-admin model** — even at schema level, what does "a new firm name initializes a new `tenant_id`" imply for multi-user firms in MVP (single-user only)? | sprint_0003 | `CLAUDE.md` §4 item 5 |
+| ~~Q8~~ | ~~firm-admin model~~ — **CLOSED 2026-08-30.** ADR-0005 (D40): registration always creates a **new store**; joining an existing store is **invite-only**; stores are multi-user at schema level from day one. Full DB-driven RBAC per D39 also closes the `REVIEWER`/`ADMIN` capability question. | — | ADR-0005 |
 | Q9 | **Is AI-4 required inside the MVP release window**, or is a post-launch fast-follow acceptable? Determines whether sprint_0014 is a release gate. | sprint_0001 | ADR / stakeholder |
 | Q10 | **Preliminary loss reserve (PSR) and VAR (Stage 11)** — any validation bounds, or free surveyor entry? | sprint_0009 / sprint_0011 | specs say surveyor-entered; no bounds given |
 | Q11 | **Media storage backend** in production (S3 / GCS / self-hosted) and the retention policy for large photo sets. | sprint_0017 | not documented |
-| Q12 | **Multi-device per surveyor** — is concurrent use on two devices in scope? Affects sync design. | sprint_0002 | not documented |
+| ~~Q12~~ | ~~Multi-device per surveyor~~ — **CLOSED 2026-08-30.** ADR-0005 (D41): **in scope.** One `ACTIVE` session per `(user_id, device_id)`; the merge model must handle two devices of the same surveyor. | — | ADR-0005 |
+| Q13 | **RS256 signing-key custody and rotation** — where the private key lives, how it rotates, how it is injected per environment. | sprint_0001 / sprint_0003 | ADR-0005 open item 3 |
+| Q14 | **`users.username` capture** — the login screen accepts a username but no signup step captures one. NULL at signup and set from Profile, or add an optional Step 2 input? | sprint_0003 | ADR-0005 open item 1 |
+| Q15 | **`auth_events` retention period** — no retention policy exists; the table grows unbounded without one. | sprint_0017 | ADR-0005 open item 4 |
 
 ---
 
 ## 12. Recommended Next Development Action
 
-**Write and obtain owner + domain-expert sign-off on `documentation/architecture/physical-schema.md`** — the finalized PostgreSQL DDL for all 20 entities (10 SRS core + 10 draft), applying ADR-0004's rules and resolving Q2.
+**Obtain owner + domain-expert sign-off on `documentation/architecture/physical-schema.md`.** The identity slice (entities 11–13 and 21–30) was finalized on 2026-08-30 under ADR-0005 and awaits owner approval. The remaining work is the DDL for the 10 SRS core claim-workflow entities plus 15–20, applying ADR-0004's rules and resolving Q2.
 
 It is the single artifact that currently blocks the most downstream work: the first migrations, the OpenAPI v1 contract, the generated `packages/types`, and any parallel backend or mobile development all depend on it. It requires no code and no environment changes, and it is the highest-leverage action available right now. It is the first task of [`sprint_0001`](sprint_0001_contract_and_toolchain_freeze/); the remainder of that sprint follows immediately behind it.

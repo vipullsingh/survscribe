@@ -80,9 +80,14 @@
 ---
 
 ## 5. Security & RBAC Metadata Initialization
-- **Role Assignment**: Automatically assigns default role scope `role: 'SURVEYOR'`.
-- **Tenant Initialization**: If a new firm name is entered, initializes a new `tenant_id` for multi-surveyor firm readiness.
-- **Session Provisioning**: Creates an encrypted session token in local device storage for immediate offline survey preparation.
+
+*(Amended 2026-08-30 by ADR-0005 — see `documentation/architecture/identity-and-rbac.md` §4.1.)*
+
+- **Store Initialization**: Registration **always creates a new store** (the surveyor firm / parent company) and makes the registrant its `owner_user_id`. A firm name matching an existing store is **never** joined automatically — firm names are neither unique nor verified, so auto-joining would let anyone who can spell a firm's name reach its claim files. Adding a colleague to an existing store is invite-only (`00_auth_invite_accept`, ADR-0005 D40).
+- **Role Assignment**: Assigns role scope `access_role_scope: 'SURVEYOR'` — the registrant's professional role, which appears on reports — **and** grants the `ADMIN` role in `user_roles`, which is what lets the founder invite colleagues. Multi-role assignment is what makes both true at once.
+- **Signup Provenance**: Records the originating IP address, user agent, device identifier and platform, plus best-effort geo-IP enrichment (country, region, city, ASN, ISP, timezone). A geo lookup failure records NULL and never blocks registration.
+- **Session Provisioning**: Creates a session bound to this device, storing the access and refresh tokens in the hardware keystore/keychain for immediate offline survey preparation.
+- **Username**: The login screen accepts an alphanumeric username as a `login_identifier`, but **this form does not capture one**. `username` is therefore `NULL` at registration and set later from the Profile screen. *(Open item — the alternative is an optional username input in Step 2; see ADR-0005 open item 1 / sprints Q14.)*
 
 ---
 

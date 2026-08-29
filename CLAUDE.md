@@ -61,7 +61,11 @@
 
 (The former empty `docs/` scaffold was **deleted** on 2026-08-30; `documentation/decisions/` and `documentation/architecture/` were created with real content.)
 
-**Not present anywhere in the repo:** `package.json`, `go.mod`, `go.sum`, any lockfile, `pnpm-workspace.yaml`, `turbo.json`, `.gitignore`, `.env` / `.env.example`, CI config, Dockerfiles, database migrations, seed scripts, tests, linter/formatter configs, or any `.go` / `.ts` / `.tsx` / `.js` source file.
+**[Implemented] Partial monorepo skeleton** (verified 2026-08-30 — this corrects an earlier claim in this file that none of it existed):
+- Root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `.gitignore`
+- `apps/backend/go.mod` — `module github.com/vipullsingh/survscribe/backend`, `go 1.22`
+
+**Still not present anywhere in the repo:** `go.sum`, any lockfile, per-package `package.json` for `packages/*`, `tsconfig`, `.env` / `.env.example`, CI config, Dockerfiles, database migrations, seed scripts, tests, linter/formatter configs, or any `.go` / `.ts` / `.tsx` / `.js` source file. `sprint_0001` task 5 completes the toolchain.
 
 ### 2.2 Implemented and working functionality
 
@@ -107,9 +111,12 @@ Only requirements supported by evidence in `documentation/` **or** decided in th
 - **CR-A7** SLA/IRDAI license number, SLA category, and base location are **OPTIONAL at signup**. License number is validated for **syntax/format only** (regex `SLA-[0-9]{4,8}`), explicitly **not** regulatory verification. Disclaimer required: *"License details are provided by the user and are subject to independent verification. Platform registration does not constitute regulatory approval or endorsement."* **However, final FSR generation is blocked until the surveyor's license number + category are present** (required for the report sign-off block). [`00_auth_signup.md` §4; **Q&A 2026-08-30** — SRS FR-0.2 / User Stories AC 0.2.1 to be reconciled to "optional at signup, required before FSR"]
 - **CR-A8** SLA Category enum: **Fellow / Associate / Licentiate / Trainee**. [`Requirement.MD` FR-0.2; `00_auth_signup.md` §3]
 - **CR-A9** Password creation requires a complexity meter; documented rule (signup screen): min 8 chars, ≥1 uppercase, ≥1 number, ≥1 special char. Terms-of-Service consent checkbox is mandatory. [`00_auth_signup.md` §4]
-- **CR-A10** Registration assigns default role scope `SURVEYOR`; entering a new firm name initializes a new `tenant_id`. [`00_auth_signup.md` §5]
+- **CR-A10** Registration **always creates a new store** (`store_id`) and makes the registrant its owner, assigning role scope `SURVEYOR` **and** granting the `ADMIN` role. A matching firm name never joins an existing store — joining is **invite-only** via `store_invites`. [`00_auth_signup.md` §5; **ADR-0005 D40**]
+- **CR-A13** Every user carries `store_id` (their firm) and is itself the `client_id` referenced by other records. Signup provenance (IP, user agent, device, geo), login state (`last_login_at`/`_ip`, `previous_login_*`, `last_seen_at`, `login_count`), and logout state (`last_logout_at`, `last_logout_reason`, lockout counters) are persisted on `users`, with a full append-only `auth_events` log alongside. [**ADR-0005 D42**; `architecture/physical-schema.md` §6, §10]
+- **CR-A14** RBAC is **database-driven**: `roles` / `permissions` / `role_permissions` / `user_roles`, multi-role per user, four immutable seeded system roles plus store-defined custom roles composed from a code-defined ~35-code permission catalogue. `claim_access_grants` scopes `INSURER_VIEWER` to individual claims. **Store isolation is enforced from the first endpoint; only per-permission UI gating is deferred.** [**ADR-0005 D39**; AC 16.2.2]
+- **CR-A15** Identifier uniqueness (`email`, `mobile`, `username`) is **global**, not per-store — forced by universal-identifier login, which resolves a bare identifier with no store context. One human, one account. [**ADR-0005 D43**]
 - **CR-A11** A dedicated Terms & Privacy screen (`00_auth_terms`) exists, reachable from signup, with Accept & Continue / Decline actions. [`00_auth_terms.md`]
-- **CR-A12** Offline auth: encrypted session token cached in hardware keystore/keychain; offline access via cached token / **device passcode**; automatic session lock after **15 minutes** of background inactivity. **Biometric unlock (Face ID / fingerprint) is DEFERRED to post-MVP** — remove stale biometric references from the docs. [`Requirement.MD` FR-0.3; `00_auth_login.md` §5; **Q&A 2026-08-30**]
+- **CR-A12** Offline auth: encrypted session token cached in hardware keystore/keychain; offline access via cached token / **device passcode**; automatic session lock after **15 minutes** of background inactivity; **30-day maximum offline grace**, after which mutations block pending online re-authentication. **Biometric unlock (Face ID / fingerprint) is DEFERRED to post-MVP** — ADR-0003 §3.1 was amended to passcode-only on 2026-08-30, closing Q3. [`Requirement.MD` FR-0.3; `00_auth_login.md` §5; ADR-0003 §3; **ADR-0005 D41**]
 
 ### 3.2 Workflow / stage requirements
 - **CR-W1** A **survey state machine** with 15 stages; each claim has a `current_stage`. Stage advance happens on each screen's primary "Save & Proceed…" action. [`Requirement.MD` §2.2, FR-1.3; every `Screens/*/*.md` §7]
@@ -159,29 +166,38 @@ Only requirements supported by evidence in `documentation/` **or** decided in th
 
 > Most items previously listed here were resolved in the 2026-08-30 Q&A and moved to §3 / §7 / §18. The remainder:
 
-1. **[Unconfirmed — clarification required]** Concrete external vendors for cloud LLM, cloud OCR, SMS/OTP, transactional email, WhatsApp, and maps/geocoding. Deferred to per-integration ADRs (`documentation/decisions/`). Interfaces are defined now; vendors are not.
-2. **[Unconfirmed — clarification required]** Session token format (JWT vs opaque), lifetime, refresh strategy, and offline-expiry behavior for the cached session. `Requirement.MD` FR-0.3 only says "encrypted session token in hardware keystore" + 15-min auto-lock.
-3. **[Unconfirmed — clarification required]** Source and content of the "standard surveyor / IRDAI / engineering depreciation scales" (Stage 11 AI-5). No scale tables or authoritative data source provided.
-4. **[Unconfirmed — clarification required]** API contract conventions: versioning scheme, error envelope shape, pagination style, auth header scheme. To be defined when `documentation/` (formerly `packages/api-contracts/`) gets its first OpenAPI spec.
-5. **[Unconfirmed — clarification required]** `REVIEWER` / `ADMIN` capability details and firm-admin vs surveyor distinctions (RBAC is schema-only for MVP, but the eventual matrix is undefined).
-6. **[Unconfirmed — clarification required]** Full physical schema (column types, PK/FK constraints, indexes, enum value lists, JSON payload shapes) for both the SRS's 10 core entities and the newly-added ones (§9). The **decision** to expand the model is made; the detailed DDL is not written.
-7. **[Unconfirmed — clarification required]** Exact worked example / numeric walk-through of the loss-assessment sequence for domain-expert sign-off (the order and base are decided in §11.1; a validated example is still worth producing).
+> **Closed since first writing:** vendors (ADR-0002), session token format and lifetime (ADR-0003), API contract conventions (ADR-0004), the `REVIEWER`/`ADMIN` capability matrix and the identity/RBAC schema (**ADR-0005** + `architecture/physical-schema.md` / `identity-and-rbac.md`), geo-IP provider (ADR-0006). The items below are what genuinely remain.
+
+1. **[Unconfirmed — clarification required]** Source and content of the "standard surveyor / IRDAI / engineering depreciation scales" (Stage 11 AI-5). No scale tables or authoritative data source provided.
+2. **[Unconfirmed — clarification required]** Full physical schema for the **10 core claim-workflow entities and §9.2 entities 15–20**. The identity slice (entities 11–13, 21–30) is finalized in `architecture/physical-schema.md`; the rest is `sprint_0001` task 1.
+3. **[Unconfirmed — clarification required]** Exact worked example / numeric walk-through of the loss-assessment sequence for domain-expert sign-off (the order and base are decided in §11.1; a validated example is still worth producing).
+4. **[Unconfirmed — clarification required]** RS256 signing-key custody and rotation — where the private key lives and how it is injected per environment. Flagged by ADR-0005; needs its own ADR (`sprint_0001` task 9 / sprints Q13).
+5. **[Unconfirmed — clarification required]** `users.username` capture — the login screen accepts a username but no signup step captures one. Assumed NULL at signup and set from Profile; the alternative changes `00_auth_signup.md` §4 (sprints Q14).
+6. **[Unconfirmed — clarification required]** `auth_events` retention period. No retention policy exists anywhere; the table grows unbounded without one (sprints Q15).
+7. **[Unconfirmed — clarification required]** Keychain/Keystore wipe recovery (`sprint_0004` Q7) — forcing online re-auth is clear; the local-data-loss warning shown to the surveyor is not.
+8. **[Unconfirmed — clarification required]** SLA licence format. `Requirement.MD` FR-0.2 / AC 0.2.2 specify `SLA-[0-9]{4,8}`; `00_auth_signup.md` §4 specifies *"`SLA-[0-9]{4,8}` or alphanumeric"* — materially looser. A **pre-existing contradiction**, surfaced rather than silently resolved. SRS treated as authoritative pending a decision; the DB holds only a loose sanity bound so the rule stays changeable without a migration. (`architecture/physical-schema.md` §6.5)
 
 ---
 
 ## 5. Users, Roles, and Permissions
 
-**[Confirmed Requirement]** Role scope enum stored on all entities: `SURVEYOR`, `REVIEWER`, `ADMIN`, `INSURER_VIEWER`. [`Requirement.MD` §1.2, §5.1; `User Stories.md` AC 16.2.2]
+**[Confirmed Requirement]** Role scope enum: `SURVEYOR`, `REVIEWER`, `ADMIN`, `INSURER_VIEWER`. [`Requirement.MD` §1.2, §5.1; `User Stories.md` AC 16.2.2]
 
-**[Confirmed Requirement]** For the MVP, role scopes are **metadata only** — stored but do **not** restrict UI actions. RBAC enforcement is explicitly future work. [`Requirement.MD` §1.2; `User Stories.md` AC 16.2.2]
+**[Confirmed — ADR-0005 D39]** RBAC is **database-driven**, not a bare enum:
+- `permissions` — a seeded, code-defined catalogue of ~35 `resource:action` codes. Never written at runtime; stores may compose roles but may not invent permissions.
+- `roles` — four immutable **system roles** (the enum above, `store_id IS NULL`) plus **store-defined custom roles**. A `CHECK` makes the two states structurally exclusive.
+- `role_permissions` / `user_roles` — many-to-many; **a user may hold multiple roles**.
+- `users.access_role_scope` is retained as the denormalised primary role for display and SRS §5.1 compatibility. **`user_roles` is authoritative for authorization.**
+- `users.permissions_version` (JWT `pv` claim) is incremented on any privilege change, so stale access tokens die within one 15-minute lifetime.
+- Seeded matrices are in `architecture/physical-schema.md` §7.6–§7.7 — this closes the previously-undefined `REVIEWER`/`ADMIN` capability question.
 
-**[Confirmed Requirement]** New registrations default to `SURVEYOR`. [`00_auth_signup.md` §5]
+**[Confirmed — ADR-0005 D39]** **The MVP enforcement boundary is narrower than "RBAC is future work" suggests.** Shipping in MVP: the tables, the middleware, `pv` revocation, and **store isolation on every endpoint**. Deferred post-MVP: per-permission gating of UI affordances, and the role-administration UI. Cross-store data separation is *never* deferred. [`User Stories.md` AC 16.2.2]
 
-**[Confirmed Requirement]** `INSURER_VIEWER` governance (future): explicit surveyor/firm authorization; read-only; scoped to individual assigned claims; every view/download in an immutable audit log; surveyor retains data ownership of drafts/unverified photos until formal submission; bilateral data-sharing terms. [`Requirement.MD` §5.1; `User Stories.md` AC 16.2.3]
+**[Confirmed — ADR-0005 D40]** Registration always creates a **new store**; the registrant becomes its owner with role scope `SURVEYOR` **and** the `ADMIN` role. Joining an existing store is **invite-only** (`store_invites`, SHA-256 token hash, expiring, single-use). Firm names are never auto-matched and `stores.firm_name` is deliberately not unique. [`00_auth_signup.md` §5]
 
-**[Confirmed Requirement]** Multi-tenant columns on all entities: `tenant_id`, `created_by_user_id`, `assigned_surveyor_id`, `reviewer_id`, `access_role_scope`. [`Requirement.MD` §5.1]
+**[Confirmed Requirement]** `INSURER_VIEWER` governance: explicit surveyor/firm authorization recorded as a **`claim_access_grants`** row; read-only; scoped to individual assigned claims; every view/download in an immutable audit log; surveyor retains data ownership of drafts/unverified photos until formal submission; bilateral data-sharing terms. Holding `insurer:claim:read` is necessary but **not sufficient** — a live grant for that claim is also required. [`Requirement.MD` §5.1; AC 16.2.3; ADR-0005 D39]
 
-**[Unconfirmed — clarification required]** Concrete per-role permission matrices (§4 item 5).
+**[Confirmed — ADR-0005 D38]** Common columns on every operational entity: **`store_id`**, **`client_id`**, `assigned_surveyor_id`, `reviewer_id`, `access_role_scope`. (Renamed from `tenant_id` / `created_by_user_id`.) Identity tables carry `store_id` and `client_id` where an owner exists; global catalogue tables carry none. [`Requirement.MD` §5.1; `architecture/physical-schema.md` §1]
 
 ---
 
@@ -257,7 +273,7 @@ Pipeline overview of all claims across the 15 stages; stage filter pills; claim 
 UI layer (RN mobile app; web later) → offline-first client data layer (WatermelonDB/SQLCipher + media store + sync queue with field-level timestamp merge) → Go/Gin backend REST API (media sync pipeline, state machine + audit engine, server `.docx` engine, PostgreSQL via pgx) → modular AI orchestration layer (provider interface → cloud LLM / cloud OCR / local models).
 
 ### 7.4 Authentication architecture
-**[Confirmed / Planned]** Encrypted session token in hardware secure element; offline access via cached token or device passcode; 15-minute background auto-lock; OTP via SMS (30 s resend) and email (45 s resend); universal-identifier resolution (email/username/phone). Biometric unlock post-MVP. Token format / lifetime / refresh — still open (§4 item 2).
+**[Confirmed — ADR-0003 as amended by ADR-0005]** Dual token: **RS256 JWT access token, 15 min**, claims `sub`/`store_id`/`client_id`/`sid`/`roles[]`/`perms[]`/`pv`; **opaque 64-byte refresh token, 30 days**, Argon2id-hashed in `sessions.refresh_token_hash`, rotated on every use with `refresh_token_family_id` reuse detection. Tokens live in iOS Keychain / Android Keystore. Offline access via cached token or **device passcode**; 15-minute background auto-lock; 30-day offline grace. OTP via SMS (30 s resend) and email (45 s resend); universal-identifier resolution (email/username/phone, globally unique). Biometric unlock post-MVP. Middleware chain: `RequestID → RealIP → Authenticate → StoreScope → RequirePermission`. Full specification in [`documentation/architecture/identity-and-rbac.md`](documentation/architecture/identity-and-rbac.md). **Signing-key custody / rotation remains open (§4 item 4).**
 
 ---
 
@@ -272,8 +288,12 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 │   ├── Requirement.MD                # SRS v1.0.0-MVP ("Approved Baseline") + §2.3 stack baseline
 │   ├── User Stories.md               # Epic 0 + Epics 1–16, acceptance criteria
 │   ├── Visual Theme & Design System.md  # Design system v2.0.0-Enterprise
-│   ├── decisions/                    # ADR log — README index + ADR-0001 (2026-08-30 decisions)
-│   ├── architecture/                 # README placeholder — physical schema, API contract, diagrams (not started)
+│   ├── decisions/                    # ADR log — README index + ADR-0001…0006
+│   │                                 #   0001 stack/scope · 0002 vendors · 0003 auth tokens
+│   │                                 #   0004 API+schema rules · 0005 identity model · 0006 geo-IP
+│   ├── architecture/                 # physical-schema.md (identity slice FINAL, claim entities pending)
+│   │                                 #   identity-and-rbac.md (FINAL)
+│   │                                 #   api-contract/, sync-protocol.md, diagrams — not started
 │   ├── sprints/                      # Master MVP roadmap + 17 individual sprint execution plans
 │   ├── assets/logo/                  # 4 brand SVGs + README (brand colors, symbolism)
 │   └── Screens/                      # 17 screen spec folders
@@ -281,8 +301,10 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 │       ├── 01_dashboard/   (01_dashboard.md — NO designs/)
 │       └── 02_… through 16_…  (<folder_name>.md only, NO designs/)
 │
-├── apps/                             # EMPTY SCAFFOLD (no files)
-│   ├── backend/                      # Go/Gin: api/, cmd/{api,worker}/,
+├── package.json  pnpm-workspace.yaml  turbo.json  .gitignore   # partial monorepo skeleton
+│
+├── apps/                             # SCAFFOLD — only apps/backend/go.mod has content
+│   ├── backend/                      # Go/Gin: go.mod, api/, cmd/{api,worker}/,
 │   │                                #   internal/{config,handler,model,pkg,repository,server,service}/,
 │   │                                #   migrations/, deployments/, pkg/{logger,response}/, scripts/
 │   └── mobile/                       # React Native: assets/, src/{app,core}/,
@@ -303,14 +325,14 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 
 ## 9. Data Model
 
-**[Confirmed Requirement — schema-level only]** From `Requirement.MD` §5.2. No migrations, ORM models, or DDL exist. Field names/types below are as written in the SRS (indicative, not finalized).
+**[Confirmed Requirement — schema-level]** From `Requirement.MD` §5.2. **The identity slice is finalized DDL** in [`documentation/architecture/physical-schema.md`](documentation/architecture/physical-schema.md) (ADR-0005). The claim-workflow entities below remain indicative SRS field lists, not finalized DDL. **No migrations exist yet** — `sprint_0001` task 2 emits the first set, covering all entities at once, and never runs them automatically.
 
-**Common columns on all entities** (`Requirement.MD` §5.1): `tenant_id` (UUID), `created_by_user_id` (UUID), `assigned_surveyor_id` (UUID), `reviewer_id` (UUID), `access_role_scope` (enum `SURVEYOR|REVIEWER|ADMIN|INSURER_VIEWER`).
+**Common columns on every operational entity** (`Requirement.MD` §5.1 as amended by **ADR-0005 D38**): **`store_id`** (UUID), **`client_id`** (UUID), `assigned_surveyor_id` (UUID), `reviewer_id` (UUID), `access_role_scope` (enum `SURVEYOR|REVIEWER|ADMIN|INSURER_VIEWER`). Identity tables carry `store_id` + `client_id` where an owner exists; global catalogue tables (`permissions`) carry none; `stores` is the tenancy root and carries none.
 
 ### 9.1 SRS §5.2 core entities (existing)
 | Entity | Key fields (from SRS §5.2) |
 | :-- | :-- |
-| `claims` | `id`, `tenant_id`, `claim_ref_no`, `policy_no`, `insurer_name`, `insured_name`, `loss_date`, `peril`, `status`, `current_stage`, `created_at`, `updated_at` |
+| `claims` | `id`, `store_id`, `client_id`, `claim_ref_no`, `policy_no`, `insurer_name`, `insured_name`, `loss_date`, `peril`, `status`, `current_stage`, `created_at`, `updated_at` |
 | `policy_details` | `id`, `claim_id`, `policy_type`, `inception_date`, `expiry_date`, `sum_insured_total`, `excess_clause`, `warranties_json` |
 | `site_visits` | `id`, `claim_id`, `visit_no`, `visit_date`, `gps_lat`, `gps_lng`, `actual_location_address`, `location_discrepancy_flag` |
 | `cause_investigations` | `id`, `claim_id`, `incident_datetime`, `discovery_datetime`, `reported_cause`, `sequence_of_events`, `fir_details`, `fire_report_details` |
@@ -321,23 +343,28 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 | `salvage_records` | `id`, `claim_id`, `description`, `qty_weight`, `disposal_mode`, `buyer_info`, `realized_amount` |
 | `final_survey_reports` | `id`, `claim_id`, `section_a_json` … `section_i_json`, `docx_file_uri`, `generated_at`, `status` |
 
-### 9.2 Entities to be ADDED to SRS §5.2 — [Confirmed — Q&A 2026-08-30, draft pending review]
-The workflows require these; they must be drafted into `Requirement.MD` §5.2 (key fields + relationships + enum value lists) before schema work:
-- `users` / `surveyors` — identity, credentials, SLA license #, SLA category, base location, role scope, firm link.
-- `tenants` — surveyor firm / organization.
-- `sessions` — encrypted session tokens, device binding, offline expiry.
-- `audit_log` — immutable; user, timestamp, entity, field, old value, new value, action (incl. insurer file-access events).
-- `sync_queue` — pending local mutations + media uploads, retry/backoff state, conflict markers.
-- `contact_logs` — Stage 3 insured communication entries.
-- `follow_up_visits` — Stage 9 subsequent visits (distinct from `site_visits` or an extension of it — to be decided in the schema doc).
-- `coverage_opinions` — Stage 13 peril/warranty/exclusion analysis + surveyor recommendation.
-- `requisition_notices` — Stage 8 document requisition checklists + dispatch log.
-- `preservation_notices` — Stage 3 Evidence & Loss Preservation Notice dispatch record (candidate; confirm during schema drafting).
+### 9.2 Identity, RBAC & auth telemetry — [Confirmed — ADR-0005, FINALIZED DDL]
+Complete DDL in `architecture/physical-schema.md`. **Do not redesign these; extend them.**
+
+| Entity | Role |
+| :-- | :-- |
+| `stores` | The surveyor firm / parent company — the tenancy root. Renames `tenants`. `firm_name` deliberately **not** unique. |
+| `users` | The **client** / employee. `users.id` *is* the `client_id` on every other table. Carries credentials, SLA fields, lifecycle status, verification timestamps, ToS version, full signup provenance (IP + UA + device + geo), login state (`last_login_*`, `previous_login_*`, `last_seen_at`, `login_count`), and logout/lockout state. Identifier uniqueness is **global** (D43). |
+| `sessions` | One per device per login. `refresh_token_hash` (Argon2id — renamed from `encrypted_token_ref`), `refresh_token_family_id` for reuse detection, origin IP + geo, status, logout/revoke reason. Multi-device supported (D41). |
+| `user_devices` | Stable device identity across sessions; the anchor for remote revoke. |
+| `permissions` · `roles` · `role_permissions` · `user_roles` | DB-driven RBAC (D39). Seeded catalogue + four system roles + store custom roles; multi-role per user. |
+| `claim_access_grants` | Per-claim, time-boxed, revocable `INSURER_VIEWER` scoping — SRS §5.1 rule 2. |
+| `auth_events` | Append-only security telemetry, 22 event types. Immutable via trigger **and** `REVOKE UPDATE, DELETE`. Deliberately separate from `audit_log`. |
+| `store_invites` | The only path into an existing store (D40). SHA-256 token hash, expiring, single-use. |
+| `otp_challenges` · `password_reset_tokens` | Defined now, wired later (OTP blocked on Twilio India DLT / R4; reset blocked on the email vendor). Only hashes stored, never plain codes. |
+
+### 9.2b Claim-workflow entities still to be drafted — [Confirmed — D27, draft pending review]
+`sync_queue`, `audit_log`, `contact_logs`, `follow_up_visits` (separate table or an extension of `site_visits` — Q2), `coverage_opinions`, `requisition_notices`, `preservation_notices` (candidate — may fold into `contact_logs`/`documents`). `sprint_0001` task 1 produces their DDL.
 
 ### 9.3 Data flow (intended)
-Stage 1 → `claims` + `claim_ref_no`; Stage 2 → `policy_details`; Stage 3 → `contact_logs` + `preservation_notices`; Stage 4 → `site_visits`; Stage 5 → `cause_investigations`; Stage 6 → `damage_items` + `media_attachments`; Stages 7 & 10 → `documents` (+ OCR JSON); Stage 8 → `requisition_notices` + PSR; Stage 9 → `follow_up_visits`; Stage 11 → `assessment_line_items`; Stage 12 → `salvage_records` (feeds `assessment_line_items.salvage_amount` / FSR Section F); Stage 13 → `coverage_opinions`; Stage 14 → `final_survey_reports`; Stage 15 → status lock + SHA-256 hash snapshot; all figure edits → `audit_log`.
+Stage 0 → `stores` + `users` + `sessions` + `user_devices` + `user_roles` + `auth_events`; Stage 1 → `claims` + `claim_ref_no`; Stage 2 → `policy_details`; Stage 3 → `contact_logs` + `preservation_notices`; Stage 4 → `site_visits`; Stage 5 → `cause_investigations`; Stage 6 → `damage_items` + `media_attachments`; Stages 7 & 10 → `documents` (+ OCR JSON); Stage 8 → `requisition_notices` + PSR; Stage 9 → `follow_up_visits`; Stage 11 → `assessment_line_items`; Stage 12 → `salvage_records` (feeds `assessment_line_items.salvage_amount` / FSR Section F); Stage 13 → `coverage_opinions`; Stage 14 → `final_survey_reports`; Stage 15 → status lock + SHA-256 hash snapshot; all figure edits → `audit_log`; all authentication actions → `auth_events`.
 
-**[Unconfirmed — clarification required]:** full physical schema (types, PK/FK, indexes, enum values, JSON shapes) — §4 item 6.
+**[Unconfirmed — clarification required]:** physical schema for the claim-workflow entities — §4 item 2. The identity slice is done.
 
 ---
 
@@ -518,7 +545,8 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 8. **Bi-directional sync with field-level timestamp conflict resolution.** Not last-write-wins. (`Requirement.MD` §2.2; `User Stories.md` AC 16.1.3)
 9. **Indelible photo watermarking + category tagging.** Every photo carries timestamp, GPS, claim ref, surveyor ID + a mandatory category tag; photos link to the item/invoice they evidence. (`Requirement.MD` FR-6.2)
 10. **Encryption + audit.** Local: WatermelonDB/SQLite + SQLCipher AES-256. Transport: TLS 1.3. Immutable audit log for every loss-assessment figure change and every insurer file access. (`Requirement.MD` §6.2, §5.1)
-11. **RBAC schema columns exist from day one** (`tenant_id`, `created_by_user_id`, `assigned_surveyor_id`, `reviewer_id`, `access_role_scope`) even though enforcement is deferred. (`Requirement.MD` §5.1)
+11. **RBAC schema columns exist from day one** (`store_id`, `client_id`, `assigned_surveyor_id`, `reviewer_id`, `access_role_scope`). **Store isolation is enforced from the first endpoint** — `store_id` comes from the verified JWT, never from a request body, query string, or path, and every repository method takes it as its first scope argument. Only *per-permission UI gating* is deferred. (`Requirement.MD` §5.1; ADR-0005 D38/D39; `identity-and-rbac.md` §3.2)
+17. **Auth secrets are never stored reversibly or logged.** Passwords, refresh tokens and OTP codes are Argon2id-hashed; invite and reset tokens are SHA-256-hashed; failed logins store only a hash of the attempted identifier. No password, token, OTP, or raw failed identifier may appear in any column, log line, or crash report. `auth_events` is append-only at the database level. (ADR-0005 D42; `sprint_0003` DoD)
 12. **9-section FSR structure and Section-to-Stage mapping** (A–I + Annexure) is an industry-standard contract — identity and ordering must not change. (`15_final_survey_report_generator.md` §4)
 13. **The 15-stage sequence and screen↔stage numbering** (`NN` folder = Stage `NN−1`) is the backbone of navigation, the state machine, and the specs. Renumbering breaks all cross-references.
 14. **Standard disclaimers embedded in every export** ("Without Prejudice", "Decision-support analysis for surveyor review. Final liability determination remains with the insurer.", registration disclaimer). Do not remove.
@@ -535,26 +563,31 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 4. **`README.md` repo-structure section is stale** — says "18 Dedicated Screen Specification Folders" and "designs/ (4 vector artboards)" for login; actual counts are 19 folders and 5 login SVGs; omits `00_auth_terms`.
 5. **Dashboard SVG missing** — commit `ea73c91` claims a Screen 01 SVG mockup; none is present in `01_dashboard/`.
 6. **Bottom-nav labels differ** between `Design System.md` §6.1 and `01_dashboard.md` §2.1 — reconcile.
-7. **No provider/vendor decisions** for external integrations (§10.3) — one ADR per integration still owed; blocks real auth (OTP), OCR, AI, messaging work.
-8. **No environment/config strategy** — no `.env.example`, config schema, or secrets-management approach documented (only "hardware keystore" for the session token).
-9. **Depreciation scale data source undefined** (§4 item 3).
-10. **Session token format / lifetime / refresh undefined** (§4 item 2).
+7. **~~No provider/vendor decisions~~ — RESOLVED.** ADR-0002 fixes SMS (Twilio, AWS SNS fallback), email (SendGrid), maps, LLM and OCR vendors; ADR-0006 fixes geo-IP (local MaxMind GeoLite2). Remaining external dependency is operational, not architectural: **Twilio India SMS DLT registration takes weeks** (risk R4), which is why OTP login is deferred out of `sprint_0003`.
+8. **No environment/config strategy** — no `.env.example`, config schema, or secrets-management approach documented. **RS256 signing-key custody and rotation is the sharpest instance** (§4 item 4, sprints Q13) and blocks a production-grade `sprint_0003`.
+9. **Depreciation scale data source undefined** (§4 item 1).
+10. **~~Session token format / lifetime / refresh undefined~~ — RESOLVED** by ADR-0003 as amended by ADR-0005 (§7.4).
+11. **`auth_events` has no retention policy** — the table grows unbounded (§4 item 6).
+12. **`users.username` is accepted at login but captured by no signup step** — assumed NULL at signup, settable from Profile; unconfirmed (§4 item 5).
 
 ---
 
 ## 16. Open Questions
 
+> **Closed:** ~~Q1~~ (monorepo bootstrapped — root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `apps/backend/go.mod` and `.gitignore` are committed), ~~Q2~~ (ADR-0002 + ADR-0006), ~~Q3~~ (ADR-0003 as amended by ADR-0005), ~~Q5~~ (ADR-0004), ~~Q7~~ (ADR-0005 D39 — seeded role/permission matrices in `architecture/physical-schema.md` §7.6–§7.7). **Q4 is half-closed:** the identity slice is finalized DDL; the claim-workflow entities are not.
+
 ### Critical — blocks development
-- **Q1.** Bootstrap the monorepo: commit `package.json` + `pnpm-workspace.yaml` + `turbo.json` + `apps/backend/go.mod`, plus `.gitignore` and stub READMEs, so `apps/`/`packages/` stop being phantom directories.
-- **Q2.** Choose concrete vendors (one ADR each): SMS OTP + transactional email first (Stage 0 is the first build target), then cloud LLM, cloud OCR, maps/geocoding, WhatsApp.
+- **Q4.** Physical schema for the **claim-workflow entities** (§9.1 + §9.2b): column types, PK/FK, indexes, enum value lists, JSON payload shapes. `sprint_0001` task 1. (§4 item 2)
+- **Q12.** **Owner approval of the identity contract** — `architecture/physical-schema.md` and `identity-and-rbac.md`. `sprint_0001` R8 requires owner sign-off before `sprint_0003` starts. Nothing is self-approved.
 
 ### Important — affects implementation or architecture
-- **Q3.** Session token: JWT vs opaque, lifetime, refresh strategy, offline-expiry behavior. (§4 item 2)
-- **Q4.** Full physical schema for §9.1 + §9.2 entities: column types, PK/FK, indexes, enum value lists, JSON payload shapes. (§4 item 6)
-- **Q5.** API contract conventions: versioning, error envelope, pagination, auth header scheme; produce the first OpenAPI spec. (§4 item 4)
-- **Q6.** Source/content of the standard surveyor / IRDAI depreciation scales for AI-5. (§4 item 3)
-- **Q7.** `REVIEWER` / `ADMIN` capability details and firm-admin vs surveyor distinctions (even if enforcement is post-MVP). (§4 item 5)
-- **Q8.** Produce a worked numeric example of the §11.1 loss sequence for domain-expert sign-off. (§4 item 7)
+- **Q6.** Source/content of the standard surveyor / IRDAI depreciation scales for AI-5. (§4 item 1)
+- **Q8.** Produce a worked numeric example of the §11.1 loss sequence for domain-expert sign-off. (§4 item 3)
+- **Q13.** RS256 signing-key custody and rotation — needs its own ADR. (§4 item 4)
+- **Q14.** `users.username` capture — NULL at signup and set from Profile, or an optional input in signup Step 2? (§4 item 5)
+- **Q15.** `auth_events` retention period. (§4 item 6)
+- **Q16.** Keychain/Keystore wipe recovery and the local-data-loss warning. (§4 item 7)
+- **Q17.** **SLA licence format contradiction** — `Requirement.MD` FR-0.2 and AC 0.2.2 say `SLA-[0-9]{4,8}`; `00_auth_signup.md` §4 says *"`SLA-[0-9]{4,8}` **or alphanumeric**"*. The SRS is treated as authoritative pending your call; the DB holds only a loose sanity bound so the rule can change without a migration. (§4 item 8)
 
 ### Later — does not currently block progress
 - **Q9.** Reconcile bottom-nav labels between the design system and the dashboard spec. (§15 item 6)
@@ -569,8 +602,8 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 
 1. **Propagate the 2026-08-30 decisions into `documentation/`** using the §19 checklist, so the SRS/specs stop contradicting the decision log. Small, mechanical, high-value.
 2. **(DONE 2026-08-30)** `documentation/decisions/` created with `ADR-0001` capturing the Q&A decisions; empty `docs/` tree deleted; `documentation/architecture/` placeholder created. Split ADR-0001 into per-decision ADRs later if finer traceability is wanted.
-3. **Bootstrap the monorepo** (Q1): root `package.json` + `pnpm-workspace.yaml` + `turbo.json`; `apps/backend/go.mod`; `.gitignore`; stub READMEs in each `apps/*` and `packages/*`.
-4. **Draft the missing entities (§9.2) into `Requirement.MD` §5.2**, then produce a complete physical schema in `documentation/architecture/` and the first migrations under `apps/backend/migrations/`.
+3. **(PARTLY DONE)** Root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `.gitignore` and `apps/backend/go.mod` are committed. Still owed: per-package `package.json` for `packages/*`, base `tsconfig`, lockfile, linter/formatter config, CI — `sprint_0001` task 5.
+4. **(IDENTITY SLICE DONE 2026-08-30)** `architecture/physical-schema.md` and `architecture/identity-and-rbac.md` finalize `stores`, `users`, `sessions`, `user_devices`, the RBAC tables, `claim_access_grants`, `auth_events`, `store_invites`, `otp_challenges` and `password_reset_tokens` under ADR-0005/0006, and `Requirement.MD` §5.2 now carries entities 21–30. **Next:** owner approval (§16 Q12), then DDL for the claim-workflow entities, then the first migrations under `apps/backend/migrations/` — all entities in one set, never auto-executed.
 5. **Define `packages/api-contracts/`** — an OpenAPI spec for the Gin backend, plus `packages/types/` shared TS types generated from it.
 6. **Implement the deterministic loss-assessment engine first, with tests**, as a pure module in `packages/` (no I/O). It is the highest-risk correctness surface and is fully specified (§11.1). Verifiable without infrastructure.
 7. **Build `AssistantService` / `IAssistantService` + `NotificationService` + `GeocodingService` as stubs** (Local/Cloud split, fake impls) so feature work can proceed before vendor selection.
@@ -610,7 +643,7 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 | **D24** | **Desktop web app = DEFERRED to post-MVP.** MVP ships the React Native mobile app only; screen-spec desktop views are forward-looking design. | Confirmed — Q&A 2026-08-30 | this session |
 | **D25** | **External integrations = provider-agnostic interfaces + config-driven adapters now; concrete vendors chosen per-integration in ADRs.** Add `NotificationService`, `GeocodingService` interfaces. | Confirmed — Q&A 2026-08-30 | this session |
 | **D26** | **Loss-assessment deduction sequence** = Gross Assessed → less Depreciation → less Betterment → less Underinsurance → less Salvage → less Policy Excess. **Underinsurance (Average Clause) base = Net of Depreciation**: `Deduction = NetOfDepreciation × (1 − SI/VAR)` when `VAR > SI`. | Confirmed — Q&A 2026-08-30 | this session |
-| **D27** | **Data model to be EXPANDED**: add `users`/`surveyors`, `tenants`, `sessions`, `audit_log`, `sync_queue`, `contact_logs`, `follow_up_visits`, `coverage_opinions`, `requisition_notices` (+ candidate `preservation_notices`) to SRS §5.2 (draft pending review). | Confirmed — Q&A 2026-08-30 | this session |
+| **D27** | **Data model to be EXPANDED**: add `users`/`surveyors`, `tenants`, `sessions`, `audit_log`, `sync_queue`, `contact_logs`, `follow_up_visits`, `coverage_opinions`, `requisition_notices` (+ candidate `preservation_notices`) to SRS §5.2 (draft pending review). *(Superseded in part by D38–D43: `tenants`→`stores`; `users`/`stores`/`sessions` are finalized DDL, not draft.)* | Confirmed — Q&A 2026-08-30 | this session |
 | **D28** | **Stage 4 GPS accuracy** = ≤ 10 m target (warn/re-capture above), ≤ 50 m hard limit (block save above). | Confirmed — Q&A 2026-08-30 | this session |
 | **D29** | **Stage 12 salvage = three disposal modes**: A Retained by Insured, B Sold to Scrap Buyer, C Tender floated by Insurer. Add Mode C to SRS FR-12.2. | Confirmed — Q&A 2026-08-30 | this session |
 | **D30** | **Primary brand blue** = `#1E3A8A` (primary) / `#1E40AF` (hover), per the design-system token scale. README prose to align; logo SVGs stay `#1E40AF`. | Confirmed — Q&A 2026-08-30 | this session |
@@ -620,12 +653,48 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 | **D34** | **Insurable-interest status enum** = `Established` / `Under Verification` / `Incomplete Documentation` / `Disputed` (4-state). Reconcile all docs. | Confirmed — Q&A 2026-08-30 | this session |
 | **D35** | **SLA license #, category, base location = OPTIONAL at signup**; license # + category **required before FSR generation** (sign-off block). Reconcile SRS FR-0.2 / User Stories AC 0.2.1. | Confirmed — Q&A 2026-08-30 | this session |
 | **D36** | **Stage 15 pre-submission audit = 7 compliance gates** (see §3 CR-W19). Fix the "6" references in `16_internal_review_submission.md`. | Confirmed — Q&A 2026-08-30 | this session |
+| **D38** | **`store` replaces `tenant`; `client` replaces `created_by_user_id`.** `tenants`→`stores`, `tenant_id`→`store_id`, `created_by_user_id`→`client_id`. One name each — no aliases. Amends SRS §5.1, ADR-0004 §4, AC 16.2. Taken while zero migrations and zero source files existed. | Confirmed — ADR-0005, 2026-08-30 | ADR-0005 |
+| **D39** | **Full DB-driven RBAC**: `permissions` (seeded, code-defined, ~35 codes) / `roles` (4 immutable system + store custom) / `role_permissions` / `user_roles` (multi-role) / `claim_access_grants` (per-claim `INSURER_VIEWER` scoping). `users.permissions_version` → JWT `pv` gives ≤15-min revocation. Defines the `permissions` claim ADR-0003 named but never specified, and closes the `REVIEWER`/`ADMIN` matrix question. **Store isolation ships in MVP; only per-permission UI gating is deferred.** | Confirmed — ADR-0005, 2026-08-30 | ADR-0005 |
+| **D40** | **Invite-only store join.** Registration always creates a new store; the registrant becomes owner with `SURVEYOR` scope **and** the `ADMIN` role. Joining an existing store requires an ADMIN-issued single-use expiring invite. Firm names are never auto-matched; `stores.firm_name` is not unique. Closes `sprint_0003` Q8. | Confirmed — ADR-0005, 2026-08-30 | ADR-0005 |
+| **D41** | **Multi-device sessions** with rotation + family reuse detection. One `ACTIVE` session per `(user_id, device_id)`. Closes `sprint_0002` Q12. Two corrections: `sessions.encrypted_token_ref` → **`refresh_token_hash`** (ADR-0003 mandates hashing, not reversible encryption); **ADR-0003 §3.1 amended to passcode-only**, closing Q3. | Confirmed — ADR-0005, 2026-08-30 | ADR-0005 |
+| **D42** | **Full auth telemetry.** Denormalised signup-provenance / login / logout / lockout columns on `users` and `sessions`, plus an append-only **`auth_events`** table (22 event types, immutable by trigger *and* `REVOKE UPDATE, DELETE`). Deliberately separate from `audit_log`. Failed logins store only a SHA-256 of the attempted identifier. | Confirmed — ADR-0005, 2026-08-30 | ADR-0005 |
+| **D43** | **Identifier uniqueness (`email`, `mobile`, `username`) is GLOBAL, not per-store** — forced by universal-identifier login, which resolves a bare identifier with no store context. One human, one account. | Confirmed — ADR-0005, 2026-08-30 | ADR-0005 |
+| **D44** | **Geo-IP via `GeoIPService` + local MaxMind GeoLite2 `.mmdb`** — no PII egress, no latency on the auth path, no availability coupling. Enrichment is best-effort; every geo column is nullable and a failure never blocks authentication. Geo-IP is a signal, never evidence, and never substitutes for GPS in `site_visits`. | Confirmed — ADR-0006, 2026-08-30 | ADR-0006 |
 
 ---
 
 ## 19. `documentation/` Reconciliation — Status
 
-The 2026-08-30 decisions (§18 D18–D37) have been **applied to `documentation/`**.
+The 2026-08-30 decisions (§18 D18–D37, then D38–D44) have been **applied to `documentation/`**.
+
+### 19.0 Identity model finalization — completed 2026-08-30 (ADR-0005 / ADR-0006, D38–D44)
+
+**New documents**
+- [x] **`documentation/architecture/physical-schema.md`** — finalized DDL for the identity slice: `stores`, `users`, `permissions`, `roles`, `role_permissions`, `user_roles`, `claim_access_grants`, `sessions`, `user_devices`, `auth_events`, `store_invites`, `otp_challenges`, `password_reset_tokens`. Includes the enum type list, partial unique indexes, `CHECK` constraints, the append-only trigger, the deferred-FK resolution for the `stores`↔`users` cycle, the seeded permission catalogue and role matrices, an ER summary, open items, and a requirement-traceability table.
+- [x] **`documentation/architecture/identity-and-rbac.md`** — token contract (JWT claim set, `pv` revocation, rotation, family reuse detection), request pipeline (`RequestID → RealIP → Authenticate → StoreScope → RequirePermission`), the four auth flows, telemetry policy, API surface with error codes, Go and React Native layouts, and a threat model.
+- [x] **`documentation/decisions/ADR-0005-identity-model-store-client-and-rbac.md`** — D38–D43.
+- [x] **`documentation/decisions/ADR-0006-geoip-provider.md`** — D44.
+
+**Amended**
+- [x] **`Requirement.MD`** — §5.1 five common columns → `store_id`/`client_id`, plus the "where the five columns apply" rule and the DB-driven RBAC paragraph; §5.2 entity 1 `claims`, entity 11 `users` (finalized), entity 12 `tenants`→`stores`, entity 13 `sessions` (finalized, `refresh_token_hash`), entity 14 `audit_log`; **new entities 21–30** for RBAC, grants, devices, `auth_events`, invites, OTP and reset tokens.
+- [x] **`User Stories.md`** — Story 16.2 narrative + AC 16.2.1–16.2.3 renamed to `store_id`/`client_id`, plus new **AC 16.2.4** (multi-role) and **AC 16.2.5** (immediate privilege revocation); new **AC 0.2.5** (store creation & founder role) and **AC 0.2.6** (signup provenance); new **Story 0.3** (invites, AC 0.3.1–0.3.3) and **Story 0.4** (sessions & sign-out, AC 0.4.1–0.4.5).
+- [x] **`ADR-0003`** — status marked amended; §1 JWT claim set restated and the refresh-token storage/rotation model added; **§3.1 amended to device passcode only** (closes Q3).
+- [x] **`ADR-0004`** — §4 tenant-isolation rule → `store_id UUID NOT NULL REFERENCES stores(id)`, with the scope qualification.
+- [x] **`decisions/README.md`** — ADR-0005 and ADR-0006 indexed; new **amendment chain** table.
+- [x] **`architecture/README.md`** — both new documents listed as delivered.
+- [x] **`sprints/README.md`** — Q3, Q8, Q12 struck through as closed; **Q13/Q14/Q15 added**; contradiction table updated for the biometric, `tenant_id` and `encrypted_token_ref` items; §12 next-action rewritten.
+- [x] **`sprint_0001`** — task 1 scoped to the remaining entities (identity slice pre-finalized); **task 8 conventions ADR renumbered 0005 → ADR-0007** (0005/0006 were taken) and task 9 key-custody ADR labelled ADR-0008; ACs updated to `store_id`/`client_id` and 30 entities; R8 narrowed; Q3 closed, Q13 added.
+- [x] **`sprint_0003`** — task 1 rewritten (`stores`, `user_devices`, always-new-store registration, family reuse detection, logout-all); **new tasks 8–11** (RBAC foundation, store invites, auth telemetry, session management); ACs extended (no enumeration oracle, cross-store negative test, provenance, append-only events, no secrets in logs); **Q8 closed**; concurrent-refresh risk and Q14 added.
+- [x] **`sprint_0002`** — task 7 and Q12 closed: multi-device is in scope and the merge model must handle it.
+- [x] **`sprint_0004`** — task 4 and Q3 closed (passcode-only).
+- [x] **`sprint_0015`** — task 3/4/5 renamed to store scoping and `store_id`/`client_id`; **new tasks 9 and 10** (auth-telemetry integrity, token lifecycle).
+- [x] **`Screens/00_auth/00_auth_signup.md`** — §5 rewritten: store initialization (always new, invite-only join), dual role assignment, signup provenance, session provisioning, and the `username` gap noted.
+- [x] **`CLAUDE.md`** — §3.1 (CR-A10 rewritten; **CR-A13/A14/A15 added**; CR-A12 extended), §4 (stale items closed, real remainder listed), §5 (rewritten for DB-driven RBAC and the MVP enforcement boundary), §7.4, §9 (common columns, `claims`, new §9.2 finalized-DDL table and §9.2b, data flow), §14 (item 11 rewritten, **item 17 added**), §15, §16, §18 (**D38–D44**), and this §19.0.
+
+**Not done — deliberately**
+- Migration files. `sprint_0001` task 2 owns them, requires all entities in one set, and its runbook states migrations are never executed automatically.
+- Any Go or TypeScript source. That is `sprint_0003`.
+- DDL for the claim-workflow entities. `sprint_0001` task 1.
 
 ### 19.1 Completed 2026-08-30
 - [x] **`README.md`** — SurvScribe naming note (full rename); repo-structure counts fixed (19 screen folders, 5 login SVGs, `00_auth_terms` added, `decisions/` + `architecture/` listed, `apps/`/`packages/` shown); primary blue prose aligned to `#1E3A8A`/`#1E40AF`; "glassmorphic micro-surfaces" softened; mobile = React Native, backend = Gin/REST (no gRPC), web = post-MVP, `.docx` = dual engine; monorepo tooling note.

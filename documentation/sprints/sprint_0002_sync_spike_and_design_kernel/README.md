@@ -29,7 +29,7 @@ No production feature code ships from the spike. The output is a **decision**.
 | 4 | Design kernel | `packages/ui`: tokens (colours including `--color-primary #1E3A8A` per D30, spacing 8pt grid, radii, typography — Plus Jakarta Sans / Inter / JetBrains Mono), `<CurrencyText>` (₹ prefix, tabular figures, Indian lakh/crore grouping, right-aligned), base `<Button>` and `<TextField>` at spec heights. | `Visual Theme & Design System.md` | High | Tokens render correctly in a sample screen or Storybook. |
 | 5 | `.docx` contract | Draft `documentation/architecture/docx-template-contract.md`: section order A–I, the Section F table shape, photo-plate layout (2 or 4 per page), header/footer, sign-off block, and the mandatory disclaimer blocks. | SRS §3 Stage 14; screen `15` | High | Reviewed contract; both engine owners sign off. |
 | 6 | Screen designs | Designer begins the Dashboard and Stage 1–2 visuals, which do not exist today. | screen specs | High | Figma frames for `01_dashboard`, `02`, `03`. |
-| 7 | Clarification | Answer **Q12** — is concurrent use by one surveyor on two devices in scope? It changes the sync design. | — | High | Written answer folded into the sync protocol. |
+| 7 | Multi-device sync | **Q12 is answered: multi-device is in scope** (ADR-0005 D41 — one `ACTIVE` session per `(user_id, device_id)`). Fold this into the sync protocol: `sync_queue` is already keyed by `device_id`, so design the merge model for two devices of the same surveyor editing one claim, not just device-vs-desk. | ADR-0005 | High | Multi-device concurrency covered by the sync protocol document. |
 
 ---
 
@@ -39,7 +39,7 @@ No production feature code ships from the spike. The output is a **decision**.
 - [ ] `sync-protocol.md` specifies field-level timestamp merging (explicitly **not** last-write-wins, per `CLAUDE.md` §14.8), the conflict-confirmation UX, media backoff, and delete semantics.
 - [ ] `docx-template-contract.md` is reviewed and covers all 9 sections, the Section F table, photo plates, sign-off, and disclaimers.
 - [ ] `packages/ui` tokens are consumable from `apps/mobile`; a sample screen renders the primary blue, the type scale, and a monospace right-aligned ₹ figure correctly.
-- [ ] Q12 has a written answer.
+- [ ] The sync protocol covers multi-device concurrency for one surveyor (Q12, answered by ADR-0005 D41).
 - [ ] Spike code is **not** merged into any product branch.
 
 ---
@@ -57,7 +57,7 @@ No production feature code ships from the spike. The output is a **decision**.
 | **R1** | WatermelonDB's built-in sync is oriented toward record-level reconciliation and may not natively support field-level merge with an interactive conflict prompt. This spike exists precisely to find out before sprint_0005 commits. If the answer is "custom queue", sprint_0005 grows — surface that immediately rather than absorbing it silently. |
 | **R2** | The `.docx` contract is the only thing preventing the client (TS) and server (Go) engines from drifting. Weak contract now equals rework in sprint_0013. |
 | **R6** | 16 of 19 screens have no visual design. The design workstream must stay one sprint ahead of the build from here on. |
-| **Q12** | Multi-device concurrency changes the merge model. |
+| ~~**Q12**~~ | **Closed 2026-08-30 by ADR-0005 (D41): multi-device is in scope.** The merge model must therefore handle two devices of the same surveyor, not only device-vs-desk. |
 
 ---
 
