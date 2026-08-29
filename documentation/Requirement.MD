@@ -59,11 +59,12 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
                                          | (Sync when connected)
                                          v
 +-----------------------------------------------------------------------------------+
-|                             BACKEND API SERVICE LAYER                             |
-|   - Claim Pipeline & State Machine (15 Stages)                                    |
-|   - Document OCR & Parsing Microservice                                           |
-|   - Media Storage & CDN Service (Encrypted S3 / Cloud Storage)                    |
-|   - Report Compilation Engine (DOCX / XML Template Generator)                     |
+|                        BACKEND API & MICROSERVICES (GOLANG)                       |
+|   - Go High-Performance REST/gRPC API Engine (Gin / Fiber Framework)              |
+|   - Goroutine-Powered Concurrent Media Sync & Chunked Upload Pipeline            |
+|   - Claim Pipeline State Machine & Audit Trail Engine (15 Stages)                 |
+|   - Native Go Document Generation Engine (DOCX / XML Report Compiler)             |
+|   - PostgreSQL Database Layer (pgx Driver with Connection Pooling)               |
 +-----------------------------------------------------------------------------------+
                                          |
                                          v
@@ -266,9 +267,20 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 | **AI-5: Loss Assessment Calculator** | Calculate depreciation, average clause, excess | User-selected rates and asset ages | Pure deterministic formula engine. Zero probabilistic generation of numbers. |
 
 ### 4.2 Local / On-Device AI Architecture Strategy
-The system encapsulates all AI operations behind a unified TypeScript/Python interface:
+The system encapsulates all AI operations behind unified Go (Backend) and TypeScript (Mobile Client) interfaces:
+
+```go
+// Go Backend AI Service Interface
+type AssistantService interface {
+    TranscribeAudio(ctx context.Context, audioReader io.Reader) (*TranscriptionResult, error)
+    ExtractDocumentLineItems(ctx context.Context, docReader io.Reader) (*ExtractedTable, error)
+    AuditClaimDiscrepancies(ctx context.Context, claim *ClaimAuditDataset) (*DiscrepancyReport, error)
+    GenerateReportNarrative(ctx context.Context, section ReportSectionKey, ctxData *GroundedContext) (*NarrativeDraft, error)
+}
+```
 
 ```typescript
+// Mobile Client AI Service Interface
 interface IAssistantService {
   transcribeAudio(audioBlob: Blob): Promise<TranscriptionResult>;
   extractDocumentLineItems(documentFile: FileBlob): Promise<ExtractedDocumentTable>;
@@ -276,7 +288,7 @@ interface IAssistantService {
   generateReportNarrative(section: ReportSectionKey, context: GroundedContext): Promise<NarrativeDraft>;
 }
 ```
-- When network status is `ONLINE`, requests route to `CloudAssistantService`.
+- When network status is `ONLINE`, requests route to `CloudAssistantService` (invoking cloud LLM/OCR APIs with goroutines).
 - When network status is `OFFLINE`, requests route to `LocalAssistantService` (integrating local on-device small models e.g., local Whisper STT).
 
 ---

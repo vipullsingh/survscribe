@@ -45,6 +45,7 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 ## 🚀 Key Architectural Features
 
 - **Mobile-First Architecture**: Designed as a **dedicated Mobile Application (iOS & Android)** with touch-first ergonomics, bottom action bars, single-hand usability, and native mobile views everywhere across all 15 stages.
+- **High-Performance Golang Backend**: Fast, lightweight REST/gRPC backend microservices in **Go (Golang)** with goroutine-powered concurrent media sync, chunked photo uploads, claim state machine, and PostgreSQL (`pgx`).
 - **Visual Design System**: Complete forensic precision design system with Deep Cobalt (`#1E40AF`), Electric Azure (`#3B82F6`), high-contrast sunlight readability, monospace number formatting, and glassmorphic micro-surfaces.
 - **Offline-First Resilience**: Full field data, photo capture, voice notes, and damage calculations with local SQLite caching and automatic bi-directional synchronization.
 - **On-Device / Local AI Slot**: Modular `AIProviderInterface` designed for cloud LLMs online and quantized on-device SLM/Whisper models when offline.
