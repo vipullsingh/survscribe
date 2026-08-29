@@ -14,7 +14,7 @@
   - Checklist cards for each ownership verification requirement (*Purchase Invoices*, *Asset Register*, *Stock Books*, *Bank Statements*).
   - Multi-page document scanner using device camera to quickly snap physical invoice copies.
   - Quick-link sheet connecting captured invoices directly to Stage 6 damage items.
-  - Ownership Verification Status Toggle (*Verified & Established / Disputed / Pending Invoices*).
+  - Ownership Verification Status Toggle (*Established / Under Verification / Incomplete Documentation / Disputed*).
   - Bottom CTA: "Confirm Ownership & Next: PSR".
 
 ### 2.2 Responsive Desktop Web View
@@ -39,7 +39,7 @@
    - `HypothecationStatusSelect` (*No Hypothecation / Hypothecated to Bank / Leased Equipment*)
    - `BankNameInput` & `BankBranchInput`
 4. **Ownership Verification Summary**:
-   - `InsurableInterestStatusSelect` (*Established / Incomplete Documentation / Unproven Ownership*)
+   - `InsurableInterestStatusSelect` (*Established / Under Verification / Incomplete Documentation / Disputed*)
    - `OwnershipRemarksTextarea` (Detailed notes for FSR Section D/E)
 
 ---
@@ -53,7 +53,7 @@
 | `invoice_date` | Date | Conditional | Cannot be later than date of loss | Original asset purchase date |
 | `vendor_name` | String | Conditional | Min 3 chars | Supplier / manufacturer name |
 | `linked_damage_item_ids`| Array<UUID> | Yes | At least one item linked | Relates proof to physical damage |
-| `insurable_interest_status`| Enum | Yes | Established / Disputed / Incomplete | Surveyor’s formal finding |
+| `insurable_interest_status`| Enum | Yes | `Established` / `Under Verification` / `Incomplete Documentation` / `Disputed` | Surveyor’s formal finding |
 | `hypothecation_details`| Text | No | Max 200 chars | Bank charge or lease details |
 
 ---

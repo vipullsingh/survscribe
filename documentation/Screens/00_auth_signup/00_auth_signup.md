@@ -27,6 +27,7 @@
     - Terms of Service & Privacy Policy acceptance checkbox.
     - **Regulatory Disclaimer Notice Box**:
       > *"License details are provided by the user and are subject to independent verification. Platform registration does not constitute regulatory approval or endorsement."*
+    - **License fields are optional at signup.** If left blank, registration still completes. A non-blocking reminder is shown, and the surveyor will be **prompted for License Number + Category before Final Survey Report (FSR) generation is allowed** (they populate the report sign-off block).
   - **Primary Action Button**: Full-width **"Complete Registration & Enter Workspace"** CTA.
   - **Bottom Switcher Bar**: *"Already have an account? **Sign In here**"* (routes to `00_auth_login`).
 

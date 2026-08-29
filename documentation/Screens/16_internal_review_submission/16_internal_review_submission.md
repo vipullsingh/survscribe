@@ -19,7 +19,7 @@
 
 ### 2.2 Responsive Desktop Web View
 - **Two-Column QA & Submission Hub**:
-  - **Left Pane (50% width)**: Automated Pre-Submission Audit Checklist (Live validation engine checking 6 core compliance gates) and Discrepancy/Warning Resolver.
+  - **Left Pane (50% width)**: Automated Pre-Submission Audit Checklist (Live validation engine checking **7** compliance gates) and Discrepancy/Warning Resolver.
   - **Right Pane (50% width)**: Final Surveyor Sign-Off & SLA Certification Block, Insurer Submission & Dispatch Log, and Archive Snapshot & Version Lock Button.
 
 ---
@@ -78,5 +78,5 @@
 ---
 
 ## 7. Action Triggers & Navigation
-- **Click "Finalize & Submit Report"**: Validates all 6 gates, locks report snapshot as read-only, dispatches `.docx` package, and transitions claim status to `COMPLETED_SUBMITTED`.
+- **Click "Finalize & Submit Report"**: Validates all 7 gates, locks report snapshot as read-only, dispatches `.docx` package, and transitions claim status to `COMPLETED_SUBMITTED`.
 - **Navigation after Submission**: Returns to `01_dashboard` with a success toast and links to download the final submitted `.docx` document.

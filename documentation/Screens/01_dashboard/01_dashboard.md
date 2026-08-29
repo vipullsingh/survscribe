@@ -16,7 +16,7 @@
 - **Card-Based Claim Feed**: Touch-optimized cards displaying Claim #, Insured Name, Risk City, Stage Badge (e.g., "Stage 6 of 15"), and sync status dot.
 - **Swipe Actions**: Swiping left on a card reveals quick-action triggers: *Call Insured*, *Open Maps*, *Add Quick Photo*.
 - **Floating Action Button (FAB)**: Prominent bottom-right `+` button to start a new claim survey or record an instant voice field note.
-- **Bottom Navigation Bar**: *Dashboard*, *Field Camera*, *Loss Calculator*, *Reports*, *Profile/Settings*.
+- **Bottom Navigation Bar (canonical 5 tabs)**: *Dashboard*, *Claims*, *Field Studio*, *Reports*, *Profile*. (See Visual Theme & Design System §6.1 for the authoritative label set.)
 
 ### 2.2 Responsive Desktop Web View
 - **Top App Bar**: Global Search Bar (by Claim #, Policy #, Insured Name, Insurer), Sync Status Indicator, "New Survey" CTA Button, User Profile Chip.
@@ -64,7 +64,7 @@
 ## 6. Offline State & Sync Indicators
 - When offline: A top notification bar states: *"Working Offline — All local claims accessible. 4 pending edits will sync once online."*
 - Cached claims in SQLite are fully readable and editable.
-- Newly created claims receive a local temporary ID (`TEMP-SA-XXXX`) until synced with the server.
+- Newly created claims receive a local temporary ID (`TEMP-SS-XXXX`) until synced with the server, after which they are assigned a permanent `SS-YYYY-XXXXX` reference.
 
 ---
 

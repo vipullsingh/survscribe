@@ -11,7 +11,7 @@
 
 ### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
 - **Mobile Salvage Tracker**:
-  - Top: Salvage Disposal Mode Toggle (*Retained by Insured* vs. *Sold to Scrap Buyer*).
+  - Top: Salvage Disposal Mode Selector — *Mode A: Retained by Insured* / *Mode B: Sold to Scrap Buyer* / *Mode C: Tender floated by Insurer*.
   - Salvage Item Cards with mobile camera button for snapping scrap piles, weighbridge slips, and buyer GST receipts.
   - Quick Salvage Value calculator (Weight $\times$ Scrap Rate/Kg).
   - Auto-Deduct sync toggle to push salvage credit into Section F assessment.

@@ -29,6 +29,7 @@
 1. **GPS Capture & Geocoding Component**:
    - `GPSCaptureButton` (Triggers device location API)
    - `CoordinateDisplay` (Latitude, Longitude, Accuracy $\pm X$ meters, Altitude, Timestamp)
+   - `AccuracyGate`: accuracy $\le 10$ m → accept; $> 10$ m and $\le 50$ m → amber warning with a "Re-capture" prompt; $> 50$ m → blocked, capture cannot be saved.
    - `ReverseGeocodedAddressBox`
 2. **Address Comparison Grid**:
    - `PolicyAddressViewer` (Read-only from Stage 2)
@@ -52,7 +53,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | `gps_latitude` | Float | Yes | $-90.0$ to $+90.0$ | GPS Latitude from field device |
 | `gps_longitude` | Float | Yes | $-180.0$ to $+180.0$ | GPS Longitude from field device |
-| `gps_accuracy_meters`| Float | Yes | $\le 50$ meters | GPS accuracy reading |
+| `gps_accuracy_meters`| Float | Yes | Target $\le 10$ m (warn + prompt re-capture above 10 m); hard limit $\le 50$ m (save blocked above 50 m) | GPS accuracy reading |
 | `actual_loss_address`| Text | Yes | Min 15 chars | Physical address of the loss site |
 | `location_discrepancy`| Boolean | Yes | Boolean flag | Indicates address mismatch |
 | `discrepancy_remarks` | Text | Conditional | Mandatory if `location_discrepancy = true` | Explanation for location mismatch |

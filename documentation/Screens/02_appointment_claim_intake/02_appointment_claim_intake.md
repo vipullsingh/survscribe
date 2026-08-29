@@ -86,5 +86,5 @@
 ---
 
 ## 7. Action Triggers & Navigation
-- **Click "Save & Proceed to Policy Review"**: Validates all mandatory fields, generates Survey ID (`SA-YYYY-XXXXX`), and routes to `03_policy_coverage_review`.
+- **Click "Save & Proceed to Policy Review"**: Validates all mandatory fields, generates Survey ID (`SS-YYYY-XXXXX`), and routes to `03_policy_coverage_review`.
 - **Click "Save Draft"**: Saves current state and returns to `01_dashboard`.

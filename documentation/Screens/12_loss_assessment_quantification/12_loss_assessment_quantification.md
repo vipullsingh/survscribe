@@ -58,15 +58,21 @@
 
 ## 4. Mathematical Formulas & Rules
 
+Deductions are applied in this **strict order**: Gross Assessed → less Depreciation → less Betterment → less Underinsurance → less Salvage → less Policy Excess.
+
 $$\text{Gross Assessed} = \text{Assessed Quantity} \times \text{Verified Unit Rate}$$
 
 $$\text{Depreciation Amount} = \text{Gross Assessed} \times \left(\frac{\text{Depreciation \%}}{100}\right)$$
 
 $$\text{Net of Depreciation} = \text{Gross Assessed} - \text{Depreciation Amount} - \text{Betterment Deduction}$$
 
-$$\text{If } \text{Value at Risk} > \text{Sum Insured} \implies \text{Underinsurance Deduction} = \text{Net of Depreciation} \times \left(1 - \frac{\text{Sum Insured}}{\text{Value at Risk}}\right)$$
+$$\text{If } \text{VAR} > \text{SI} \implies \text{Underinsurance Deduction} = \text{Net of Depreciation} \times \left(1 - \frac{\text{SI}}{\text{VAR}}\right)\text{, else } 0$$
 
-$$\text{Net Recommended} = \text{Adjusted Loss} - \text{Salvage Realization} - \text{Policy Excess}$$
+$$\text{After Underinsurance} = \text{Net of Depreciation} - \text{Underinsurance Deduction}$$
+
+$$\text{Net Recommended} = \text{After Underinsurance} - \text{Salvage Realization} - \text{Policy Excess}$$
+
+**Worked example (single line item):** Gross Assessed ₹10,00,000; Depreciation 20% = ₹2,00,000; Betterment ₹50,000 → Net of Depreciation ₹7,50,000. SI ₹60,00,000, VAR ₹80,00,000 → Underinsurance = 7,50,000 × (1 − 60/80) = ₹1,87,500 → After Underinsurance ₹5,62,500. Salvage ₹40,000 → ₹5,22,500. Policy Excess ₹25,000 → **Net Recommended ₹4,97,500**.
 
 ---
 
