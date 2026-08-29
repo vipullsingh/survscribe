@@ -17,26 +17,28 @@ Every Epic and User Story below is implemented with a **primary native Mobile Vi
 
 ## Epic 0: Surveyor Authentication, Registration & Biometric Access
 
-### Story 0.1: Surveyor Sign In & Mobile OTP
+### Story 0.1: Surveyor Sign In & Mobile OTP (Screen 00_auth_login)
 **As a** Licensed Claim Surveyor,  
-**I want to** sign in using my email/password or mobile number with OTP,  
-**So that** I can securely access my assigned surveys and reports.
+**I want to** sign in using my email/password, mobile phone with OTP, or biometric FaceID,  
+**So that** I can securely access my assigned surveys and reports with a single tap.
 
 #### Acceptance Criteria
 - **AC 0.1.1 (Email/Password Login)**: Entering valid email and password directs the surveyor to `01_dashboard`.
 - **AC 0.1.2 (Mobile Phone + OTP Login)**: Entering a 10-digit mobile number sends a 6-digit SMS OTP; entering the valid OTP completes authentication.
 - **AC 0.1.3 (Biometric Unlock)**: On mobile devices with FaceID / TouchID enabled, clicking the biometric icon unlocks the app in $< 1\text{ second}$ without requiring password re-entry.
 - **AC 0.1.4 (Offline Biometric Session)**: In remote field sites with zero cellular coverage, cached biometric authentication permits offline survey creation and editing.
+- **AC 0.1.5 (Switch to Sign Up)**: Clicking "Register as Surveyor" seamlessly navigates to `00_auth_signup`.
 
-### Story 0.2: New Surveyor Registration & Profile Setup
+### Story 0.2: New Surveyor Registration & Profile Setup (Screen 00_auth_signup)
 **As a** New Surveyor or Firm Associate,  
 **I want to** register an account with my firm name, SLA license number, and category,  
 **So that** my survey reports automatically include my verified surveyor credentials.
 
 #### Acceptance Criteria
-- **AC 0.2.1 (Surveyor Profile Capture)**: Captures Full Name, Survey Firm Name, SLA License Number, and Category (*Fellow / Associate / Licentiate*).
-- **AC 0.2.2 (SLA License Validation)**: Validates that the SLA license number matches standard formatting.
+- **AC 0.2.1 (Surveyor Profile Capture)**: Captures Full Name, Survey Firm Name, SLA License Number, and Category (*Fellow / Associate / Licentiate / Trainee*).
+- **AC 0.2.2 (SLA License Validation)**: Validates that the SLA license number matches standard formatting (`SLA-XXXXX`).
 - **AC 0.2.3 (Immediate Dashboard Access)**: Upon successful sign-up, the surveyor is redirected to the dashboard with initial onboarding guidance.
+- **AC 0.2.4 (Switch to Sign In)**: Clicking "Already have an account? Sign In" navigates back to `00_auth_login`.
 
 ---
 

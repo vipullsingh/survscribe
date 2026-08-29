@@ -88,15 +88,18 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 
 ## 3. End-to-End Functional Requirements (Auth & 15-Stage Workflow)
 
-### Stage 0: Authentication, Registration & Mobile Access Gate
-- **FR-0.1 (Surveyor Sign In)**: The system shall provide secure surveyor authentication supporting:
-  - Email/Password credentials.
-  - Mobile Phone Number + One-Time Password (OTP).
-  - Native On-Device Biometrics (FaceID / TouchID / Fingerprint) for rapid unlocking.
-- **FR-0.2 (Surveyor Registration / Sign Up)**: The system shall capture new surveyor profile data:
+### Stage 0: Authentication, Registration & Mobile Access Gate (Screens 00_auth_login & 00_auth_signup)
+- **FR-0.1 (Surveyor Sign In - Screen 00_auth_login)**: The system shall provide secure surveyor authentication supporting:
+  - Email/Password credentials with "Remember Me".
+  - Mobile Phone Number + 6-digit One-Time Password (OTP) with 30-second resend timer.
+  - Native On-Device Biometrics (FaceID / TouchID / Fingerprint) for rapid $<1\text{s}$ unlocking.
+  - Password recovery and reset link dispatch.
+  - Direct switch link to `00_auth_signup`.
+- **FR-0.2 (Surveyor Registration / Sign Up - Screen 00_auth_signup)**: The system shall provide a dedicated onboarding screen capturing:
   - Full Legal Name, Surveyor Firm Name, Contact Number, Email Address.
-  - SLA / IRDAI License Number (e.g., `SLA-XXXXX`) and License Category (*Fellow, Associate, Licentiate*).
-  - Secure Password creation and Terms of Service consent.
+  - SLA / IRDAI License Number (e.g., `SLA-XXXXX`) and License Category (*Fellow, Associate, Licentiate, Trainee*).
+  - Secure Password creation with complexity meter and Terms of Service consent.
+  - Direct switch link back to `00_auth_login`.
 - **FR-0.3 (Offline Authentication & Security)**:
   - The mobile app shall securely cache an encrypted session token in hardware keystore / keychain.
   - When disconnected from cellular network, the surveyor shall authenticate via local Biometrics/PIN to access cached claims.
