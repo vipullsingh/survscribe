@@ -6,7 +6,7 @@
 >
 > Every statement below is tagged with one of:
 > - **[Confirmed Requirement]** — explicitly stated in `documentation/` (SRS, User Stories, Screen Specs, Design System).
-> - **[Confirmed — Q&A 2026-08-30]** — decided by the project owner during a clarification session on 2026-08-30. **These decisions are authoritative but not yet propagated into the `documentation/` source files** — see §19 for the pending doc-edit checklist.
+> - **[Confirmed — Q&A 2026-08-30]** — decided by the project owner during a clarification session on 2026-08-30, and **propagated into the `documentation/` source files the same day** (see §19 for the file-by-file record). Recorded in `documentation/decisions/ADR-0001`.
 > - **[Implemented]** — demonstrably present as working code in the repository.
 > - **[Planned / Referenced]** — named as intended/future work but not implemented.
 > - **[Unconfirmed — clarification required]** — cannot be verified; still open.
@@ -59,7 +59,8 @@
 - `apps/backend/` → `api/`, `cmd/{api,worker}/`, `internal/{config,handler,model,pkg,repository,server,service}/`, `migrations/`, `deployments/`, `pkg/{logger,response}/`, `scripts/`
 - `apps/mobile/` → `assets/`, `src/{app,core}/`, `src/features/{ai-assistant,auth/{api,components,hooks,screens,store,types},evidence,inspection,surveys/{api,components,hooks,screens,store,types}}/`, `src/infrastructure/{media,network,storage}/`, `src/shared/{components,hooks,utils}/`, `src/types/`
 - `packages/` → `api-contracts/`, `config/`, `types/`, `ui/`
-- `docs/` → `api/`, `architecture/`, `decisions/`, `requirements/`, `workflows/` — **to be deleted / consolidated into `documentation/`** (see §8, Q&A 2026-08-30).
+
+(The former empty `docs/` scaffold was **deleted** on 2026-08-30; `documentation/decisions/` and `documentation/architecture/` were created with real content.)
 
 **Not present anywhere in the repo:** `package.json`, `go.mod`, `go.sum`, any lockfile, `pnpm-workspace.yaml`, `turbo.json`, `.gitignore`, `.env` / `.env.example`, CI config, Dockerfiles, database migrations, seed scripts, tests, linter/formatter configs, or any `.go` / `.ts` / `.tsx` / `.js` source file.
 
@@ -195,12 +196,12 @@ All workflows below are **[Confirmed Requirement]** as specifications and **[Pla
 Offline: authenticate via cached encrypted token / device passcode; 15-minute background auto-lock. (Biometric unlock post-MVP.)
 
 ### 6.2 Dashboard (Screen 01)
-Pipeline overview of all claims across the 15 stages; stage filter pills; claim cards/table; FAB / "New Survey" → `02_appointment_claim_intake`. Offline banner shows pending-sync count; new offline claims get `TEMP-SA-XXXX` IDs.
+Pipeline overview of all claims across the 15 stages; stage filter pills; claim cards/table; FAB / "New Survey" → `02_appointment_claim_intake`. Offline banner shows pending-sync count; new offline claims get `TEMP-SS-XXXX` IDs.
 
 ### 6.3 The 15-stage survey pipeline
 | Stage | Screen folder | Purpose (short) | Advance action |
 | :-- | :-- | :-- | :-- |
-| 1 | `02_appointment_claim_intake` | Record/parse insurer appointment; generate `SA-YYYY-XXXXX`; init state machine | → Stage 2 |
+| 1 | `02_appointment_claim_intake` | Record/parse insurer appointment; generate `SS-YYYY-XXXXX`; init state machine | → Stage 2 |
 | 2 | `03_policy_coverage_review` | Policy schedule, section-wise SI, perils, warranties, excess; loss-date-in-period check | → Stage 3 |
 | 3 | `04_insured_contact_schedule` | Contact log, schedule visit, dispatch Loss Preservation Notice | → Stage 4 |
 | 4 | `05_risk_location_verification` | GPS capture, address compare, discrepancy flag + justification | → Stage 5 |
@@ -237,7 +238,7 @@ Pipeline overview of all claims across the 15 stages; stage filter pills; claim 
 
 | Layer | Technology | Basis |
 | :-- | :-- | :-- |
-| **Product name** | **SurvScribe** (code, packages, UI). Repo dir `SurveyAssist` and `SA-` claim-ref prefix retained as internal codes. | Q&A 2026-08-30 |
+| **Product name** | **SurvScribe** across all aspects — code, packages, UI, docs, and the claim-ref prefix (`SS-YYYY-XXXXX`). Physical repo-dir rename `SurveyAssist`→`SurvScribe` + git-remote update still pending. | Q&A 2026-08-30 |
 | **Mobile client** | **React Native + TypeScript**. Feature-first layout (`apps/mobile/src/features/<feature>/{api,components,hooks,screens,store,types}`) + `src/infrastructure/` + `src/shared/`. Primary and only MVP client. | Q&A 2026-08-30 |
 | **Mobile local DB** | **WatermelonDB** (reactive ORM over **SQLite**), encrypted with **SQLCipher (AES-256)**. Backs the offline store + sync queue. | Q&A 2026-08-30 |
 | **Desktop web** | **Deferred to post-MVP.** Screen-spec "Responsive Desktop Web View" sections are forward-looking design only. When built: React + shared `packages/` TS types. | Q&A 2026-08-30 |
@@ -251,7 +252,7 @@ Pipeline overview of all claims across the 15 stages; stage filter pills; claim 
 | **Monorepo tooling** | **pnpm workspaces + Turborepo** for the JS/TS packages (`apps/mobile`, future `apps/web`, `packages/*`). The **Go backend keeps its own `go.mod`** and is built separately (optionally wired into Turbo tasks). | Q&A 2026-08-30 |
 | **Transport security** | TLS 1.3. | `Requirement.MD` §6.2 |
 | **Local security** | Hardware keystore/keychain for the session token; SQLCipher AES-256 at rest. | `Requirement.MD` §6.2 |
-| **Docs root** | Single root: **`documentation/`**. The empty `docs/` tree is to be deleted; ADRs live in `documentation/decisions/`, architecture in `documentation/architecture/`. | Q&A 2026-08-30 |
+| **Docs root** | Single root: **`documentation/`**. Empty `docs/` tree **deleted 2026-08-30**; ADRs live in `documentation/decisions/`, architecture in `documentation/architecture/`. | Q&A 2026-08-30 |
 
 ### 7.3 Intended system layers (`Requirement.MD` §2.2 diagram)
 UI layer (RN mobile app; web later) → offline-first client data layer (WatermelonDB/SQLCipher + media store + sync queue with field-level timestamp merge) → Go/Gin backend REST API (media sync pipeline, state machine + audit engine, server `.docx` engine, PostgreSQL via pgx) → modular AI orchestration layer (provider interface → cloud LLM / cloud OCR / local models).
@@ -264,16 +265,16 @@ UI layer (RN mobile app; web later) → offline-first client data layer (Waterme
 ## 8. Codebase Structure
 
 ```
-SurveyAssist/  (product name: SurvScribe)
+SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 ├── README.md                         # Project summary & feature list (design intent)
 ├── CLAUDE.md                          # This file — living project context
 │
-├── documentation/                    # THE SINGLE DOCS ROOT (docs/ to be removed)
-│   ├── Requirement.MD                # SRS v1.0.0-MVP ("Approved Baseline")
+├── documentation/                    # THE SINGLE DOCS ROOT
+│   ├── Requirement.MD                # SRS v1.0.0-MVP ("Approved Baseline") + §2.3 stack baseline
 │   ├── User Stories.md               # Epic 0 + Epics 1–16, acceptance criteria
 │   ├── Visual Theme & Design System.md  # Design system v2.0.0-Enterprise
-│   ├── decisions/                    # (to be created) ADR log — one file per decision
-│   ├── architecture/                 # (to be created) physical schema, API contract, diagrams
+│   ├── decisions/                    # ADR log — README index + ADR-0001 (2026-08-30 decisions)
+│   ├── architecture/                 # README placeholder — physical schema, API contract, diagrams (not started)
 │   ├── assets/logo/                  # 4 brand SVGs + README (brand colors, symbolism)
 │   └── Screens/                      # 19 screen spec folders
 │       ├── 00_auth_login/  (description/00_auth_login.md + designs/ 5 SVGs)
@@ -291,11 +292,10 @@ SurveyAssist/  (product name: SurvScribe)
 │                                     #   src/infrastructure/{media,network,storage}/,
 │                                     #   src/shared/{components,hooks,utils}/, src/types/
 │
-├── packages/                         # EMPTY SCAFFOLD (no files) — pnpm workspace pkgs
-│   ├── api-contracts/  config/  types/  ui/
-│
-└── docs/                             # EMPTY SCAFFOLD — TO BE DELETED (consolidated into documentation/)
+└── packages/                         # EMPTY SCAFFOLD (no files) — pnpm workspace pkgs
+    ├── api-contracts/  config/  types/  ui/
 ```
+(The former empty `docs/` tree was deleted on 2026-08-30.)
 
 **Where to look for authority today:** `documentation/Requirement.MD` (SRS) is the top-level source; `documentation/User Stories.md` refines it into testable ACs; `documentation/Screens/<name>/<name>.md` is the most detailed layer. **When the SRS and a screen spec disagree, this `CLAUDE.md` §3 / §18 records the resolved answer — use that, and update the underlying doc per §19.**
 
@@ -532,8 +532,8 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 ## 15. Known Issues and Technical Debt
 
 1. **No implementation exists.** The gap between `documentation/` (detailed, "Approved Baseline") and code (zero) is the entire project risk surface.
-2. **Empty scaffold directories are untracked by git.** `apps/`, `packages/`, `docs/` show nothing in `git status` because git ignores empty dirs; a fresh clone won't contain them. Add real content + `.gitkeep`/README stubs when bootstrapping.
-3. **`documentation/` source files not yet updated with the 2026-08-30 decisions.** The SRS, User Stories, screen specs, README, and design system still contain the pre-decision text. See §19 for the exact edit checklist. Until then, this `CLAUDE.md` is the reconciled source of truth.
+2. **Empty scaffold directories are untracked by git.** `apps/` and `packages/` show nothing in `git status` because git ignores empty dirs; a fresh clone won't contain them. Add real content + `.gitkeep`/README stubs when bootstrapping.
+3. **~~`documentation/` source files not yet updated~~ — DONE 2026-08-30.** The 2026-08-30 decisions have been propagated into the SRS, User Stories, Visual Design System, README, and the affected screen specs; `documentation/decisions/ADR-0001` records them; the empty `docs/` tree was deleted. Remaining doc-adjacent follow-ups: physical repo-dir rename `SurveyAssist`→`SurvScribe`, monorepo bootstrap files, and the `00_auth_terms.svg` legal-copy "biometric" line (rendered asset). See §19.
 4. **`README.md` repo-structure section is stale** — says "18 Dedicated Screen Specification Folders" and "designs/ (4 vector artboards)" for login; actual counts are 19 folders and 5 login SVGs; omits `00_auth_terms`.
 5. **Dashboard SVG missing** — commit `ea73c91` claims a Screen 01 SVG mockup; none is present in `01_dashboard/`.
 6. **Bottom-nav labels differ** between `Design System.md` §6.1 and `01_dashboard.md` §2.1 — reconcile.
@@ -570,7 +570,7 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 **Recommendations, not confirmed requirements.**
 
 1. **Propagate the 2026-08-30 decisions into `documentation/`** using the §19 checklist, so the SRS/specs stop contradicting the decision log. Small, mechanical, high-value.
-2. **Create `documentation/decisions/`** and write ADR-0001…000n capturing each Q&A decision (name, mobile=RN, backend=Gin/REST, `.docx`=dual engine, monorepo=pnpm+Turbo, DB=WatermelonDB, web=post-MVP, providers=interface+ADR, etc.). Delete the empty `docs/` tree.
+2. **(DONE 2026-08-30)** `documentation/decisions/` created with `ADR-0001` capturing the Q&A decisions; empty `docs/` tree deleted; `documentation/architecture/` placeholder created. Split ADR-0001 into per-decision ADRs later if finer traceability is wanted.
 3. **Bootstrap the monorepo** (Q1): root `package.json` + `pnpm-workspace.yaml` + `turbo.json`; `apps/backend/go.mod`; `.gitignore`; stub READMEs in each `apps/*` and `packages/*`.
 4. **Draft the missing entities (§9.2) into `Requirement.MD` §5.2**, then produce a complete physical schema in `documentation/architecture/` and the first migrations under `apps/backend/migrations/`.
 5. **Define `packages/api-contracts/`** — an OpenAPI spec for the Gin backend, plus `packages/types/` shared TS types generated from it.
@@ -598,11 +598,12 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 | D11 | Local storage encrypted with **SQLCipher AES-256**; transport **TLS 1.3**; immutable audit logs. | Confirmed | `Requirement.MD` §6.2 |
 | D12 | Field photos: **JPEG 1600×1200 @ 85%**, EXIF preserved, indelible watermark, mandatory 6-category tagging. | Confirmed | `Requirement.MD` §6.1, FR-6.2 |
 | D13 | Offline sync = **bi-directional, field-level timestamp merge** with surveyor confirmation on conflict. | Confirmed | `Requirement.MD` §2.2; `User Stories.md` AC 16.1.3 |
-| D14 | Internal claim reference **`SA-YYYY-XXXXX`**; offline temp IDs `TEMP-SA-XXXX`. | Confirmed | `Requirement.MD` FR-1.3; `01_dashboard.md` §6 |
+| D14 | Internal claim reference **`SS-YYYY-XXXXX`**; offline temp IDs `TEMP-SS-XXXX`. (Renamed from `SA-` by D18/D37.) | Confirmed | `Requirement.MD` FR-1.3; `01_dashboard.md` §6 |
 | D15 | SLA license field is **syntax-validated only** (`SLA-[0-9]{4,8}`), not regulatory verification; disclaimer required. | Confirmed | `Requirement.MD` FR-0.2 |
 | D16 | Design system = **"Enterprise Precision"**; strict anti-pattern list; Plus Jakarta Sans + Inter + JetBrains Mono; 8pt grid; green/amber/red-only status colors. | Confirmed | `Visual Theme & Design System.md` v2.0.0 |
 | D17 | Repo is a **monorepo**: `apps/{backend,mobile}` + shared `packages/{api-contracts,config,types,ui}`. | Confirmed | directory scaffold |
-| **D18** | **Canonical product name = "SurvScribe"** for code/packages/UI. Repo dir `SurveyAssist` and `SA-` claim-ref prefix retained as internal codes (not renamed). | Confirmed — Q&A 2026-08-30 | this session |
+| **D18** | **Canonical product name = "SurvScribe"** for code/packages/UI. | Confirmed — Q&A 2026-08-30 | this session; ADR-0001 |
+| **D37** | **Full rename** (amends D18): "SurvScribe" applies **everywhere**, including the internal claim-ref prefix → **`SS-YYYY-XXXXX`** / `TEMP-SS-XXXX`. All `documentation/` files updated. Physical repo-dir rename + git-remote update remain a manual follow-up. | Confirmed — user instruction 2026-08-30 | this session; ADR-0001 |
 | **D19** | **Mobile client = React Native + TypeScript.** Feature-first `apps/mobile/src` layout. | Confirmed — Q&A 2026-08-30 | this session |
 | **D20** | **Mobile local DB = WatermelonDB** (over SQLite) + **SQLCipher (AES-256)**. | Confirmed — Q&A 2026-08-30 | this session |
 | **D21** | **Backend = Go + Gin, REST/JSON.** **gRPC dropped from MVP.** `pgx` + PostgreSQL. | Confirmed — Q&A 2026-08-30 | this session |
@@ -624,32 +625,32 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 
 ---
 
-## 19. Pending `documentation/` Edit Checklist (apply the 2026-08-30 decisions)
+## 19. `documentation/` Reconciliation — Status
 
-These source-file edits reconcile `documentation/` with §18. None are done yet.
+The 2026-08-30 decisions (§18 D18–D37) have been **applied to `documentation/`**.
 
-- [ ] **`README.md`** — fix stale repo-structure counts (19 screen folders, 5 login SVGs, add `00_auth_terms`); align "Deep Cobalt `#1E40AF`" prose to the `#1E3A8A`/`#1E40AF` token scale; soften "glassmorphic micro-surfaces" to match Design System v2.0.0; note mobile = React Native, backend = Gin/REST, web = post-MVP.
-- [ ] **`documentation/Requirement.MD`**
-  - [ ] §2.1 / §2.2 — mobile = React Native + TS; backend = Gin, REST/JSON, gRPC removed from MVP; desktop web = post-MVP companion; `.docx` = dual engine (client draft + authoritative server Go), benchmark on server; local DB = WatermelonDB/SQLite + SQLCipher; monorepo = pnpm + Turborepo.
-  - [ ] §4.2 — add `NotificationService` / `GeocodingService` interfaces; state "vendors selected per-integration via ADR".
-  - [ ] §5.2 — add the §9.2 entities (draft pending review).
-  - [ ] FR-0.1 — OTP resend: phone 30 s, email 45 s (explicit).
-  - [ ] FR-0.2 — SLA license #, category, base location optional at signup; required before FSR generation.
-  - [ ] FR-0.3 — remove biometric; keep cached token + device passcode + 15-min auto-lock.
-  - [ ] FR-4.x — GPS: ≤ 10 m target / ≤ 50 m hard limit.
-  - [ ] FR-11.2 — deduction sequence + underinsurance base = net-of-depreciation (D26); add worked example placeholder.
-  - [ ] FR-12.2 — add salvage Mode C (Tender floated by Insurer).
-- [ ] **`documentation/User Stories.md`** — AC 0.1.3 (email OTP 45 s, consistent); AC 0.2.1/0.2.2 (license optional at signup, required before FSR); AC 4.1.1 (GPS 10 m/50 m); AC 11.1.3–11.1.4 (underinsurance base + sequence per D26); Epic 12 (three salvage modes); note desktop views post-MVP.
-- [ ] **`documentation/Visual Theme & Design System.md`** — confirm `#1E3A8A`/`#1E40AF` scale is canonical; add a note that desktop layouts (§6.2) are post-MVP; reconcile bottom-nav labels with `01_dashboard.md`.
-- [ ] **`documentation/Screens/00_auth_login/description/00_auth_login.md`** — remove biometric traces; keep phone 30 s / email 45 s.
-- [ ] **`documentation/Screens/00_auth_signup/00_auth_signup.md`** — keep license/category/base optional; add "required before FSR" note; ensure disclaimer text present.
-- [ ] **`documentation/Screens/05_risk_location_verification/05_risk_location_verification.md`** — GPS 10 m target / 50 m hard limit.
-- [ ] **`documentation/Screens/08_ownership_document_locker/08_ownership_document_locker.md`** — insurable-interest enum → 4-state (D34).
-- [ ] **`documentation/Screens/12_loss_assessment_quantification/12_loss_assessment_quantification.md`** — align formulas/wording to D26 (already close); add worked example.
-- [ ] **`documentation/Screens/13_salvage_disposal_manager/13_salvage_disposal_manager.md`** — three modes A/B/C consistently.
-- [ ] **`documentation/Screens/16_internal_review_submission/16_internal_review_submission.md`** — 7 gates everywhere (fix the "6 gates" / "6 core" references).
-- [ ] **Repo** — delete empty `docs/`; create `documentation/decisions/` + `documentation/architecture/`; add `.gitignore`; add `.gitkeep`/README stubs to `apps/*` and `packages/*`.
-- [ ] **ADRs** — write one ADR per D18–D36 under `documentation/decisions/`.
+### 19.1 Completed 2026-08-30
+- [x] **`README.md`** — SurvScribe naming note (full rename); repo-structure counts fixed (19 screen folders, 5 login SVGs, `00_auth_terms` added, `decisions/` + `architecture/` listed, `apps/`/`packages/` shown); primary blue prose aligned to `#1E3A8A`/`#1E40AF`; "glassmorphic micro-surfaces" softened; mobile = React Native, backend = Gin/REST (no gRPC), web = post-MVP, `.docx` = dual engine; monorepo tooling note.
+- [x] **`documentation/Requirement.MD`** — new **§2.3 Confirmed Technology Stack** table; §2.1/§2.2 rewritten (React Native, WatermelonDB/SQLCipher, Gin/REST, server `.docx` engine, web post-MVP); §4.2 provider-agnostic integration policy (`NotificationService`, `GeocodingService`, vendors via ADR); §5.2 additional entities 11–20 (draft); FR-0.1 OTP 30 s/45 s; FR-0.2 SLA optional at signup / required before FSR; FR-1.3 `SS-YYYY-XXXXX`; FR-4.1 GPS 10 m/50 m; FR-11.2 full deduction chain + underinsurance on net-of-depreciation; FR-11.3 blocking rule; FR-12.2 three salvage modes; FR-15.1 explicit 7 gates + SHA-256.
+- [x] **`documentation/User Stories.md`** — design-paradigm note (React Native, web post-MVP); AC 0.2.1/0.2.2 (license optional at signup, required before FSR); AC 1.1.1 `SS-2026-00101`; AC 4.1.1 GPS 10 m/50 m; AC 11.1.3–11.1.4 (underinsurance on net-of-depreciation, sequence); AC 12.1.2 three salvage modes.
+- [x] **`documentation/Visual Theme & Design System.md`** — canonical primary-blue note (`#1E3A8A`/`#1E40AF`); §6.1 canonical 5-tab bottom nav (`Dashboard · Claims · Field Studio · Reports · Profile`); §6.2 marked POST-MVP; `SA-2026-00101` → `SS-2026-00101` (×3).
+- [x] **`documentation/Screens/00_auth_login/description/00_auth_login.md`** — hard-coded `file:///…/SurveyAssist/…` design links replaced with relative `../designs/…` paths. (Timers already 30 s/45 s; no biometric text present.)
+- [x] **`documentation/Screens/00_auth_signup/00_auth_signup.md`** — added "license fields optional at signup; License # + Category required before FSR generation" note.
+- [x] **`documentation/Screens/01_dashboard/01_dashboard.md`** — `TEMP-SS-XXXX`; canonical 5-tab bottom nav.
+- [x] **`documentation/Screens/02_appointment_claim_intake/02_appointment_claim_intake.md`** — Survey ID `SS-YYYY-XXXXX`.
+- [x] **`documentation/Screens/05_risk_location_verification/05_risk_location_verification.md`** — GPS `AccuracyGate` (10 m target / 50 m hard limit) in §3.1 and §4.
+- [x] **`documentation/Screens/08_ownership_document_locker/08_ownership_document_locker.md`** — insurable-interest enum → `Established / Under Verification / Incomplete Documentation / Disputed` (×3).
+- [x] **`documentation/Screens/12_loss_assessment_quantification/12_loss_assessment_quantification.md`** — §4 tightened formula chain (`After Underinsurance`) + worked numeric example.
+- [x] **`documentation/Screens/13_salvage_disposal_manager/13_salvage_disposal_manager.md`** — §2.1 mode selector shows all three modes A/B/C.
+- [x] **`documentation/Screens/16_internal_review_submission/16_internal_review_submission.md`** — "6 gates" / "6 core" → 7 (§2.1 and §7).
+- [x] **Repo** — empty `docs/` deleted; `documentation/decisions/` (README + ADR-0001) and `documentation/architecture/` (README) created.
+
+### 19.2 Still pending (not doc edits — infra / manual)
+- [ ] Rename the physical git repo directory `SurveyAssist` → `SurvScribe` and update the git remote. *(Cannot be done from inside the working directory; manual step.)*
+- [ ] Bootstrap the monorepo: root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `apps/backend/go.mod`, `.gitignore`, and `.gitkeep`/README stubs in `apps/*` and `packages/*`.
+- [ ] `documentation/Screens/00_auth_terms/designs/00_auth_terms.svg` — legal-copy line still mentions "Biometric authentication keys". Low priority (rendered mockup asset); update when the terms screen is re-exported.
+- [ ] Split ADR-0001 into per-decision ADRs if/when finer traceability is wanted (currently one consolidated record covers D18–D37).
+- [ ] Pending vendor / schema / API-convention ADRs — see `documentation/decisions/README.md`.
 
 ---
 
@@ -687,7 +688,7 @@ Unless the user explicitly instructs otherwise in the current task:
 ## No destructive actions without explicit permission
 - Do not delete, overwrite, reset, truncate, or drop data or important files without explicit authorization.
 - Prefer reversible approaches. Before deleting/overwriting a file you did not create, inspect it and confirm.
-  (Exception already authorized: the empty `docs/` tree is to be removed per D31 — still confirm before running the delete.)
+  (The empty `docs/` tree was already removed on 2026-08-30 per D31, after verifying it contained zero files.)
 
 ## Keep changes focused
 - No unrelated refactoring, reformatting, renaming, dependency bumps, or "cleanup" outside the task scope.
