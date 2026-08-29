@@ -5,16 +5,10 @@ One record per significant, hard-to-reverse decision. Newest decisions get the n
 | ADR | Title | Status | Date |
 | :-- | :-- | :-- | :-- |
 | [ADR-0001](ADR-0001-foundational-stack-and-mvp-scope.md) | Foundational stack & MVP scope decisions | Accepted | 2026-08-30 |
+| [ADR-0002](ADR-0002-concrete-vendor-selections.md) | Concrete external service vendor selections (SMS, Email, Maps, WhatsApp, LLM, OCR) | Accepted | 2026-08-30 |
+| [ADR-0003](ADR-0003-session-token-and-auth-spec.md) | Session token, authentication & offline security specification | Accepted | 2026-08-30 |
+| [ADR-0004](ADR-0004-api-contract-conventions-and-schema.md) | API contract conventions & database schema design rules | Accepted | 2026-08-30 |
 
-## Pending ADRs (decision owed before the related work starts)
+## Resolved ADR Tracker
 
-- Concrete SMS OTP provider (blocks Stage 0).
-- Concrete transactional email provider (blocks Stage 0).
-- Cloud LLM provider (blocks AI-3 / AI-4).
-- Cloud OCR provider (blocks AI-2).
-- Maps / reverse-geocoding provider (blocks Stage 4 geocoding).
-- WhatsApp dispatch provider (blocks Stage 3 / Stage 8 notice dispatch).
-- Session token format & lifetime (JWT vs opaque; refresh; offline expiry).
-- Physical database schema (types, PK/FK, indexes, enum value lists, JSON shapes).
-- API contract conventions (versioning, error envelope, pagination, auth header).
-- Linter / formatter / test framework / branching strategy (when first code lands).
+All core architectural decisions, vendor selections, authentication mechanics, and API conventions are formally documented above.

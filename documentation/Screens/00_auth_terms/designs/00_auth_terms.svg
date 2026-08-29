@@ -71,7 +71,7 @@
     <g transform="translate(0, 488)">
       <text font-size="14" font-weight="700" fill="#0F172A">4. Hardware Secure Enclave</text>
       <text font-size="13" font-weight="400" fill="#334155" line-height="1.5">
-        <tspan x="0" y="24">Biometric authentication keys and local session tokens</tspan>
+        <tspan x="0" y="24">Device passcode and local session tokens</tspan>
         <tspan x="0" y="44">are stored directly within your device's hardware enclave</tspan>
         <tspan x="0" y="64">and are never transmitted to our servers.</tspan>
       </text>
