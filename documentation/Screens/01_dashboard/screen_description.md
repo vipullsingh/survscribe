@@ -10,7 +10,7 @@
 ## 2. Layout & UI Architecture
 
 ### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
-- **Compact Mobile Top Bar**: App branding (`SurveyAssist`), Offline/Online sync badge with tap-to-sync button, Search icon, and Notification bell.
+- **Compact Mobile Top Bar**: App branding (`SurvScribe`), Offline/Online sync badge with tap-to-sync button, Search icon, and Notification bell.
 - **Daily Field Focus Carousel**: Horizontally swipeable cards showing today’s scheduled field visits with one-tap "Start Field Survey" and "Navigate via GPS" buttons.
 - **Segmented Stage Filter Pills**: Touch-friendly chips: *All (15)*, *In Field*, *Audit/Quantification*, *Report Drafting*, *Ready to Submit*.
 - **Card-Based Claim Feed**: Touch-optimized cards displaying Claim #, Insured Name, Risk City, Stage Badge (e.g., "Stage 6 of 15"), and sync status dot.

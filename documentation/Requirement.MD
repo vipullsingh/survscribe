@@ -1,5 +1,5 @@
 # Software Requirements Specification (SRS)
-# Project: SurveyAssist MVP (AI-Assisted Claim Surveyor Platform)
+# Project: SurvScribe MVP (AI-Assisted Claim Surveyor Platform)
 **Version:** 1.0.0-MVP  
 **Document Status:** Approved Baseline  
 **Scope:** Insurance Survey & Loss Assessment Lifecycle (Appointment to Final Survey Report)
@@ -9,7 +9,7 @@
 ## 1. Executive Summary & Domain Context
 
 ### 1.1 Purpose & Vision
-**SurveyAssist** is a professional, domain-specialized software system engineered for licensed General Insurance Claim Surveyors and Loss Assessors (SLA). The MVP focuses exclusively on eliminating administrative bottlenecks, preventing discrepancies, and accelerating the preparation of **Preliminary Survey Reports (PSR)** and **Final Survey Reports (FSR)** through deterministic calculations and grounded AI assistance.
+**SurvScribe** is a professional, domain-specialized software system engineered for licensed General Insurance Claim Surveyors and Loss Assessors (SLA). The MVP focuses exclusively on eliminating administrative bottlenecks, preventing discrepancies, and accelerating the preparation of **Preliminary Survey Reports (PSR)** and **Final Survey Reports (FSR)** through deterministic calculations and grounded AI assistance.
 
 The platform directly answers the **Five Core Questions of Every Loss Assessment**:
 1. **What happened?** *(Accurate chronology, origin, peril, and incident dynamics)*

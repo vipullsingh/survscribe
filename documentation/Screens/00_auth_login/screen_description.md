@@ -12,7 +12,7 @@
 
 ### 2.1 Primary Mobile App View (iOS & Android) - Core Mobile Experience
 - **Sleek Mobile Sign-In Interface**:
-  - **Top Branding Section**: Animated SurveyAssist logo, app moniker (*"Intelligent Claim Surveying & Loss Assessment"*), and Real-time Connectivity Badge (*Green: Online / Amber: Offline Mode Ready*).
+  - **Top Branding Section**: Animated SurvScribe logo, app moniker (*"Intelligent Claim Surveying & Loss Assessment"*), and Real-time Connectivity Badge (*Green: Online / Amber: Offline Mode Ready*).
   - **Auth Mode Switcher (Pills)**: `[ Email & Password ]` | `[ Mobile OTP ]`.
   - **Email & Password Mode Form**:
     - Floating label input for Registered Email / Username.
@@ -32,7 +32,7 @@
 
 ### 2.2 Responsive Desktop Web View
 - **Split-Screen Desktop Layout**:
-  - **Left Showcase Panel (50% width)**: Deep blue gradient branding showcase highlighting key SurveyAssist capabilities (Offline-first capture, Zero-hallucination AI report generator, 15-stage workflow, and `.docx` export).
+  - **Left Showcase Panel (50% width)**: Deep blue gradient branding showcase highlighting key SurvScribe capabilities (Offline-first capture, Zero-hallucination AI report generator, 15-stage workflow, and `.docx` export).
   - **Right Authentication Card (50% width)**: Centered login card with Email/Password input, Mobile OTP option, Remember Me checkbox, and "Create an Account" link.
 
 ---

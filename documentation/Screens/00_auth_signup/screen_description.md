@@ -38,7 +38,7 @@
 ## 3. Detailed UI Component Hierarchy
 1. **Branding & Header**:
    - `AppLogoBrand`
-   - `OnboardingTitle` ("Join SurveyAssist as an Approved Surveyor")
+   - `OnboardingTitle` ("Join SurvScribe as an Approved Surveyor")
    - `StepProgressBar` (Step 1 of 2 / Step 2 of 2)
 2. **Step 1 Components: Surveyor Basics**:
    - `FullNameInput`

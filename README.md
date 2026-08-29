@@ -1,6 +1,6 @@
-# SurveyAssist: AI-Assisting Insurance Claim Surveyor Platform (MVP)
+# SurvScribe: AI-Assisting Insurance Claim Surveyor Platform (MVP)
 
-**SurveyAssist** is a specialized, zero-hallucination, offline-first platform designed for licensed General Insurance Claim Surveyors and Loss Assessors (SLA).
+**SurvScribe** is a specialized, zero-hallucination, offline-first mobile platform designed for licensed General Insurance Claim Surveyors and Loss Assessors (SLA).
 
 The platform manages the complete **15-Stage General Claim Survey Process** (from Appointment Intake to Final Survey Report Submission) answering the 5 foundational loss assessment questions:
 1. **What happened?** *(Cause & circumstances)*

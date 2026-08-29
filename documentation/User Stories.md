@@ -1,5 +1,5 @@
 # User Stories & Acceptance Criteria
-# Project: SurveyAssist MVP (AI-Assisted Claim Surveyor Platform)
+# Project: SurvScribe MVP (AI-Assisted Claim Surveyor Platform)
 **Version:** 1.0.0-MVP  
 **Document Status:** Approved Baseline  
 **Scope:** 15-Stage Claim Survey Lifecycle + Offline Sync & AI Core  
