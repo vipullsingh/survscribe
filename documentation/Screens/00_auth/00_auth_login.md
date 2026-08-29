@@ -104,10 +104,10 @@ All screens in this directory are structured as native standalone vector artboar
 
 | Screen / Modal File | Artboard Dimensions | Target Platform | Description |
 | :--- | :--- | :--- | :--- |
-| **[00_auth_login.svg](../designs/00_auth_login.svg)** | `375 × 812` (iOS) | Mobile Primary | Primary Surveyor Sign In screen with Universal Input, Password, and OTP login triggers |
-| **[00_auth_login_modal_phone_otp.svg](../designs/00_auth_login_modal_phone_otp.svg)** | `375 × 812` (iOS) | Mobile Bottom Sheet | Verify Phone SMS OTP modal with 6-digit auto-advancing PIN boxes and 30s timer |
-| **[00_auth_login_modal_email_otp.svg](../designs/00_auth_login_modal_email_otp.svg)** | `375 × 812` (iOS) | Mobile Bottom Sheet | Verify Work Email OTP modal with 6-digit encrypted token inputs and 45s timer |
-| **[00_auth_login_forgot_password.svg](../designs/00_auth_login_forgot_password.svg)** | `375 × 812` (iOS) | Mobile Recovery | Password reset and account recovery workflow |
+| **[00_auth_login.svg](designs/00_auth_login.svg)** | `375 × 812` (iOS) | Mobile Primary | Primary Surveyor Sign In screen with Universal Input, Password, and OTP login triggers |
+| **[00_auth_login_modal_phone_otp.svg](designs/00_auth_login_modal_phone_otp.svg)** | `375 × 812` (iOS) | Mobile Bottom Sheet | Verify Phone SMS OTP modal with 6-digit auto-advancing PIN boxes and 30s timer |
+| **[00_auth_login_modal_email_otp.svg](designs/00_auth_login_modal_email_otp.svg)** | `375 × 812` (iOS) | Mobile Bottom Sheet | Verify Work Email OTP modal with 6-digit encrypted token inputs and 45s timer |
+| **[00_auth_login_forgot_password.svg](designs/00_auth_login_forgot_password.svg)** | `375 × 812` (iOS) | Mobile Recovery | Password reset and account recovery workflow |
 
 
 

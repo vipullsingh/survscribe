@@ -47,9 +47,8 @@
 - `documentation/Requirement.MD` — Software Requirements Specification, "Version 1.0.0-MVP", "Document Status: Approved Baseline".
 - `documentation/User Stories.md` — 16 Epics (Epic 0 + Epics 1–16) with acceptance criteria.
 - `documentation/Visual Theme & Design System.md` — "Version 2.0.0-Enterprise" design system (tokens, typography, components, layouts).
-- `documentation/Screens/` — **19 screen specification markdown files** across 19 folders:
-  - `00_auth_login/` (spec in `description/`, plus 5 SVGs in `designs/`)
-  - `00_auth_signup/` (2 SVGs), `00_auth_terms/` (1 SVG)
+- `documentation/Screens/` — **17 screen specification folders** containing 19 spec markdown files:
+  - `00_auth/` (`00_auth_login.md`, `00_auth_signup.md`, `00_auth_terms.md`, plus 8 SVGs in `designs/`)
   - `01_dashboard/` (spec only — **no SVG present** despite git commit `ea73c91`)
   - `02_...` through `16_...` (spec markdown only, no `designs/` folders)
 - `documentation/assets/logo/` — 4 brand SVGs + `README.md`.
@@ -276,10 +275,8 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 │   ├── decisions/                    # ADR log — README index + ADR-0001 (2026-08-30 decisions)
 │   ├── architecture/                 # README placeholder — physical schema, API contract, diagrams (not started)
 │   ├── assets/logo/                  # 4 brand SVGs + README (brand colors, symbolism)
-│   └── Screens/                      # 19 screen spec folders
-│       ├── 00_auth_login/  (description/00_auth_login.md + designs/ 5 SVGs)
-│       ├── 00_auth_signup/ (00_auth_signup.md + designs/ 2 SVGs)
-│       ├── 00_auth_terms/  (00_auth_terms.md + designs/ 1 SVG)
+│   └── Screens/                      # 17 screen spec folders
+│       ├── 00_auth/        (00_auth_login.md, 00_auth_signup.md, 00_auth_terms.md + designs/ 8 SVGs)
 │       ├── 01_dashboard/   (01_dashboard.md — NO designs/)
 │       └── 02_… through 16_…  (<folder_name>.md only, NO designs/)
 │

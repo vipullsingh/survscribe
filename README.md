@@ -27,12 +27,8 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 │   ├── Visual Theme & Design System.md               # Complete Visual Design System, Tokens, Typography & Components
 │   ├── decisions/                                    # Architecture Decision Records (one file per decision)
 │   ├── architecture/                                 # Physical schema, API contract, system diagrams
-│   └── Screens/                                      # 19 Dedicated Screen Specification Folders
-│       ├── 00_auth_login/                            # designs/ (5 vector artboards) + description/
-│       │   ├── description/00_auth_login.md
-│       │   └── designs/
-│       ├── 00_auth_signup/00_auth_signup.md          # + designs/ (2 vector artboards)
-│       ├── 00_auth_terms/00_auth_terms.md            # + designs/ (1 vector artboard)
+│   └── Screens/                                      # 17 Dedicated Screen Specification Folders
+│       ├── 00_auth/                                  # 00_auth_login.md, 00_auth_signup.md, 00_auth_terms.md + designs/ (8 vector artboards)
 │       ├── 01_dashboard/01_dashboard.md
 │       ├── 02_appointment_claim_intake/02_appointment_claim_intake.md
 │       ├── 03_policy_coverage_review/03_policy_coverage_review.md
