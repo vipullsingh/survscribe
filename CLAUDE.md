@@ -654,8 +654,9 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 - **Q19.** `physical-schema.md` §38 item 4 — FR-6.1 names "Electrical" as a Stage 6 damage head; FR-11.1's five heads do not include it. Does Stage 6 need a sixth `head_category` value, or does "Electrical" map to `PLANT_MACHINERY`?
 
 ### Later — does not currently block progress
-- **Q10.** Recreate the missing Screen 01 (dashboard) SVG, and add SVGs / Figma frames for stages 1–15 before building those screens. (§15 item 5)
+- **Q10.** Recreate the missing Screen 01 (dashboard) SVG, and add SVGs / Figma frames for stages 1–15 before building those screens. (§15 item 5) — **now sharper**: `sprint_0002` task 6 (Dashboard + Stage 1–2 designs) was due this round and was not delivered — no design-tool access. `sprint_0002` R6 flags the design workstream as now trailing the build.
 - **Q20.** `physical-schema.md` §38 items 8–9 — the `uom` (12 values) and `document_type` (32 values) enums were closed from specs that ended in "etc."; worth a domain-expert pass before they're locked in by a migration.
+- **Q21.** The design system's focus-ring shadow (`0 0 0 3px rgba(30,58,138,0.1)`, `Design System.md` §4.1) has no direct React Native primitive; `packages/ui`'s `TextField` implements the border change only. Needs a decision on approach (shadow view, Reanimated, or accept the gap) before it matters visually on a real screen.
 
 ---
 
