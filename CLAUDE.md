@@ -826,6 +826,30 @@ The 2026-08-30 decisions (§18 D18–D37, then D38–D44, then **D45–D53** —
 - No `git commit`/`push` — per this file's own git-safety rule, changes are left staged for the user to review and commit.
 - Q2 (dashboard/design-system nav labels doc-side reconciliation), Q6, Q8, Q14–Q20 remain open; none was silently resolved.
 
+### 19.4 `sprint_0002` — completed 2026-08-30 (D54–D58)
+
+**New documents**
+- [x] `documentation/decisions/ADR-0010-sync-protocol-choice.md` (Accepted).
+- [x] `documentation/architecture/sync-protocol.md` (v1.0.0).
+- [x] `documentation/architecture/docx-template-contract.md` (v1.0.0).
+- [x] `packages/ui/src/{Button,TextField,CurrencyText}.tsx` + `src/samples/KernelSampleScreen.tsx` + `src/__tests__/*.test.tsx` (23 real, passing RNTL assertions) + `packages/ui/README.md` (documents the focus-ring gap and the pnpm/Jest `transformIgnorePatterns` fix).
+- [x] `packages/ui/jest.config.cjs`, `babel.config.cjs`.
+
+**Amended**
+- [x] `packages/ui/src/tokens.ts` — added `typeScale` (the full §3.2 table) and the `Decimal` type alias.
+- [x] `packages/ui/package.json` — test dependencies (Jest, RNTL, `@react-native/babel-preset`), real `test` script.
+- [x] `apps/mobile/tsconfig.json`, `apps/mobile/package.json` — added `@types/node` (a Sprint 1 gap: `types: ["react","jest"]` silently excluded Node globals `env.ts` needed; surfaced only once `@types/jest` was actually installed and the workspace typecheck run for real).
+- [x] `documentation/decisions/README.md`, `documentation/architecture/README.md` — ADR-0010 and the two new architecture documents indexed.
+- [x] `documentation/sprints/README.md` — R1 closed.
+- [x] `documentation/sprints/sprint_0002_sync_spike_and_design_kernel/README.md` — status, all acceptance criteria, risks, and DoD updated; task 6 explicitly flagged not done.
+- [x] `CLAUDE.md` — §2.1b (new), §18 (D54–D58), and this §19.4.
+
+**Not done — deliberately**
+- Task 6 (screen designs) — no design-tool access in this session; flagged, not silently skipped (§18 D58).
+- A live end-to-end sync integration test (real mobile client, real server endpoint) — the go/no-go rests on algorithmic analysis of real, executed code against a real scenario, not an integration test; `sprint_0005` should still validate the full pipeline.
+- Owner approval on either new architecture document — same `CLAUDE.md` §16 Q12 blocker as everything else.
+- No `git commit`/`push` — same rule as §19.3.
+
 ---
 
 # MANDATORY DEVELOPMENT RULES FOR AI AGENTS AND DEVELOPERS
