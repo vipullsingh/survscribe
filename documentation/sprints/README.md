@@ -360,7 +360,7 @@ The MVP is releasable when **all** of the following are true:
 
 | # | Risk | Impact | Mitigation |
 | :-- | :-- | :-- | :-- |
-| R1 | **Offline bi-directional, field-level-merge sync with interactive conflict resolution** is the hardest requirement; WatermelonDB's built-in sync may not support it natively. | Could derail every stage screen. | Throwaway spike in sprint_0002 with an explicit go/no-go ADR before sprint_0005; property-based merge tests. |
+| ~~R1~~ | ~~Offline bi-directional, field-level-merge sync~~ — **RESOLVED 2026-08-30.** Confirmed by source inspection: WatermelonDB's built-in sync has no field-level timestamp and resolves any locally-dirty column unconditionally in favour of local. `ADR-0010`: custom `field_updated_at` queue, WatermelonDB kept as local storage only. `sync-protocol.md` specifies the full protocol. | — | `ADR-0010`, `architecture/sync-protocol.md` |
 | R2 | **Dual `.docx` engine (client TS + server Go) parity** doubles report work and is permanent maintenance debt. | Rework, drift, benchmark misses. | Freeze `docx-template-contract.md` early; mandatory parity test suite. **Recommendation:** consider narrowing the MVP to "client draft = preview only, server = authoritative" under timeline pressure. |
 | R3 | **Deterministic loss engine** correctness (rounding, deduction order, underinsurance base) — legally consequential figures. | Wrong recommended amounts. | Pure package, TDD, worked-example fixture, **mandatory domain-expert sign-off** (Q8-equivalent) in sprint_0011. |
 | R4 | **Twilio India SMS DLT** template/entity registration lead time (often weeks). | OTP login slips. | Password login is Critical, OTP is Should-Have; registration starts in sprint_0001. |

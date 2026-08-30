@@ -4,7 +4,7 @@
 | :-- | :-- |
 | **Roadmap ref** | S0.2 |
 | **Stage** | 0 — Foundation & Technical Readiness |
-| **Status** | Not started |
+| **Status** | Tasks 1–5, 7 complete, 2026-08-30 — awaiting project-owner approval alongside every other `sprint_0001`/`sprint_0002` artifact (`CLAUDE.md` §16 Q12). **Task 6 (screen designs) is out of scope for this session — no design-tool (Figma) access; needs the human designer.** |
 | **Depends on** | [`sprint_0001`](../sprint_0001_contract_and_toolchain_freeze/) |
 | **Blocks** | sprint_0005 (sync engine), sprint_0009 and sprint_0013 (`.docx` engines) |
 | **Roadmap** | [`../README.md`](../README.md) |
@@ -35,12 +35,14 @@ No production feature code ships from the spike. The output is a **decision**.
 
 ## 3. Acceptance Criteria
 
-- [ ] The spike answers "WatermelonDB built-in sync or custom queue?" with reproducible evidence, and the answer is recorded as an accepted ADR.
-- [ ] `sync-protocol.md` specifies field-level timestamp merging (explicitly **not** last-write-wins, per `CLAUDE.md` §14.8), the conflict-confirmation UX, media backoff, and delete semantics.
-- [ ] `docx-template-contract.md` is reviewed and covers all 9 sections, the Section F table, photo plates, sign-off, and disclaimers.
-- [ ] `packages/ui` tokens are consumable from `apps/mobile`; a sample screen renders the primary blue, the type scale, and a monospace right-aligned ₹ figure correctly.
-- [ ] The sync protocol covers multi-device concurrency for one surveyor (Q12, answered by ADR-0005 D41).
-- [ ] Spike code is **not** merged into any product branch.
+- [x] The spike answers "WatermelonDB built-in sync or custom queue?" with reproducible evidence, and the answer is recorded as an accepted ADR. **Custom queue.** See `ADR-0010`: WatermelonDB's `resolveConflict()` (transcribed from its actual installed source, `@nozbe/watermelondb@0.27.1`) has no field-level timestamp and resolves any locally-dirty column unconditionally in favour of local, regardless of write order — a stricter violation of `CLAUDE.md` §14.8 than ordinary last-write-wins. A runnable side-by-side comparison against the custom `field_updated_at` design, on an identical concurrent-edit scenario, confirmed the custom approach correctly detects and surfaces the same collision instead of silently discarding one side.
+- [x] `sync-protocol.md` specifies field-level timestamp merging (explicitly **not** last-write-wins, per `CLAUDE.md` §14.8), the conflict-confirmation UX, media backoff, and delete semantics. Written; §7 lists what is deliberately deferred to `sprint_0005`.
+- [x] `docx-template-contract.md` is reviewed and covers all 9 sections, the Section F table, photo plates, sign-off, and disclaimers. Written; also specifies the PSR as a distinct entity sharing the same contract (§3), since FR-8.2's PSR needed the same treatment.
+- [x] `packages/ui` tokens are consumable from `apps/mobile`; a sample screen renders the primary blue, the type scale, and a monospace right-aligned ₹ figure correctly. **Verified without a simulator** (none available in this environment): `Button`, `TextField`, `CurrencyText` built against Design System §§3–4; a `KernelSampleScreen` exercises all three together; 23 React Native Testing Library assertions (real, run, passing) check resolved styles — `#1E3A8A` primary, the exact type-scale rows, and `₹4,97,500.00` right-aligned in JetBrains Mono. A true on-device screenshot remains unverified.
+- [x] The sync protocol covers multi-device concurrency for one surveyor (Q12, answered by ADR-0005 D41). `sync-protocol.md` §4.3.
+- [x] Spike code is **not** merged into any product branch. Went further: it was never committed to this repository at all — written and executed in a session scratch directory, never staged. The durable evidence (the transcribed `resolveConflict` source and the custom-algorithm output) is embedded directly in `ADR-0010` and `sync-protocol.md` instead, so it is reviewable without needing the throwaway code to exist anywhere.
+
+**Not done:** task 6 (screen designs for Dashboard, `02`, `03`) — this session has no design-tool (Figma) access. Flagged rather than skipped silently; needs the project's human designer.
 
 ---
 
@@ -54,10 +56,10 @@ No production feature code ships from the spike. The output is a **decision**.
 
 | Item | Detail |
 | :-- | :-- |
-| **R1** | WatermelonDB's built-in sync is oriented toward record-level reconciliation and may not natively support field-level merge with an interactive conflict prompt. This spike exists precisely to find out before sprint_0005 commits. If the answer is "custom queue", sprint_0005 grows — surface that immediately rather than absorbing it silently. |
-| **R2** | The `.docx` contract is the only thing preventing the client (TS) and server (Go) engines from drifting. Weak contract now equals rework in sprint_0013. |
-| **R6** | 16 of 19 screens have no visual design. The design workstream must stay one sprint ahead of the build from here on. |
-| ~~**Q12**~~ | **Closed 2026-08-30 by ADR-0005 (D41): multi-device is in scope.** The merge model must therefore handle two devices of the same surveyor, not only device-vs-desk. |
+| ~~**R1**~~ | **Resolved 2026-08-30.** The answer is "custom queue" — confirmed by direct inspection of WatermelonDB's installed sync source, not by assumption. `sprint_0005`'s scope grows to exactly the size `physical-schema.md` §38 item 1 already flagged as provisional; see `ADR-0010`. |
+| **R2** | The `.docx` contract now exists (`docx-template-contract.md`), reviewed and pending owner sign-off. Still a real risk until `sprint_0013` actually builds the server engine against it — a contract is only as strong as the engine that's checked to follow it, and no engine exists yet. |
+| **R6** | 16 of 19 screens still have no visual design. **Not addressed this session** — task 6 needs a human designer (Figma access); see §3. The design workstream is now a sprint *behind* the build, not ahead of it, and this should be raised explicitly before `sprint_0003` screen work begins. |
+| ~~**Q12**~~ | **Closed 2026-08-30 by ADR-0005 (D41): multi-device is in scope.** The merge model handles two devices of the same surveyor identically to device-vs-desk — see `sync-protocol.md` §4.3. |
 
 ---
 
@@ -65,6 +67,6 @@ No production feature code ships from the spike. The output is a **decision**.
 
 Global DoD (see [`../README.md`](../README.md) §6) plus:
 
-- Spike code is explicitly discarded or branch-quarantined; nothing from it ships as-is.
-- The sync decision is recorded as an ADR, not only as sprint notes.
-- `sync-protocol.md` and `docx-template-contract.md` are reviewed and approved before the sprints that consume them start.
+- [x] Spike code is explicitly discarded or branch-quarantined; nothing from it ships as-is. Went further — never entered the repository at all (§3).
+- [x] The sync decision is recorded as an ADR, not only as sprint notes. `ADR-0010`.
+- [ ] `sync-protocol.md` and `docx-template-contract.md` are reviewed and approved before the sprints that consume them start. **Written and internally reviewed for this session's own consistency; project-owner approval is still outstanding** — the same `CLAUDE.md` §16 Q12 blocker covering every `sprint_0001`/`sprint_0002` artifact.

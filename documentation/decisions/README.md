@@ -13,6 +13,7 @@ One record per significant, hard-to-reverse decision. Newest decisions get the n
 | [ADR-0007](ADR-0007-engineering-conventions.md) | Engineering conventions: testing, branching, toolchain & formatting | Proposed | 2026-08-30 |
 | [ADR-0008](ADR-0008-configuration-and-secrets.md) | Configuration, secrets & RS256 signing-key custody | Proposed | 2026-08-30 |
 | [ADR-0009](ADR-0009-mvp-release-scope.md) | MVP release scope: AI-4 timing & dual-`.docx` engine scope | Accepted | 2026-08-30 |
+| [ADR-0010](ADR-0010-sync-protocol-choice.md) | Sync protocol: custom field-level queue, not WatermelonDB's built-in sync | Accepted | 2026-08-30 |
 
 See also [`vendor-tracker.md`](vendor-tracker.md) — account and credential status for every vendor ADR-0002/0006 selected (all currently `NOT STARTED`).
 
