@@ -10,6 +10,11 @@ One record per significant, hard-to-reverse decision. Newest decisions get the n
 | [ADR-0004](ADR-0004-api-contract-conventions-and-schema.md) | API contract conventions & database schema design rules | Accepted | 2026-08-30 |
 | [ADR-0005](ADR-0005-identity-model-store-client-and-rbac.md) | Identity model: store/client naming, DB-driven RBAC, invite-only join & auth telemetry | Accepted | 2026-08-30 |
 | [ADR-0006](ADR-0006-geoip-provider.md) | Geo-IP enrichment provider | Accepted | 2026-08-30 |
+| [ADR-0007](ADR-0007-engineering-conventions.md) | Engineering conventions: testing, branching, toolchain & formatting | Proposed | 2026-08-30 |
+| [ADR-0008](ADR-0008-configuration-and-secrets.md) | Configuration, secrets & RS256 signing-key custody | Proposed | 2026-08-30 |
+| [ADR-0009](ADR-0009-mvp-release-scope.md) | MVP release scope: AI-4 timing & dual-`.docx` engine scope | Accepted | 2026-08-30 |
+
+See also [`vendor-tracker.md`](vendor-tracker.md) — account and credential status for every vendor ADR-0002/0006 selected (all currently `NOT STARTED`).
 
 ## Amendment chain
 

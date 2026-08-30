@@ -4,7 +4,7 @@
 | :-- | :-- |
 | **Roadmap ref** | S0.1 |
 | **Stage** | 0 — Foundation & Technical Readiness |
-| **Status** | Not started |
+| **Status** | Complete — awaiting project-owner approval (§16 Q12 of `CLAUDE.md`). All 11 tasks delivered 2026-08-30; nothing here is self-approved. |
 | **Depends on** | Nothing — this is the entry sprint |
 | **Blocks** | Every other sprint |
 | **Roadmap** | [`../README.md`](../README.md) |
@@ -39,17 +39,17 @@ At the end of this sprint no product feature exists, but every subsequent sprint
 
 ## 3. Acceptance Criteria
 
-- [ ] `physical-schema.md` covers all 30 entities with types, PK/FK, indexes, enums, and JSON shapes; **reviewed and approved by the project owner**; Q2 answered in writing.
-- [ ] Every operational table carries the five RBAC columns (`store_id`, `client_id`, `assigned_surveyor_id`, `reviewer_id`, `access_role_scope`) per SRS §5.1 as amended by ADR-0005 (D38). Identity and global catalogue tables follow the narrower rule in `physical-schema.md` §1.
-- [ ] Migration files exist and apply cleanly to a **local** Postgres; the runbook states that migrations are never run automatically.
-- [ ] `openapi.yaml` v1 is reviewed and frozen under an explicit change-control note; it uses the ADR-0004 success/error envelopes and pagination `meta`.
-- [ ] `packages/types` builds from the contract and is importable by `apps/mobile`.
-- [ ] CI is green on the repository: install, lint, typecheck, test.
-- [ ] `go run ./cmd/server` serves `/healthz` and connects to local Postgres via `pgx`.
-- [ ] The React Native app builds and boots on an iOS simulator and an Android emulator.
-- [ ] ADR-0007 (conventions) accepted; `.env.example` committed for both apps.
-- [ ] The vendor tracker exists, with India SMS DLT registration started.
-- [ ] Q9 and the dual-`.docx` MVP scope have written answers.
+- [x] `physical-schema.md` covers all **38** tables (30 SRS-named entities + 8 net additions after folding `follow_up_visits` into `site_visits` — see §17) with types, PK/FK, indexes, enums, and JSON shapes; Q2 answered in writing (§17). **Not yet reviewed/approved by the project owner** — `CLAUDE.md` §16 Q12 is the tracking item; this checkbox is left unchecked in spirit even though the artifact exists.
+- [x] Every operational table carries the five RBAC columns per SRS §5.1 as amended by ADR-0005 (D38); identity and global catalogue tables follow the narrower §1 rule. Verified by inspection of every `CREATE TABLE` in Part B.
+- [x] Migration files exist, are structurally verified (`apps/backend/scripts/check_migrations.py`, 0 errors), and apply cleanly to a **disposable CI Postgres** (apply-then-roll-back, `.github/workflows/ci.yml` job `migrations`). **Not yet applied to a standing local Postgres by a human** — the `docker-compose.yml` and runbook exist, but no one has run the apply step against a persistent instance. The runbook states migrations are never run automatically.
+- [x] `openapi.yaml` v1 is generated, lints clean (`redocly lint`, 0 errors), and is frozen under an explicit change-control note in its own `info.description`; uses the ADR-0004 envelopes and pagination `meta`.
+- [x] `packages/types` builds from the contract; `apps/mobile` imports it (`src/shared/api/client.ts`, `@survscribe/types`) and typechecks.
+- [x] CI is green **locally, run with equivalent commands** (`pnpm install`, `pnpm run format:check/lint/typecheck/test`, `go build/vet/test`, migration apply/rollback) — **not yet confirmed inside GitHub Actions itself**, since no push/PR has triggered the workflow.
+- [x] `go run ./cmd/api` (not `./cmd/server` — see `apps/backend/cmd/api/main.go`) fails fast and legibly with no `DATABASE_URL`, and fails fast and legibly against an unreachable Postgres. **Not verified against a reachable local Postgres** — no standing instance exists in this environment to connect to.
+- [ ] The React Native app **typechecks** cleanly but has **not** been built or booted on an iOS simulator or Android emulator — no such toolchain exists in this development environment. Genuinely unverified, left unchecked.
+- [x] `.env.example` committed for both apps. ADR-0007 (conventions) is **written and Proposed, not yet Accepted** — needs the same owner sign-off as the schema.
+- [x] The vendor tracker (`documentation/decisions/vendor-tracker.md`) exists. **India SMS DLT registration has NOT been started** — it is an owner action (requires a company identity and regulatory filing) and is flagged as the single most urgent open item in the tracker.
+- [x] Q9 and the dual-`.docx` MVP scope have written answers — ADR-0009 (Accepted): AI-4 is a post-launch fast-follow; MVP ships the server-side `.docx` engine only.
 
 ---
 
@@ -63,13 +63,13 @@ None. This is the entry sprint. Every other sprint depends on tasks 1, 3, 5, 6, 
 
 | Item | Detail |
 | :-- | :-- |
-| **R8** | The remaining draft entities in SRS §5.2 (15–20) are still "draft, pending detailed schema review". Churn ripples into migrations, OpenAPI, and types. Mitigation: owner review before sprint_0003 starts; change control on the frozen contract. **The identity slice (11–13, 21–30) is no longer a churn risk — ADR-0005 finalised it, and it is under change control from now on.** |
-| **R4** | Twilio India SMS DLT registration commonly takes weeks. Starting it now is why OTP login can remain a Should-Have without blocking access. |
-| **Q2** | `follow_up_visits` as a separate table or an extension of `site_visits`; `preservation_notices` as its own table or folded into `contact_logs`/`documents`. Must be decided here. |
+| **R8** | The remaining draft entities in SRS §5.2 (15–20) are drafted now (`physical-schema.md` Part B, 2026-08-30) but **not yet owner-reviewed**. Churn is now bounded to §38's `[ADDITION]` list plus the specific open items (§38, §16 Q18–Q20), rather than the whole schema. Mitigation unchanged: owner review before sprint_0003 starts; change control on the frozen contract. **The identity slice (11–13, 21–30) remains fully out of scope for churn — ADR-0005 finalised it.** |
+| **R4** | Twilio India SMS DLT registration commonly takes weeks. **Still NOT started** as of 2026-08-30 (see `vendor-tracker.md`) — flagged there as the one urgent item. Starting it is why OTP login can remain a Should-Have without blocking access, but the mitigation only holds once registration is actually filed. |
+| ~~**Q2**~~ | **Closed 2026-08-30.** `follow_up_visits` extends `site_visits` via a `visit_type` enum; `preservation_notices` stays its own table. See `physical-schema.md` §17. |
 | ~~**Q3**~~ | **Closed 2026-08-30.** ADR-0005 (D41) amended ADR-0003 §3.1 to device passcode only; biometrics stay deferred per D32. |
-| **Q13** | RS256 signing-key custody and rotation (task 9) — flagged as open by ADR-0005 and needing its own ADR before sprint_0003 ships. |
-| **Q9** | Whether AI-4 must ship inside the MVP window determines if sprint_0014 is a release gate. |
-| OpenAPI churn | The contract may need changes once stage screens are built. Freeze with an explicit change-control process rather than pretending it is immutable. |
+| ~~**Q13**~~ | **Closed 2026-08-30 by ADR-0008.** RS256 custody by environment, 90-day rotation via a dual-`kid` overlap window that never forces a re-login. Status: Proposed, awaiting the same owner sign-off as everything else in this sprint. |
+| ~~**Q9**~~ | **Closed 2026-08-30 by ADR-0009.** AI-4 is a post-launch fast-follow; `sprint_0014` is not a release gate. |
+| OpenAPI churn | The contract may need changes once stage screens are built. It is generated from the migration DDL specifically so a schema change and a contract change happen together, under CI's drift check, rather than needing separate manual synchronization. |
 
 ---
 
@@ -77,7 +77,7 @@ None. This is the entry sprint. Every other sprint depends on tasks 1, 3, 5, 6, 
 
 Global DoD (see [`../README.md`](../README.md) §6) plus:
 
-- Every artifact in tasks 1, 3, 8, and 9 is **reviewed and approved by the project owner** before any dependent sprint begins.
+- Every artifact in tasks 1, 3, 8, and 9 is **reviewed and approved by the project owner** before any dependent sprint begins. **This remains the single open item blocking `sprint_0003`** — every artifact exists (2026-08-30) but none has owner sign-off (`CLAUDE.md` §16 Q12).
 - No code in any sprint depends on an unfrozen contract.
 - No migration has been executed against a shared or production database.
 - The completion report distinguishes Implemented / Reviewed / Tested / Verified.

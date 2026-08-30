@@ -367,25 +367,25 @@ The MVP is releasable when **all** of the following are true:
 | R5 | **Cloud LLM data residency / privacy** for Indian insurance claim data (AI-4, Anthropic). | Compliance block on enabling AI-4. | Privacy review before sprint_0014 ships; keep AI-4 sandbox-only until cleared; strict prompt boundaries. |
 | R6 | **16 of 19 screens have no visual design.** | Build-to-spec is possible, but rework risk. | Designer runs one sprint ahead on the critical path; specs are detailed enough for functional builds. |
 | R7 | **On-device image processing** (watermark + compress, 50+ photos) on low-end Android. | Field performance and storage pressure. | Benchmark in sprint_0008; native module for image operations; storage-pressure UX. |
-| R8 | **Schema for the 10 draft entities** is not domain-reviewed; churn ripples into migrations, OpenAPI, and types. | Foundation rework. | Freeze with change control in sprint_0001; owner review before sprint_0003. |
+| R8 | **Schema for the remaining entities is drafted (2026-08-30, `physical-schema.md` Part B) but not domain-reviewed**; churn is now bounded to the 9 `[ADDITION]` tables and specific open items (§38) rather than the whole schema. | Foundation rework, narrowed in scope. | Frozen with change control in sprint_0001; owner review before sprint_0003 (still outstanding). |
 
 ### Open questions requiring decisions (could not be confirmed from the existing project)
 
 | # | Question | Needed by | Source |
 | :-- | :-- | :-- | :-- |
 | Q1 | **Rounding policy** for the loss engine — round per line item, or only at section/grand totals? Section F must reconcile to the rupee. | sprint_0005 / sprint_0011 | SRS FR-11.2; `12_*.md` §4 (not specified) |
-| Q2 | **`follow_up_visits` vs `site_visits`** — separate table or extension? Is `preservation_notices` its own table or folded into `contact_logs`/`documents`? | sprint_0001 | SRS §5.2 entities 17, 20 (marked unresolved) |
+| ~~Q2~~ | ~~`follow_up_visits` vs `site_visits`~~ — **CLOSED 2026-08-30.** `follow_up_visits` extends `site_visits` via a `visit_type` enum; `preservation_notices` stays its own table. | — | `physical-schema.md` §17 |
 | ~~Q3~~ | ~~ADR-0003 biometric contradiction~~ — **CLOSED 2026-08-30.** ADR-0005 (D41) amended ADR-0003 §3.1 to **device passcode only**; biometrics stay deferred per D32. | — | ADR-0005 |
 | Q4 | **Insurable-interest enum** — 4-state (D34 / screen `08`) vs 3-state (AC 7.1.2). Confirm 4-state. | sprint_0009 | conflicting documents |
 | Q5 | **Stage 15 gate 6 (Contradiction Scanner)** — the exact deterministic rule list, or AI-assisted? Determines whether it is MVP-deterministic or depends on AI-4. | sprint_0013 | FR-15.1 (rules not enumerated) |
 | Q6 | **Depreciation / IRDAI / engineering scale data source** — no authoritative table provided. Blocks AI-5 suggestions (not MVP math). | Post-MVP | `CLAUDE.md` §4 item 3, §16 Q6 |
 | Q7 | **Session-key loss recovery** — if the Keychain/Keystore entry is wiped, force online re-auth and full re-sync? Any local-data-loss risk to warn about? | sprint_0004 | not documented |
 | ~~Q8~~ | ~~firm-admin model~~ — **CLOSED 2026-08-30.** ADR-0005 (D40): registration always creates a **new store**; joining an existing store is **invite-only**; stores are multi-user at schema level from day one. Full DB-driven RBAC per D39 also closes the `REVIEWER`/`ADMIN` capability question. | — | ADR-0005 |
-| Q9 | **Is AI-4 required inside the MVP release window**, or is a post-launch fast-follow acceptable? Determines whether sprint_0014 is a release gate. | sprint_0001 | ADR / stakeholder |
+| ~~Q9~~ | ~~Is AI-4 required inside the MVP release window~~ — **CLOSED 2026-08-30 by ADR-0009.** Post-launch fast-follow; sprint_0014 is not a release gate. | — | ADR-0009 |
 | Q10 | **Preliminary loss reserve (PSR) and VAR (Stage 11)** — any validation bounds, or free surveyor entry? | sprint_0009 / sprint_0011 | specs say surveyor-entered; no bounds given |
 | Q11 | **Media storage backend** in production (S3 / GCS / self-hosted) and the retention policy for large photo sets. | sprint_0017 | not documented |
 | ~~Q12~~ | ~~Multi-device per surveyor~~ — **CLOSED 2026-08-30.** ADR-0005 (D41): **in scope.** One `ACTIVE` session per `(user_id, device_id)`; the merge model must handle two devices of the same surveyor. | — | ADR-0005 |
-| Q13 | **RS256 signing-key custody and rotation** — where the private key lives, how it rotates, how it is injected per environment. | sprint_0001 / sprint_0003 | ADR-0005 open item 3 |
+| ~~Q13~~ | ~~RS256 signing-key custody and rotation~~ — **CLOSED 2026-08-30 by ADR-0008.** Custody by environment, 90-day rotation via a dual-`kid` overlap window. Proposed, awaiting owner sign-off. | — | ADR-0008 |
 | Q14 | **`users.username` capture** — the login screen accepts a username but no signup step captures one. NULL at signup and set from Profile, or add an optional Step 2 input? | sprint_0003 | ADR-0005 open item 1 |
 | Q15 | **`auth_events` retention period** — no retention policy exists; the table grows unbounded without one. | sprint_0017 | ADR-0005 open item 4 |
 
@@ -393,6 +393,6 @@ The MVP is releasable when **all** of the following are true:
 
 ## 12. Recommended Next Development Action
 
-**Obtain owner + domain-expert sign-off on `documentation/architecture/physical-schema.md`.** The identity slice (entities 11–13 and 21–30) was finalized on 2026-08-30 under ADR-0005 and awaits owner approval. The remaining work is the DDL for the 10 SRS core claim-workflow entities plus 15–20, applying ADR-0004's rules and resolving Q2.
+**Obtain owner sign-off on the `sprint_0001` deliverables.** As of 2026-08-30, `sprint_0001` is functionally complete: `physical-schema.md` covers all 38 tables (identity slice finalized under ADR-0005; the workflow slice drafted in Part B, §16–§39, resolving Q2); `api-contract/openapi.yaml` is generated and lints clean; the first 12 migrations are structurally verified and CI-applies cleanly; the monorepo, Go backend, and React Native skeleton all build/vet/typecheck/test clean; ADR-0007, ADR-0008 and ADR-0009 are written (the first two Proposed, the third Accepted); the vendor tracker exists.
 
-It is the single artifact that currently blocks the most downstream work: the first migrations, the OpenAPI v1 contract, the generated `packages/types`, and any parallel backend or mobile development all depend on it. It requires no code and no environment changes, and it is the highest-leverage action available right now. It is the first task of [`sprint_0001`](sprint_0001_contract_and_toolchain_freeze/); the remainder of that sprint follows immediately behind it.
+**Nothing in that list is self-approved.** The single artifact-independent action that unblocks the most downstream work now is **review, not drafting**: the physical schema, the API contract, and the two Proposed ADRs all need the project owner's explicit sign-off before `sprint_0003` can begin (`sprint_0001` §6 DoD, `CLAUDE.md` §16 Q12). Alongside review, two genuinely owner-only actions remain outstanding: opening the vendor accounts in `vendor-tracker.md` (starting with India SMS DLT registration, given its multi-week lead time) and applying the migrations to a real, persistent database for the first time.
