@@ -58,7 +58,7 @@ else
   echo "Warning: 'go' is not installed in PATH."
 fi
 
-# 3. Start Mobile Expo Dev Server
-echo -e "\n[3/3] Starting Mobile Expo Dev Server..."
+# 3. Start Mobile Expo Dev Server on port 8082
+echo -e "\n[3/3] Starting Mobile Expo Dev Server on port 8082..."
 cd "$MOBILE_DIR"
-npx expo start "$@"
+npx expo start --port 8082 "$@"

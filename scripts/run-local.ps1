@@ -1,5 +1,6 @@
 # SurvScribe Local Development Launcher (Backend API + Expo Dev Server)
 param (
+    [int]$Port = 8082,
     [switch]$ClearCache = $false,
     [switch]$NoBackend = $false
 )
@@ -84,14 +85,14 @@ if (-not $NoBackend) {
     }
 }
 
-# 3. Start Expo Dev Server with interactive terminal & QR Code
-Write-Host "`n[3/3] Starting Mobile Expo Dev Server..." -ForegroundColor Yellow
+# 3. Start Expo Dev Server on Port 8082 (avoiding Apache on 8081)
+Write-Host "`n[3/3] Starting Mobile Expo Dev Server on port $Port..." -ForegroundColor Yellow
 Push-Location $MobileDir
 try {
     if ($ClearCache) {
-        npx expo start -c
+        npx expo start --port $Port -c
     } else {
-        npx expo start
+        npx expo start --port $Port
     }
 } finally {
     Pop-Location

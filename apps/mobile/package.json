@@ -6,7 +6,7 @@
   "license": "UNLICENSED",
   "main": "index.js",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --port 8082",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "prebuild": "expo prebuild",
