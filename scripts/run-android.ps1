@@ -70,8 +70,17 @@ if ($adbCmd) {
                 $avdName = $avds[0]
                 Write-Host "Launching Android Emulator ($avdName)..." -ForegroundColor Cyan
                 Start-Process -FilePath $sdkPath -ArgumentList "-avd", $avdName
-                Write-Host "Waiting 8 seconds for emulator initialization..." -ForegroundColor Gray
-                Start-Sleep -Seconds 8
+                Write-Host "Waiting for emulator to complete boot..." -ForegroundColor Gray
+                $bootTimeout = 30
+                while ($bootTimeout -gt 0) {
+                    $onlineDev = & adb devices | Select-String -Pattern "\tdevice$"
+                    if ($onlineDev) {
+                        Write-Host "Android emulator is online and ready." -ForegroundColor Green
+                        break
+                    }
+                    Start-Sleep -Seconds 3
+                    $bootTimeout -= 3
+                }
             } else {
                 Write-Host "No Android Virtual Devices (AVDs) found. Create one in Android Studio." -ForegroundColor Yellow
             }
