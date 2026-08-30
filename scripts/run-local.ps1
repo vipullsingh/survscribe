@@ -1,4 +1,9 @@
 # SurvScribe Local Development Launcher (Backend API + Expo Dev Server)
+param (
+    [switch]$ClearCache = $false,
+    [switch]$NoBackend = $false
+)
+
 $ErrorActionPreference = "Continue"
 
 $ProjectRoot = Resolve-Path "$PSScriptRoot/.."
@@ -49,18 +54,20 @@ if (-not $dbUrl) {
     Write-Host "Note: PostgreSQL is not responding on 5432/5433. Backend will run in offline standalone mode." -ForegroundColor Yellow
 }
 
-# 2. Start Go Backend API Server
-Write-Host "`n[2/3] Starting Go Backend API Server (http://localhost:8080)..." -ForegroundColor Yellow
-$backendRunning = $false
-try {
-    $health = curl.exe -s --max-time 1 http://localhost:8080/healthz 2>$null
-    if ($health -match '"success":true') {
-        $backendRunning = $true
-        Write-Host "Backend API is already running on http://localhost:8080." -ForegroundColor Green
-    }
-} catch {}
+# 2. Restart Go Backend API Server (Clean restart on every re-run)
+if (-not $NoBackend) {
+    Write-Host "`n[2/3] Restarting Go Backend API Server (http://localhost:8080)..." -ForegroundColor Yellow
 
-if (-not $backendRunning) {
+    # Stop any existing backend process listening on port 8080
+    $existingPids = Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
+    if ($existingPids) {
+        foreach ($pidToKill in $existingPids) {
+            Write-Host "Stopping previous backend process (PID: $pidToKill)..." -ForegroundColor Gray
+            Stop-Process -Id $pidToKill -Force -ErrorAction SilentlyContinue
+        }
+        Start-Sleep -Milliseconds 600
+    }
+
     $goCmd = Get-Command "go" -ErrorAction SilentlyContinue
     if ($goCmd) {
         $env:DATABASE_URL = $dbUrl
@@ -70,18 +77,22 @@ if (-not $backendRunning) {
         $env:HTTP_ADDR = ":8080"
         
         $backendProcess = Start-Process -FilePath "go" -ArgumentList "run", "./cmd/api" -WorkingDirectory $BackendDir -PassThru
-        Write-Host "Backend process started (PID: $($backendProcess.Id)) on http://localhost:8080" -ForegroundColor Green
-        Start-Sleep -Seconds 2
+        Write-Host "Backend process running fresh (PID: $($backendProcess.Id)) on http://localhost:8080" -ForegroundColor Green
+        Start-Sleep -Seconds 1
     } else {
         Write-Host "Warning: 'go' is not installed or not in PATH." -ForegroundColor Red
     }
 }
 
-# 3. Start Expo Dev Server with QR Code
+# 3. Start Expo Dev Server with interactive terminal & QR Code
 Write-Host "`n[3/3] Starting Mobile Expo Dev Server..." -ForegroundColor Yellow
 Push-Location $MobileDir
 try {
-    npx expo start
+    if ($ClearCache) {
+        npx expo start -c
+    } else {
+        npx expo start
+    }
 } finally {
     Pop-Location
 }
