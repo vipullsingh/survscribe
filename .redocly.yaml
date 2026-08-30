@@ -1,0 +1,24 @@
+# Redocly lint configuration for the SurvScribe API contract.
+#
+# The spec is generated (apps/backend/scripts/gen_openapi.py), so lint findings are
+# fixed in the generator, never by editing openapi.yaml. Two recommended rules are
+# turned off below; each has a reason, and neither is a blanket relaxation.
+
+extends:
+  - recommended
+
+apis:
+  survscribe@v1:
+    root: documentation/architecture/api-contract/openapi.yaml
+
+rules:
+  # /healthz has no client-error path. It is unauthenticated, takes no input, and
+  # answers "is the process up and can it reach Postgres" -- there is no request a
+  # client can make that produces a 4xx. Every other operation declares 401/403/404
+  # and the relevant 409/422, so this rule earns nothing here but a false positive.
+  operation-4xx-response: off
+
+  # The project is proprietary and has no published licence URL to point at.
+  # info.license.name is set; info-license-strict additionally wants a url or an
+  # SPDX identifier, neither of which exists.
+  info-license-strict: off

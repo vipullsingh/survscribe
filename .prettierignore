@@ -1,0 +1,19 @@
+pnpm-lock.yaml
+**/node_modules/**
+**/dist/**
+**/build/**
+**/coverage/**
+**/ios/**
+**/android/**
+
+# Generated artifacts. Findings are fixed in the generator, not the output.
+packages/types/src/schema.d.ts
+packages/api-contracts/openapi.yaml
+documentation/architecture/api-contract/openapi.yaml
+
+# Authored prose, not code. The SRS, user stories, screen specs, ADRs and sprint plans
+# are written for humans and reviewed as documents; running a code formatter over them
+# would reflow tables and wrap sentences for no benefit, and would bury a real
+# specification change in hundreds of lines of whitespace churn.
+**/*.md
+**/*.MD

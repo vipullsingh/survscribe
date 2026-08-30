@@ -3,14 +3,26 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**", ".next/**"]
+      "outputs": ["dist/**", "build/**"]
     },
     "lint": {
       "outputs": []
     },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "outputs": ["coverage/**"]
+    },
+    "generate": {
+      "cache": false,
+      "outputs": ["src/schema.d.ts"]
+    },
+    "sync": {
+      "cache": false,
+      "outputs": ["openapi.yaml"]
     },
     "dev": {
       "cache": false,

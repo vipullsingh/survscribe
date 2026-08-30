@@ -2,19 +2,29 @@
   "name": "survscribe-monorepo",
   "private": true,
   "version": "0.1.0",
-  "description": "SurvScribe - Insurance Surveyor & Loss Assessor Field Application Monorepo",
+  "description": "SurvScribe - AI-assisted platform for licensed General Insurance Claim Surveyors and Loss Assessors. Monorepo root.",
+  "license": "UNLICENSED",
   "packageManager": "pnpm@9.0.0",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "contract:generate": "python apps/backend/scripts/gen_openapi.py && pnpm --filter @survscribe/types generate && pnpm --filter @survscribe/api-contracts sync",
+    "contract:lint": "redocly lint",
+    "migrations:check": "python apps/backend/scripts/check_migrations.py",
     "clean": "turbo run clean && rimraf node_modules"
   },
   "devDependencies": {
+    "@redocly/cli": "^1.16.0",
+    "@survscribe/config": "workspace:*",
+    "prettier": "^3.2.0",
+    "rimraf": "^5.0.7",
     "turbo": "^1.13.0",
-    "typescript": "^5.4.0",
-    "prettier": "^3.2.0"
+    "typescript": "^5.4.0"
   },
   "engines": {
     "node": ">=18.0.0",

@@ -1,7 +1,7 @@
 # Project Overview
 
 > **Document type:** Persistent, evidence-based project context for **SurvScribe** (git repo directory still `SurveyAssist` — physical rename pending, see §16 Q1).
-> **Created:** 2026-08-30 · **Last updated:** 2026-08-30 (Q&A resolutions folded in **and propagated into `documentation/`**; see §19).
+> **Created:** 2026-08-30 · **Last updated:** 2026-08-30 (Q&A resolutions folded in **and propagated into `documentation/`**; see §19; **`sprint_0001` bootstrap completed same day** — see §2.1a and §18 D45–D48).
 > **Maintained by:** Future developers and AI agents working in this repository.
 >
 > Every statement below is tagged with one of:
@@ -11,7 +11,7 @@
 > - **[Planned / Referenced]** — named as intended/future work but not implemented.
 > - **[Unconfirmed — clarification required]** — cannot be verified; still open.
 >
-> **The single most important fact:** As of 2026-08-30 this repository contains **documentation and design assets only**. There is **no application source code, no build configuration, no dependency manifests, no database, and no tests**. See §2.
+> **The single most important fact:** As of 2026-08-30 (post-`sprint_0001`) this repository contains a **working, verified toolchain skeleton**: a Go backend that builds, vets, and passes its tests; a five-package pnpm/Turborepo workspace that lints, typechecks and tests clean; a generated-and-linted OpenAPI v1 contract; and 12 SQL migration files (never executed against a live database — see §2.1a). **No feature is implemented and no database has been created.** See §2.
 
 ---
 
@@ -61,39 +61,62 @@
 
 (The former empty `docs/` scaffold was **deleted** on 2026-08-30; `documentation/decisions/` and `documentation/architecture/` were created with real content.)
 
-**[Implemented] Partial monorepo skeleton** (verified 2026-08-30 — this corrects an earlier claim in this file that none of it existed):
-- Root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `.gitignore`
-- `apps/backend/go.mod` — `module github.com/vipullsingh/survscribe/backend`, `go 1.22`
+### 2.1a `sprint_0001` bootstrap — [Implemented, verified 2026-08-30]
 
-**Still not present anywhere in the repo:** `go.sum`, any lockfile, per-package `package.json` for `packages/*`, `tsconfig`, `.env` / `.env.example`, CI config, Dockerfiles, database migrations, seed scripts, tests, linter/formatter configs, or any `.go` / `.ts` / `.tsx` / `.js` source file. `sprint_0001` task 5 completes the toolchain.
+Every task in `sprint_0001` is complete. This supersedes the "empty scaffold" and "partial monorepo skeleton" claims above wherever they conflict — those describe the pre-bootstrap state.
+
+**Physical schema — `documentation/architecture/physical-schema.md`, v2.0.0.** Extended with **Part B** (§16–§39): DDL for all 20 remaining SRS §5.2 entities plus 9 additions the specs required but did not name (`policy_sections`, `chronology_events`, `document_line_items`, `assessment_heads`, `discrepancy_flags`, `preliminary_survey_reports`, `pre_submission_audits`, `report_dispatches`, `document_damage_links`) — flagged `[ADDITION]` throughout and listed in §38 for owner review. **38 tables total** (Part A's 13 + Part B's 25), **50 enum types**. **Q2 resolved** (§17): follow-up visits extend `site_visits` via a `visit_type` enum rather than a separate `follow_up_visits` table; `preservation_notices` stays its own table, not folded into `contact_logs`. Still Draft pending project-owner review (§16 Q12 remains open — nothing here is self-approved).
+
+**Migrations — `apps/backend/migrations/`.** 12 migration pairs (`.up.sql`/`.down.sql`, `golang-migrate` naming), extracted verbatim from the schema document by `apps/backend/scripts/gen_openapi.py`'s sibling `check_migrations.py`. 246 statements. **Verified** by a static structural checker (`apps/backend/scripts/check_migrations.py` — 0 errors: no forward references, no unbalanced statements, every up has a down, every table/type is dropped) and by CI's apply-then-roll-back job against a disposable Postgres. **Not yet verified against a real, persistent database** — `sprint_0001` §5 R8 and §16 Q12 (owner approval) are still open, and per the runbook (`migrations/README.md`) they are never executed automatically anywhere. A local `docker-compose` Postgres (`apps/backend/deployments/docker-compose.yml`, port 5433) is provided for that manual step.
+
+**API contract — `documentation/architecture/api-contract/openapi.yaml`, v1.0.0.** **Generated**, not hand-written, from the migration DDL (`apps/backend/scripts/gen_openapi.py`), so contract and schema cannot silently drift — CI regenerates and diffs on every run. 149 component schemas, 50 enums, 73 paths, 135 operations. **Verified**: passes `redocly lint` with 0 errors (1 accepted warning — see `.redocly.yaml`). Frozen under the change-control note in the spec's own `info.description`. Money is a decimal string, never a JSON number (`NUMERIC(15,2)` cannot round-trip through IEEE-754). `store_id`/`client_id` are never accepted in a request body (ADR-0004 §4) — write schemas set `additionalProperties: false`.
+
+**Shared types — `packages/types`.** `openapi-typescript` output (`src/schema.d.ts`, generated, never hand-edited) plus a hand-written `src/index.ts` giving ergonomic names (`import type { Claim } from "@survscribe/types"`). **Verified**: typechecks; a drift-check script (`check-generated.mjs`, wired as its `test`) fails the build if `schema.d.ts` no longer matches the OpenAPI source.
+
+**Monorepo completion.** `packages/{types,ui,config,api-contracts}` each have a real `package.json` and (where applicable) `tsconfig.json`; `pnpm-lock.yaml` is committed; root `tsconfig.json`, ESLint 9 flat config, Prettier config (all in `packages/config`, consumed via workspace `exports`); Turbo `lint`/`typecheck`/`test`/`build` tasks; `.github/workflows/ci.yml` (4 jobs: contract integrity, migrations apply/rollback, Go build/vet/test, workspace lint/typecheck/test). **Verified**: `pnpm install && pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run test` all exit 0 across all 5 JS/TS packages, run locally in this session (not yet run inside the GitHub Actions environment itself — CI has not executed on this repository yet).
+
+**Backend skeleton — `apps/backend`.** `cmd/api/main.go` (config → logger → DB connect-with-ping → server, clean SIGTERM/SIGINT shutdown; **no automatic migrations**); `internal/config` (fail-fast env loading, all problems reported at once); `internal/server` (Gin router, envelope middleware chain `RequestID → RealIP → Recovery → AccessLog`; `Authenticate → StoreScope → RequirePermission` are sprint_0003 seams, not yet wired); `internal/repository` (pgx pool with Ping-at-connect); `internal/handler` (`/healthz`); `pkg/response` (ADR-0004 envelope + typed error codes); `pkg/logger` (structured `log/slog`, JSON or text). **Verified**: `go build ./...`, `go vet ./...`, and `go test ./...` (real `httptest` coverage of the envelope, 404/405 handling, and the degraded-without-database health path) all pass. Manually verified: fails fast and legibly with no `DATABASE_URL`; fails fast and legibly against an unreachable Postgres. Go pinned to **1.25** (not 1.22 — `pgx/v5` v5.10.0 requires it; ADR-0007 §1 records and supersedes the earlier `go.mod` line).
+
+**Mobile skeleton — `apps/mobile`.** React Native 0.75 + TypeScript scaffold: `src/app/App.tsx` (navigation shell, the canonical 5-tab bottom nav, one named `PlaceholderScreen` per tab stating which sprint owns it — no lorem ipsum, per Design System §7.3); `src/core/env.ts` (build-time config; **no provider secret ever enters this file or the bundle** — see ADR-0008 §3); `src/shared/api/client.ts` (envelope-aware fetch wrapper, typed `ApiRequestError` with an `isOffline` discriminator for the future sync engine; auth-header attachment and refresh-on-401 are marked `sprint_0003` seams). **Verified**: typechecks clean with `exactOptionalPropertyTypes` on. **Not verified**: has not been run on an actual iOS simulator or Android emulator — no such device/toolchain is available in this environment. That check remains outstanding against `sprint_0001`'s acceptance criterion "runs on iOS simulator and Android emulator."
+
+**ADR-0007 (conventions).** Go 1.25; backend testing = `testing` + `testify`, `-race` in CI, no unit test may require Postgres; mobile testing = Jest + React Native Testing Library, Detox deferred; the deterministic loss engine held to a higher bar (shared Go/TS fixture, the §30.2 worked example as a committed regression case) once `sprint_0011` builds it; Prettier owns formatting (100-col), ESLint owns correctness (four added rules, each justified); short-lived branches off `main`, squash merge, Conventional Commits (continuing existing practice); generated artifacts are committed and CI proves they're current. **Status: Proposed** — needs project-owner sign-off like every other ADR in this repo.
+
+**ADR-0008 (config & secrets) — closes Q13.** Environment-only configuration, validated once at boot, every problem reported together; layered `.env` for dev only, gitignored; **no provider secret ever reaches the mobile bundle** (the app calls providers only through the backend); RS256 key custody: dev = local throwaway pair, CI = ephemeral, staging/production = platform secret manager (AWS Secrets Manager, provisional — no environment is provisioned yet); **90-day rotation via an overlap window that never forces a re-login** (refresh tokens are opaque and unaffected by a signing-key change — this is the constraint that makes rotation safe for an offline surveyor); database: application role gets `INSERT`/`SELECT` only on `audit_log`/`auth_events`, never owner privileges; migrations run under a separate human-operated role. **Status: Proposed.**
+
+**Vendor tracker — `documentation/decisions/vendor-tracker.md`.** Every ADR-0002/0006 vendor listed with status (**all 14 rows `NOT STARTED` or `NOT DECIDED`** — account creation is an owner action, not something performed here), what each blocks, and the rule that a missing key degrades a feature rather than breaking the app (offline-first was never allowed to depend on a network call on a critical path). **India SMS DLT registration (row 3) flagged as the one urgent item** — weeks of lead time, and starting it now is the only way Phone OTP stays a Should-Have rather than a blocker.
+
+**ADR-0009 (MVP release scope) — closes Q9 and the dual-`.docx` scope question.** Both were explicitly put to the project owner rather than resolved silently (`CLAUDE.md`'s own rule). **AI-4 is a post-launch fast-follow, not an MVP release gate** — `sprint_0014` stays where the roadmap already placed it, and Stage 14 must work completely with sections C/D/H/I entered by the surveyor with no AI assist. **MVP builds the server-side Go `.docx` engine only**; the offline client-side TypeScript engine (ADR-0001 D22's other half) is deferred post-MVP — every stage of *data capture* stays fully offline per `CLAUDE.md` §14 constraint 7, only final-document *rendering* needs connectivity in MVP. **Status: Accepted.**
+
+**What `sprint_0001` deliberately did not do:** apply any migration to a persistent database; provision any vendor account or secret; run the mobile app on a simulator/emulator; get owner approval on the schema, contract, ADR-0007 or ADR-0008 (all four need it before `sprint_0003` starts, per `sprint_0001` R8/Q12); execute CI inside GitHub Actions itself (only run locally, equivalently, in this session).
 
 ### 2.2 Implemented and working functionality
 
-**None.** There is no runnable application, service, or test suite.
+**None as a product feature.** Toolchain and scaffolding only (§2.1a). No claim can be created, no user can register, no screen beyond five navigation placeholders exists.
 
 ### 2.3 Partially implemented functionality
 
-**None** in code. The only "partial" artifacts are design-side: only screens `00_auth_login`, `00_auth_signup`, `00_auth_terms` have visual SVG mockups; screens 01–16 have written specs but no visuals.
+**Design-side:** unchanged — only screens `00_auth_login`, `00_auth_signup`, `00_auth_terms` have visual SVG mockups; screens 01–16 have written specs but no visuals.
+
+**Code-side:** the backend and the API contract are further along than the mobile app or any feature: a real HTTP server with a real (if featureless) route exists and is tested; the mobile app has a navigation shell and an API client with no screen behind either yet.
 
 ### 2.4 Planned / referenced functionality
 
-Everything is planned. High-level scope (see §6 for detail):
+Everything product-facing is still planned. High-level scope (see §6 for detail):
 - Auth (Stage 0): password + universal identifier login, Phone OTP, Email OTP, forgot password, offline session, registration, Terms screen.
 - 15 workflow stages (Stage 1 Appointment Intake … Stage 15 Internal Review & Submission).
-- 5 AI touchpoints: Voice-to-Text (AI-1), Document/Invoice OCR (AI-2), Cross-Check/Fraud Audit (AI-3), Report Draft Generator (AI-4, primary), Loss Assessment Calculator (AI-5, deterministic).
-- Offline sync engine, RBAC-ready schema, `.docx` report engine.
+- 5 AI touchpoints: Voice-to-Text (AI-1), Document/Invoice OCR (AI-2), Cross-Check/Fraud Audit (AI-3), Report Draft Generator (AI-4, primary — **post-MVP fast-follow, ADR-0009**), Loss Assessment Calculator (AI-5, deterministic).
+- Offline sync engine, RBAC enforcement middleware, server-side `.docx` report engine (MVP scope — ADR-0009).
 
-### 2.5 Known incomplete / undecided areas (after 2026-08-30 Q&A)
+### 2.5 Known incomplete / undecided areas (after `sprint_0001`)
 
-Resolved on 2026-08-30 (see §18 decision log; still to be written into `documentation/` per §19):
-product name, mobile framework, backend framework, `.docx` engine location, monorepo tooling, desktop-web MVP scope, mobile local DB, external-provider strategy, loss-math deduction order & underinsurance base, data-model expansion, GPS accuracy thresholds, salvage mode count, primary-blue token, docs-root consolidation, biometric scope, OTP timers, claim-ref prefix, insurable-interest enum, SLA-license mandatory/optional, Stage-15 gate count.
+Resolved 2026-08-30 in the 08-30 Q&A (see §18 decision log D18–D44) **and now also**: Q2 (follow-up-visit/preservation-notice table shape — §17 of `physical-schema.md`), Q9 (AI-4 MVP timing — ADR-0009), the dual-`.docx` MVP scope (ADR-0009), Q13 (RS256 key custody — ADR-0008). §19 tracks propagation into `documentation/`.
 
 Still genuinely open — see §16:
-- No project bootstrapping yet (no toolchain files, no first migrations, no API contract).
-- Concrete external vendors (LLM, OCR, SMS, email, WhatsApp, maps) — deferred to ADRs.
-- Session/token format & lifetime specifics.
-- Depreciation scale data source.
-- API contract conventions (versioning, error envelope, pagination, auth header).
+- **Q12** — owner approval of the physical schema, API contract, ADR-0007 and ADR-0008. Nothing in `sprint_0001`'s output is self-approved; `sprint_0003` cannot start without it.
+- Part B `[ADDITION]` tables (`physical-schema.md` §38) — 9 tables the SRS didn't name but the stage screens require; each needs a specific yes.
+- Concrete external vendor accounts — selected (ADR-0002/0006), **none provisioned** (vendor tracker).
+- Depreciation scale data source (§4 item 1).
+- Migrations have never touched a real database (only CI's disposable one).
 
 ---
 
@@ -247,7 +270,7 @@ Pipeline overview of all claims across the 15 stages; stage filter pills; claim 
 ## 7. Technical Architecture
 
 ### 7.1 Status
-**[Planned / Referenced]** — nothing is implemented. The `apps/` and `packages/` folders are empty scaffolds. The stack below is now **decided** (2026-08-30) but not yet bootstrapped.
+**[Planned / Referenced]** for every product feature. **[Implemented]** for the toolchain: the Go backend, the five-package JS/TS workspace, the generated OpenAPI contract, and 12 SQL migration files all exist, build, and are verified per §2.1a. No feature is built and no migration has touched a persistent database.
 
 ### 7.2 Decided stack (2026-08-30 Q&A + `Requirement.MD` §2.2)
 
@@ -260,7 +283,7 @@ Pipeline overview of all claims across the 15 stages; stage filter pills; claim 
 | **Backend** | **Go (Golang)** + **Gin** framework, **REST/JSON** API. **gRPC dropped from MVP.** Standard `cmd/ + internal/ + pkg/` layout. `pgx` driver + connection pooling. | Q&A 2026-08-30; `Requirement.MD` §2.2 |
 | **Backend concurrency** | Goroutine-powered concurrent media sync + chunked photo upload pipeline. | `Requirement.MD` §2.2 |
 | **State machine** | Claim pipeline state machine + audit-trail engine (15 stages), in the Go backend. | `Requirement.MD` §2.2 |
-| **`.docx` engine** | **Two engines with a shared template contract.** (1) **Client-side** (TS) generation on the mobile app for **offline PSR/FSR drafts**. (2) **Authoritative server-side Go engine** for the **final compiled report**; the `< 5 s` / 50-plate benchmark (CR-NF5) applies here. Formatting parity between the two is a shared spec. | Q&A 2026-08-30 |
+| **`.docx` engine** | **Two engines with a shared template contract are the target architecture; MVP builds the server engine only (ADR-0009).** (1) **Client-side** (TS) generation on the mobile app for **offline PSR/FSR drafts** — deferred post-MVP. (2) **Authoritative server-side Go engine** for the **final compiled report**; the `< 5 s` / 50-plate benchmark (CR-NF5) applies here, and this is what MVP ships. Formatting parity is a shared spec for when the client engine is added. | Q&A 2026-08-30; **ADR-0009 (scope), 2026-08-30** |
 | **Server database** | **PostgreSQL** (via `pgx`). | `Requirement.MD` §2.2 |
 | **AI orchestration** | `AssistantService` (Go) / `IAssistantService` (TS) with **Cloud** (online) and **Local/on-device** (offline) provider modes. Local: Whisper STT, on-device SLM. Vendors via ADR. | `Requirement.MD` §4.2; Q&A 2026-08-30 |
 | **External integrations** | Provider-agnostic interfaces (`NotificationService`, `GeocodingService`, …) + config-driven adapters. Concrete vendors chosen per-integration in `documentation/decisions/` ADRs. | Q&A 2026-08-30 |
@@ -273,7 +296,7 @@ Pipeline overview of all claims across the 15 stages; stage filter pills; claim 
 UI layer (RN mobile app; web later) → offline-first client data layer (WatermelonDB/SQLCipher + media store + sync queue with field-level timestamp merge) → Go/Gin backend REST API (media sync pipeline, state machine + audit engine, server `.docx` engine, PostgreSQL via pgx) → modular AI orchestration layer (provider interface → cloud LLM / cloud OCR / local models).
 
 ### 7.4 Authentication architecture
-**[Confirmed — ADR-0003 as amended by ADR-0005]** Dual token: **RS256 JWT access token, 15 min**, claims `sub`/`store_id`/`client_id`/`sid`/`roles[]`/`perms[]`/`pv`; **opaque 64-byte refresh token, 30 days**, Argon2id-hashed in `sessions.refresh_token_hash`, rotated on every use with `refresh_token_family_id` reuse detection. Tokens live in iOS Keychain / Android Keystore. Offline access via cached token or **device passcode**; 15-minute background auto-lock; 30-day offline grace. OTP via SMS (30 s resend) and email (45 s resend); universal-identifier resolution (email/username/phone, globally unique). Biometric unlock post-MVP. Middleware chain: `RequestID → RealIP → Authenticate → StoreScope → RequirePermission`. Full specification in [`documentation/architecture/identity-and-rbac.md`](documentation/architecture/identity-and-rbac.md). **Signing-key custody / rotation remains open (§4 item 4).**
+**[Confirmed — ADR-0003 as amended by ADR-0005]** Dual token: **RS256 JWT access token, 15 min**, claims `sub`/`store_id`/`client_id`/`sid`/`roles[]`/`perms[]`/`pv`; **opaque 64-byte refresh token, 30 days**, Argon2id-hashed in `sessions.refresh_token_hash`, rotated on every use with `refresh_token_family_id` reuse detection. Tokens live in iOS Keychain / Android Keystore. Offline access via cached token or **device passcode**; 15-minute background auto-lock; 30-day offline grace. OTP via SMS (30 s resend) and email (45 s resend); universal-identifier resolution (email/username/phone, globally unique). Biometric unlock post-MVP. Middleware chain: `RequestID → RealIP → Authenticate → StoreScope → RequirePermission` — **`RequestID` and `RealIP` are implemented** (`apps/backend/internal/server/middleware.go`); `Authenticate`/`StoreScope`/`RequirePermission` are `sprint_0003` seams, not yet written. Full specification in [`documentation/architecture/identity-and-rbac.md`](documentation/architecture/identity-and-rbac.md). **Signing-key custody / rotation — [Confirmed — ADR-0008, 2026-08-30]: closes §4 item 4 / §16 Q13.** RS256, 2048-bit minimum, `kid`-identified; dev = local throwaway pair, CI = ephemeral, staging/production = platform secret manager (provisional, no environment provisioned yet); 90-day scheduled rotation via a dual-`kid` overlap window sized to one access-token lifetime plus margin, which never forces a re-login because refresh tokens are opaque and unaffected by a signing-key change.
 
 ---
 
@@ -281,19 +304,25 @@ UI layer (RN mobile app; web later) → offline-first client data layer (Waterme
 
 ```
 SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
-├── README.md                         # Project summary & feature list (design intent)
-├── CLAUDE.md                          # This file — living project context
+├── README.md  CLAUDE.md               # Project summary; this file
+├── .editorconfig  .redocly.yaml  .gitignore  .prettierignore
+├── package.json  pnpm-workspace.yaml  pnpm-lock.yaml  turbo.json  tsconfig.json
+├── eslint.config.mjs  prettier.config.mjs   # thin re-exports of packages/config
+├── .github/workflows/ci.yml           # 4 jobs: contract, migrations, backend, workspace
 │
 ├── documentation/                    # THE SINGLE DOCS ROOT
 │   ├── Requirement.MD                # SRS v1.0.0-MVP ("Approved Baseline") + §2.3 stack baseline
 │   ├── User Stories.md               # Epic 0 + Epics 1–16, acceptance criteria
 │   ├── Visual Theme & Design System.md  # Design system v2.0.0-Enterprise
-│   ├── decisions/                    # ADR log — README index + ADR-0001…0006
+│   ├── decisions/                    # ADR log — README index + ADR-0001…0009
 │   │                                 #   0001 stack/scope · 0002 vendors · 0003 auth tokens
 │   │                                 #   0004 API+schema rules · 0005 identity model · 0006 geo-IP
-│   ├── architecture/                 # physical-schema.md (identity slice FINAL, claim entities pending)
-│   │                                 #   identity-and-rbac.md (FINAL)
-│   │                                 #   api-contract/, sync-protocol.md, diagrams — not started
+│   │                                 #   0007 conventions (Proposed) · 0008 config/secrets (Proposed)
+│   │                                 #   0009 MVP scope (Accepted) · vendor-tracker.md
+│   ├── architecture/
+│   │   ├── physical-schema.md        # v2.0.0 — Part A identity (FINAL) + Part B workflow (Draft, 38 tables)
+│   │   ├── identity-and-rbac.md      # FINAL
+│   │   └── api-contract/openapi.yaml # GENERATED — v1.0.0, 149 schemas / 73 paths / 135 ops
 │   ├── sprints/                      # Master MVP roadmap + 17 individual sprint execution plans
 │   ├── assets/logo/                  # 4 brand SVGs + README (brand colors, symbolism)
 │   └── Screens/                      # 17 screen spec folders
@@ -301,21 +330,34 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 │       ├── 01_dashboard/   (01_dashboard.md — NO designs/)
 │       └── 02_… through 16_…  (<folder_name>.md only, NO designs/)
 │
-├── package.json  pnpm-workspace.yaml  turbo.json  .gitignore   # partial monorepo skeleton
+├── apps/
+│   ├── backend/                      # Go 1.25 / Gin — BUILDS, VETS, TESTS clean
+│   │   ├── go.mod  go.sum  .env.example
+│   │   ├── cmd/api/main.go           # config → logger → DB(ping) → server; no auto-migrate
+│   │   ├── internal/config/          # fail-fast env loading
+│   │   ├── internal/server/          # router + middleware (RequestID, RealIP, Recovery, AccessLog)
+│   │   │                             #   + server_test.go (httptest coverage)
+│   │   ├── internal/handler/         # /healthz (degrades to 503 if DB unreachable)
+│   │   ├── internal/repository/      # pgx pool, Connect() Pings before returning
+│   │   ├── pkg/response/             # ADR-0004 envelope + typed ErrorCode
+│   │   ├── pkg/logger/               # log/slog, JSON or text
+│   │   ├── migrations/               # 12 pairs, .up/.down.sql — NEVER auto-executed; see README.md
+│   │   ├── deployments/docker-compose.yml  # local Postgres 16, port 5433, dev-only
+│   │   └── scripts/                  # gen_openapi.py, check_migrations.py
+│   └── mobile/                       # React Native 0.75 + TS — TYPECHECKS clean
+│       ├── package.json  tsconfig.json  metro.config.js  babel.config.js  .env.example
+│       ├── src/app/                  # App.tsx (5-tab nav shell) + PlaceholderScreen.tsx
+│       ├── src/core/env.ts           # build-time config; no secret ever lands here
+│       ├── src/shared/api/client.ts  # envelope-aware fetch client, typed ApiRequestError
+│       └── src/{features,infrastructure}/  # empty — feature work starts sprint_0003+
 │
-├── apps/                             # SCAFFOLD — only apps/backend/go.mod has content
-│   ├── backend/                      # Go/Gin: go.mod, api/, cmd/{api,worker}/,
-│   │                                #   internal/{config,handler,model,pkg,repository,server,service}/,
-│   │                                #   migrations/, deployments/, pkg/{logger,response}/, scripts/
-│   └── mobile/                       # React Native: assets/, src/{app,core}/,
-│                                     #   src/features/{ai-assistant,auth,evidence,inspection,surveys}/,
-│                                     #   src/infrastructure/{media,network,storage}/,
-│                                     #   src/shared/{components,hooks,utils}/, src/types/
-│
-└── packages/                         # EMPTY SCAFFOLD (no files) — pnpm workspace pkgs
-    ├── api-contracts/  config/  types/  ui/
+└── packages/                         # pnpm workspace — all 4 have real manifests
+    ├── types/         # @survscribe/types  — GENERATED src/schema.d.ts + hand-written index.ts
+    ├── api-contracts/ # @survscribe/api-contracts — vendors openapi.yaml for tooling
+    ├── ui/            # @survscribe/ui — design-system tokens (tokens.ts), components not yet built
+    └── config/        # @survscribe/config — shared tsconfig.base.json, eslint.config.mjs, prettier.config.mjs
 ```
-(The former empty `docs/` tree was deleted on 2026-08-30.)
+(The former empty `docs/` tree was deleted on 2026-08-30. `pkg/response`/`pkg/logger` are under `apps/backend/`, not repo root — the CLAUDE.md §2.1 "empty scaffold" listing that put them at root predates the actual bootstrap.)
 
 **Where to look for authority today:** `documentation/Requirement.MD` (SRS) is the top-level source; `documentation/User Stories.md` refines it into testable ACs; `documentation/Screens/<name>/<name>.md` is the most detailed layer. **When the SRS and a screen spec disagree, this `CLAUDE.md` §3 / §18 records the resolved answer — use that, and update the underlying doc per §19.**
 
@@ -325,7 +367,7 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 
 ## 9. Data Model
 
-**[Confirmed Requirement — schema-level]** From `Requirement.MD` §5.2. **The identity slice is finalized DDL** in [`documentation/architecture/physical-schema.md`](documentation/architecture/physical-schema.md) (ADR-0005). The claim-workflow entities below remain indicative SRS field lists, not finalized DDL. **No migrations exist yet** — `sprint_0001` task 2 emits the first set, covering all entities at once, and never runs them automatically.
+**[Confirmed Requirement — schema-level]** From `Requirement.MD` §5.2. **The identity slice (Part A) is finalized DDL**, per ADR-0005. **[Draft — schema-level, awaiting owner approval]** The claim-workflow entities (Part B, §16–§39 of `physical-schema.md`) now also have complete DDL — 25 tables including 9 flagged `[ADDITION]` beyond the original SRS §5.2 list — produced by `sprint_0001` task 1. **Q2 is resolved** (§17): `follow_up_visits` folds into `site_visits`; `preservation_notices` stays separate. **Migrations exist** — 12 files under `apps/backend/migrations/`, structurally verified and CI-applied to a disposable database, but **never executed against any persistent database**; `sprint_0001`'s runbook (`migrations/README.md`) states they never run automatically. **§16 Q12 (owner approval) is still open** — nothing in Part B should be treated as final until reviewed.
 
 **Common columns on every operational entity** (`Requirement.MD` §5.1 as amended by **ADR-0005 D38**): **`store_id`** (UUID), **`client_id`** (UUID), `assigned_surveyor_id` (UUID), `reviewer_id` (UUID), `access_role_scope` (enum `SURVEYOR|REVIEWER|ADMIN|INSURER_VIEWER`). Identity tables carry `store_id` + `client_id` where an owner exists; global catalogue tables (`permissions`) carry none; `stores` is the tenancy root and carries none.
 
@@ -358,20 +400,20 @@ Complete DDL in `architecture/physical-schema.md`. **Do not redesign these; exte
 | `store_invites` | The only path into an existing store (D40). SHA-256 token hash, expiring, single-use. |
 | `otp_challenges` · `password_reset_tokens` | Defined now, wired later (OTP blocked on Twilio India DLT / R4; reset blocked on the email vendor). Only hashes stored, never plain codes. |
 
-### 9.2b Claim-workflow entities still to be drafted — [Confirmed — D27, draft pending review]
-`sync_queue`, `audit_log`, `contact_logs`, `follow_up_visits` (separate table or an extension of `site_visits` — Q2), `coverage_opinions`, `requisition_notices`, `preservation_notices` (candidate — may fold into `contact_logs`/`documents`). `sprint_0001` task 1 produces their DDL.
+### 9.2b Claim-workflow entities — [Draft DDL complete, D27 superseded] — `physical-schema.md` Part B, §16–§39
+All 25 Part B tables now have DDL: `sync_queue`, `audit_log`, `contact_logs`, `coverage_opinions`, `requisition_notices`, `preservation_notices` (kept separate — **Q2 resolved**), plus `policy_sections`, `chronology_events`, `document_line_items`, `assessment_heads`, `discrepancy_flags`, `preliminary_survey_reports`, `pre_submission_audits`, `report_dispatches`, `document_damage_links` (9 `[ADDITION]` tables the SRS field lists didn't name — flagged individually in `physical-schema.md` §38 for owner review). `follow_up_visits` was **not** created as a separate table — it is `site_visits` rows with `visit_type = 'FOLLOW_UP'` (§17.1). **Status: Draft, not yet owner-approved** (§16 Q12) — extend, don't redesign, without a documented reason.
 
 ### 9.3 Data flow (intended)
-Stage 0 → `stores` + `users` + `sessions` + `user_devices` + `user_roles` + `auth_events`; Stage 1 → `claims` + `claim_ref_no`; Stage 2 → `policy_details`; Stage 3 → `contact_logs` + `preservation_notices`; Stage 4 → `site_visits`; Stage 5 → `cause_investigations`; Stage 6 → `damage_items` + `media_attachments`; Stages 7 & 10 → `documents` (+ OCR JSON); Stage 8 → `requisition_notices` + PSR; Stage 9 → `follow_up_visits`; Stage 11 → `assessment_line_items`; Stage 12 → `salvage_records` (feeds `assessment_line_items.salvage_amount` / FSR Section F); Stage 13 → `coverage_opinions`; Stage 14 → `final_survey_reports`; Stage 15 → status lock + SHA-256 hash snapshot; all figure edits → `audit_log`; all authentication actions → `auth_events`.
+Stage 0 → `stores` + `users` + `sessions` + `user_devices` + `user_roles` + `auth_events`; Stage 1 → `claims` + `claim_ref_no`; Stage 2 → `policy_details` + `policy_sections`; Stage 3 → `contact_logs` + `preservation_notices`; Stage 4 → `site_visits` (`visit_type='INITIAL'`); Stage 5 → `cause_investigations` + `chronology_events`; Stage 6 → `damage_items` + `media_attachments`; Stages 7 & 10 → `documents` + `document_line_items` (+ OCR JSON) + `document_damage_links`; Stage 8 → `requisition_notices` + `preliminary_survey_reports`; Stage 9 → `site_visits` (`visit_type='FOLLOW_UP'`); Stage 11 → `assessment_heads` + `assessment_line_items`; Stage 12 → `salvage_records` (feeds `assessment_line_items.salvage_amount` / FSR Section F); Stage 13 → `coverage_opinions`; Stage 14 → `final_survey_reports`; Stage 15 → `pre_submission_audits` + status lock + SHA-256 hash snapshot + `report_dispatches`; all figure edits and insurer file access → `audit_log`; all authentication actions → `auth_events`; rule-and-AI findings across every stage → `discrepancy_flags`.
 
-**[Unconfirmed — clarification required]:** physical schema for the claim-workflow entities — §4 item 2. The identity slice is done.
+**Physical schema for the claim-workflow entities is now drafted** (§4 item 2 substantially addressed) — what remains is project-owner review and sign-off (§16 Q12), plus the specific `[ADDITION]` confirmations in `physical-schema.md` §38.
 
 ---
 
 ## 10. APIs and External Integrations
 
 ### 10.1 Internal API
-**[Planned / Referenced]** Go **Gin** REST/JSON API. **No endpoints, no OpenAPI file, no routes exist.** `packages/api-contracts/` (moving conceptually under `documentation/architecture/`) is reserved for the contract.
+**[Implemented — contract only]** `documentation/architecture/api-contract/openapi.yaml` v1.0.0 exists, is generated from the migration DDL (`apps/backend/scripts/gen_openapi.py`), and passes `redocly lint` with 0 errors. 149 schemas, 73 paths, 135 operations, vendored into `packages/api-contracts/`. `packages/types` provides generated TypeScript types over it. **[Planned / Referenced] for the server itself:** the Go/Gin API implements only `/healthz` (`apps/backend/internal/handler/health.go`) — none of the 135 contracted operations has a handler yet. The contract is frozen under an explicit change-control note (see the spec's own `info.description`) and is not to be hand-edited — regenerate instead.
 
 ### 10.2 AI provider interface (contract defined, not implemented)
 **[Confirmed Requirement]** `Requirement.MD` §4.2:
@@ -524,12 +566,13 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 - **Monorepo:** pnpm workspaces + Turborepo (JS/TS); Go backend separate `go.mod`.
 - **ADRs:** to live in `documentation/decisions/`, one file per decision.
 
-### 13.2 Not yet established (do not invent — ask / open an ADR)
-- No linter/formatter config (ESLint/Prettier/golangci-lint) yet.
-- No testing framework / test-naming / coverage convention yet.
-- No branching strategy documented (all commits on `main`).
-- No API versioning / error-envelope / pagination convention yet.
-- No `.editorconfig`, no `.gitignore` yet.
+### 13.2 Established 2026-08-30 by ADR-0007 — [Proposed, awaiting owner approval]
+- **Linter/formatter:** ESLint 9 flat config + Prettier (100-col), shared via `@survscribe/config`; `gofmt` defaults for Go, no local additions. Config lives in `packages/config/{eslint,prettier}.config.mjs`.
+- **Testing:** Go = `testing` + `testify`, `-race` in CI, no unit test may require Postgres; mobile = Jest + React Native Testing Library, Detox deferred; the Stage 11 deterministic loss engine held to a higher bar (shared Go/TS fixture) once `sprint_0011` builds it.
+- **Branching:** short-lived `feat/`/`fix/`/`docs/`/`chore/`/`refactor/` branches off `main`, squash merge, Conventional Commits subjects (continuing existing practice). `main` protected, CI-green-to-merge — **enabling branch protection in GitHub settings is an owner action**, not yet done.
+- **API conventions:** ADR-0004 already fixed envelope/pagination/versioning; ADR-0007 adds nothing new here.
+- **`.editorconfig`:** committed at repo root (UTF-8, LF, trimmed trailing whitespace, 2-space indent / tabs in Go / 4-space in SQL).
+- Full rationale and alternatives considered: [`ADR-0007`](documentation/decisions/ADR-0007-engineering-conventions.md).
 
 ---
 
@@ -551,48 +594,54 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 13. **The 15-stage sequence and screen↔stage numbering** (`NN` folder = Stage `NN−1`) is the backbone of navigation, the state machine, and the specs. Renumbering breaks all cross-references.
 14. **Standard disclaimers embedded in every export** ("Without Prejudice", "Decision-support analysis for surveyor review. Final liability determination remains with the insurer.", registration disclaimer). Do not remove.
 15. **Design system anti-patterns (§12.2)** are explicit acceptance-checklist gates (`Design System.md` §8) — new UI must pass them.
-16. **`.docx` formatting parity.** The offline client engine and the authoritative server Go engine must produce equivalent documents from the same shared template contract. Do not let them drift.
+16. **`.docx` formatting parity.** The offline client engine and the authoritative server Go engine must produce equivalent documents from the same shared template contract. Do not let them drift. **MVP builds the server engine only** (ADR-0009) — the client engine is deferred post-MVP, but the shared template contract (`final_survey_reports.section_*_json` envelope, `physical-schema.md` §33) is still built to the full spec now, precisely so parity is achievable later without a rewrite.
 
 ---
 
 ## 15. Known Issues and Technical Debt
 
-1. **No implementation exists.** The gap between `documentation/` (detailed, "Approved Baseline") and code (zero) is the entire project risk surface.
-2. **Empty scaffold directories are untracked by git.** `apps/` and `packages/` show nothing in `git status` because git ignores empty dirs; a fresh clone won't contain them. Add real content + `.gitkeep`/README stubs when bootstrapping.
-3. **~~`documentation/` source files not yet updated~~ — DONE 2026-08-30.** The 2026-08-30 decisions have been propagated into the SRS, User Stories, Visual Design System, README, and the affected screen specs; `documentation/decisions/ADR-0001` records them; the empty `docs/` tree was deleted. Remaining doc-adjacent follow-ups: physical repo-dir rename `SurveyAssist`→`SurvScribe`, monorepo bootstrap files, and the `00_auth_terms.svg` legal-copy "biometric" line (rendered asset). See §19.
-4. **`README.md` repo-structure section is stale** — says "18 Dedicated Screen Specification Folders" and "designs/ (4 vector artboards)" for login; actual counts are 19 folders and 5 login SVGs; omits `00_auth_terms`.
+1. **No feature implementation exists.** `sprint_0001` closed the gap between "Approved Baseline" documentation and zero code by delivering a verified toolchain (§2.1a) — but that toolchain has no product feature behind it yet. The gap between documentation and *features* remains the project's central risk surface.
+2. **~~Empty scaffold directories are untracked by git~~ — RESOLVED 2026-08-30.** `apps/` and `packages/` now hold real, committed files throughout (§2.1a, §8).
+3. **~~`documentation/` source files not yet updated~~ — DONE 2026-08-30.** The 2026-08-30 decisions have been propagated into the SRS, User Stories, Visual Design System, README, and the affected screen specs; `documentation/decisions/ADR-0001` records them; the empty `docs/` tree was deleted. Remaining doc-adjacent follow-ups: physical repo-dir rename `SurveyAssist`→`SurvScribe`, and the `00_auth_terms.svg` legal-copy "biometric" line (rendered asset). See §19.
+4. **`README.md` repo-structure section is stale** — says "18 Dedicated Screen Specification Folders" and "designs/ (4 vector artboards)" for login; actual counts are 19 folders and 5 login SVGs; omits `00_auth_terms`. Also predates `sprint_0001`'s bootstrap and does not describe the current `apps/`/`packages/` contents.
 5. **Dashboard SVG missing** — commit `ea73c91` claims a Screen 01 SVG mockup; none is present in `01_dashboard/`.
-6. **Bottom-nav labels differ** between `Design System.md` §6.1 and `01_dashboard.md` §2.1 — reconcile.
-7. **~~No provider/vendor decisions~~ — RESOLVED.** ADR-0002 fixes SMS (Twilio, AWS SNS fallback), email (SendGrid), maps, LLM and OCR vendors; ADR-0006 fixes geo-IP (local MaxMind GeoLite2). Remaining external dependency is operational, not architectural: **Twilio India SMS DLT registration takes weeks** (risk R4), which is why OTP login is deferred out of `sprint_0003`.
-8. **No environment/config strategy** — no `.env.example`, config schema, or secrets-management approach documented. **RS256 signing-key custody and rotation is the sharpest instance** (§4 item 4, sprints Q13) and blocks a production-grade `sprint_0003`.
-9. **Depreciation scale data source undefined** (§4 item 1).
+6. **Bottom-nav labels differ** between `Design System.md` §6.1 and `01_dashboard.md` §2.1 — reconcile. (The 5-tab set implemented in `apps/mobile/src/app/App.tsx` follows the canonical `Design System.md` §6.1 list.)
+7. **~~No provider/vendor decisions~~ — RESOLVED.** ADR-0002 fixes SMS (Twilio, AWS SNS fallback), email (SendGrid), maps, LLM and OCR vendors; ADR-0006 fixes geo-IP (local MaxMind GeoLite2). **No account is provisioned** — see `documentation/decisions/vendor-tracker.md`, created `sprint_0001` task 10, every row `NOT STARTED`/`NOT DECIDED`. Remaining external dependency is operational, not architectural: **Twilio India SMS DLT registration takes weeks** (risk R4) — flagged in the tracker as the one urgent item, and it has not been started.
+8. **~~No environment/config strategy~~ — RESOLVED 2026-08-30 by ADR-0008** (Proposed, awaiting owner approval). `.env.example` committed for both apps; fail-fast env loading implemented (`apps/backend/internal/config`); RS256 signing-key custody and 90-day rotation specified (§4 item 4, §16 Q13 — closed).
+9. **Depreciation scale data source undefined** (§4 item 1). Still open — `assessment_line_items.depreciation_basis` is a free-text column, not a lookup against a scale table, because no scale data source has been provided.
 10. **~~Session token format / lifetime / refresh undefined~~ — RESOLVED** by ADR-0003 as amended by ADR-0005 (§7.4).
-11. **`auth_events` has no retention policy** — the table grows unbounded (§4 item 6).
+11. **`auth_events` has no retention policy** — the table grows unbounded (§4 item 6). `physical-schema.md` §10.2 and §38 item 10 both flag this; `audit_log` has the same open question and is evidentiary, which raises the stakes.
 12. **`users.username` is accepted at login but captured by no signup step** — assumed NULL at signup, settable from Profile; unconfirmed (§4 item 5).
+13. **`physical-schema.md` Part B contains 9 tables the SRS never named** (`policy_sections`, `chronology_events`, `document_line_items`, `assessment_heads`, `discrepancy_flags`, `preliminary_survey_reports`, `pre_submission_audits`, `report_dispatches`, `document_damage_links`) — each is architecturally justified in the document itself and flagged `[ADDITION]`, but none is approved. Listed for review in `physical-schema.md` §38 and tracked here as debt until §16 Q12 closes.
+14. **The mobile app has not run on any simulator or emulator.** It typechecks; `sprint_0001`'s own acceptance criterion ("runs on iOS simulator and Android emulator") is unverified because no such toolchain exists in this development environment.
+15. **CI has never executed inside GitHub Actions.** `.github/workflows/ci.yml` exists and its four jobs were run locally, by hand, with equivalent commands and equivalent (0-error) results — but the workflow itself has not fired on a real push or pull request yet.
+16. **No migration has ever touched a persistent database.** Only CI's disposable, job-scoped Postgres has applied them (apply, then roll back). `sprint_0001` R8 and §16 Q12 require owner sign-off before that changes.
 
 ---
 
 ## 16. Open Questions
 
-> **Closed:** ~~Q1~~ (monorepo bootstrapped — root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `apps/backend/go.mod` and `.gitignore` are committed), ~~Q2~~ (ADR-0002 + ADR-0006), ~~Q3~~ (ADR-0003 as amended by ADR-0005), ~~Q5~~ (ADR-0004), ~~Q7~~ (ADR-0005 D39 — seeded role/permission matrices in `architecture/physical-schema.md` §7.6–§7.7). **Q4 is half-closed:** the identity slice is finalized DDL; the claim-workflow entities are not.
+> **Closed:** ~~Q1~~ (monorepo bootstrapped — root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `apps/backend/go.mod` and `.gitignore` are committed), ~~Q2~~ (vendors: ADR-0002 + ADR-0006), ~~Q3~~ (ADR-0003 as amended by ADR-0005), ~~Q5~~ (ADR-0004), ~~Q7~~ (ADR-0005 D39 — seeded role/permission matrices in `architecture/physical-schema.md` §7.6–§7.7), ~~Q9~~ (bottom-nav labels — implemented per Design System §6.1 in `App.tsx`; `01_dashboard.md` still needs the doc-side reconciliation), ~~Q11~~ (ADR-0007), ~~Q13~~ (ADR-0008). **Q4 is now further along:** all 38 tables (Part A + Part B) have DDL; what remains is owner approval (Q12), not drafting.
+>
+> Note: `sprint_0001`'s **own** Q9 (whether AI-4 gates the MVP release) is a **different question** from this file's Q9 above — that one is closed by **ADR-0009**, not by this list, and was never numbered here.
 
-### Critical — blocks development
-- **Q4.** Physical schema for the **claim-workflow entities** (§9.1 + §9.2b): column types, PK/FK, indexes, enum value lists, JSON payload shapes. `sprint_0001` task 1. (§4 item 2)
-- **Q12.** **Owner approval of the identity contract** — `architecture/physical-schema.md` and `identity-and-rbac.md`. `sprint_0001` R8 requires owner sign-off before `sprint_0003` starts. Nothing is self-approved.
+### Critical — blocks `sprint_0003`
+- **Q12.** **Owner approval of the schema, contract and ADR-0007/ADR-0008.** `architecture/physical-schema.md` (both parts), `api-contract/openapi.yaml`, and the two Proposed ADRs. `sprint_0001` R8 requires sign-off before `sprint_0003` starts. Nothing produced by `sprint_0001` is self-approved — not the schema, not the contract, not the conventions, not the secrets model.
+- **Q4 (remaining half).** Not the DDL itself (drafted — §9.2b) but the **9 `[ADDITION]` tables** listed in `physical-schema.md` §38: each needs a specific owner decision, not a blanket approval.
 
 ### Important — affects implementation or architecture
 - **Q6.** Source/content of the standard surveyor / IRDAI depreciation scales for AI-5. (§4 item 1)
-- **Q8.** Produce a worked numeric example of the §11.1 loss sequence for domain-expert sign-off. (§4 item 3)
-- **Q13.** RS256 signing-key custody and rotation — needs its own ADR. (§4 item 4)
+- **Q8.** Produce a worked numeric example of the §11.1 loss sequence for domain-expert sign-off. (§4 item 3) — Note: `12_loss_assessment_quantification.md` §4 already carries one worked example (₹4,97,500 net recommended); confirm whether that satisfies this or a second, domain-expert-reviewed example is still wanted.
 - **Q14.** `users.username` capture — NULL at signup and set from Profile, or an optional input in signup Step 2? (§4 item 5)
-- **Q15.** `auth_events` retention period. (§4 item 6)
+- **Q15.** `auth_events` **and** `audit_log` retention period. (§4 item 6; `physical-schema.md` §38 item 10 extends this to `audit_log`, which is evidentiary)
 - **Q16.** Keychain/Keystore wipe recovery and the local-data-loss warning. (§4 item 7)
 - **Q17.** **SLA licence format contradiction** — `Requirement.MD` FR-0.2 and AC 0.2.2 say `SLA-[0-9]{4,8}`; `00_auth_signup.md` §4 says *"`SLA-[0-9]{4,8}` **or alphanumeric**"*. The SRS is treated as authoritative pending your call; the DB holds only a loose sanity bound so the rule can change without a migration. (§4 item 8)
+- **Q18.** `physical-schema.md` §38 item 5 — is Policy Excess genuinely per-line-item (as SRS entity 8, FR-11.2 step 9, and the screen's §5 field table all say), or does the screen's single claim-level `PolicyExcessDeductionInput` (§3) mean it should be claim-level with per-line distribution? Schema currently assumes per-line.
+- **Q19.** `physical-schema.md` §38 item 4 — FR-6.1 names "Electrical" as a Stage 6 damage head; FR-11.1's five heads do not include it. Does Stage 6 need a sixth `head_category` value, or does "Electrical" map to `PLANT_MACHINERY`?
 
 ### Later — does not currently block progress
-- **Q9.** Reconcile bottom-nav labels between the design system and the dashboard spec. (§15 item 6)
 - **Q10.** Recreate the missing Screen 01 (dashboard) SVG, and add SVGs / Figma frames for stages 1–15 before building those screens. (§15 item 5)
-- **Q11.** Linter/formatter, testing framework, branching strategy, `.editorconfig` — decide when the first code lands. (§13.2)
+- **Q20.** `physical-schema.md` §38 items 8–9 — the `uom` (12 values) and `document_type` (32 values) enums were closed from specs that ended in "etc."; worth a domain-expert pass before they're locked in by a migration.
 
 ---
 
@@ -600,15 +649,17 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 
 **Recommendations, not confirmed requirements.**
 
-1. **Propagate the 2026-08-30 decisions into `documentation/`** using the §19 checklist, so the SRS/specs stop contradicting the decision log. Small, mechanical, high-value.
-2. **(DONE 2026-08-30)** `documentation/decisions/` created with `ADR-0001` capturing the Q&A decisions; empty `docs/` tree deleted; `documentation/architecture/` placeholder created. Split ADR-0001 into per-decision ADRs later if finer traceability is wanted.
-3. **(PARTLY DONE)** Root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `.gitignore` and `apps/backend/go.mod` are committed. Still owed: per-package `package.json` for `packages/*`, base `tsconfig`, lockfile, linter/formatter config, CI — `sprint_0001` task 5.
-4. **(IDENTITY SLICE DONE 2026-08-30)** `architecture/physical-schema.md` and `architecture/identity-and-rbac.md` finalize `stores`, `users`, `sessions`, `user_devices`, the RBAC tables, `claim_access_grants`, `auth_events`, `store_invites`, `otp_challenges` and `password_reset_tokens` under ADR-0005/0006, and `Requirement.MD` §5.2 now carries entities 21–30. **Next:** owner approval (§16 Q12), then DDL for the claim-workflow entities, then the first migrations under `apps/backend/migrations/` — all entities in one set, never auto-executed.
-5. **Define `packages/api-contracts/`** — an OpenAPI spec for the Gin backend, plus `packages/types/` shared TS types generated from it.
-6. **Implement the deterministic loss-assessment engine first, with tests**, as a pure module in `packages/` (no I/O). It is the highest-risk correctness surface and is fully specified (§11.1). Verifiable without infrastructure.
-7. **Build `AssistantService` / `IAssistantService` + `NotificationService` + `GeocodingService` as stubs** (Local/Cloud split, fake impls) so feature work can proceed before vendor selection.
-8. **Start UI on the fully-designed auth screens** (`00_auth_login`, `00_auth_signup`, `00_auth_terms`) to establish the `packages/ui/` component library against the design system.
-9. **Produce dashboard + stage 1–15 visual designs** before implementing those screens, per the project's "spec + design then build" pattern.
+1. **(DONE 2026-08-30)** 2026-08-30 decisions propagated into `documentation/`; §19 checklist complete for that round.
+2. **(DONE 2026-08-30)** `documentation/decisions/` holds `ADR-0001` through `ADR-0009` plus `vendor-tracker.md`.
+3. **(DONE 2026-08-30 — `sprint_0001`)** Monorepo fully bootstrapped: per-package `package.json` for all of `packages/*`, base `tsconfig`, `pnpm-lock.yaml`, ESLint/Prettier config, CI (`.github/workflows/ci.yml`). `pnpm install && pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run test` all pass locally (§2.1a). Not yet verified: an actual GitHub Actions run.
+4. **(DONE 2026-08-30 — `sprint_0001`)** `physical-schema.md` now covers all 38 tables (Part A identity, finalized; Part B workflow, drafted). **Next, in order:** (a) owner approval — §16 Q12, the single hardest blocker on `sprint_0003` starting; (b) the specific `[ADDITION]` and open-item decisions in `physical-schema.md` §38; (c) applying the migrations to a real, persistent database for the first time, following `apps/backend/migrations/README.md`.
+5. **(DONE 2026-08-30 — `sprint_0001`)** `packages/api-contracts/` vendors the generated OpenAPI spec; `packages/types/` provides generated TS types with a drift check. Both wired into CI.
+6. **Implement the deterministic loss-assessment engine next, with tests**, as a pure module (no I/O). Still the highest-risk correctness surface (`CLAUDE.md` §14 constraint 5), still fully specified (§11.1), still unbuilt. `sprint_0011` owns it; ADR-0007 §4 already commits it to a shared Go/TS test fixture.
+7. **Build `AssistantService` / `IAssistantService` + `NotificationService` + `GeocodingService` as stubs** (Local/Cloud split, fake impls) so feature work can proceed before vendor accounts exist (per the vendor tracker, none do yet).
+8. **Start UI on the fully-designed auth screens** (`00_auth_login`, `00_auth_signup`, `00_auth_terms`) to build out the `packages/ui/` component library — currently tokens-only (`packages/ui/src/tokens.ts`) — against the design system. This is `sprint_0002`/`sprint_0003` work, not yet started.
+9. **Produce dashboard + stage 1–15 visual designs** before implementing those screens, per the project's "spec + design then build" pattern. Not started.
+10. **New, `sprint_0001`-specific:** run `.github/workflows/ci.yml` for real (push a branch, open a PR) to verify it behaves the same in GitHub Actions as it did locally in this session.
+11. **New:** get the mobile app onto an actual iOS simulator or Android emulator — genuinely unverified, since no such device exists in this development environment.
 
 ---
 
@@ -660,12 +711,21 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 | **D42** | **Full auth telemetry.** Denormalised signup-provenance / login / logout / lockout columns on `users` and `sessions`, plus an append-only **`auth_events`** table (22 event types, immutable by trigger *and* `REVOKE UPDATE, DELETE`). Deliberately separate from `audit_log`. Failed logins store only a SHA-256 of the attempted identifier. | Confirmed — ADR-0005, 2026-08-30 | ADR-0005 |
 | **D43** | **Identifier uniqueness (`email`, `mobile`, `username`) is GLOBAL, not per-store** — forced by universal-identifier login, which resolves a bare identifier with no store context. One human, one account. | Confirmed — ADR-0005, 2026-08-30 | ADR-0005 |
 | **D44** | **Geo-IP via `GeoIPService` + local MaxMind GeoLite2 `.mmdb`** — no PII egress, no latency on the auth path, no availability coupling. Enrichment is best-effort; every geo column is nullable and a failure never blocks authentication. Geo-IP is a signal, never evidence, and never substitutes for GPS in `site_visits`. | Confirmed — ADR-0006, 2026-08-30 | ADR-0006 |
+| **D45** | **Claim-workflow physical schema drafted** — `physical-schema.md` Part B, 25 tables (§16–§39), covering all 20 remaining SRS §5.2 entities plus 9 `[ADDITION]` tables the specs required without naming (`policy_sections`, `chronology_events`, `document_line_items`, `assessment_heads`, `discrepancy_flags`, `preliminary_survey_reports`, `pre_submission_audits`, `report_dispatches`, `document_damage_links`). **Q2 resolved**: follow-up visits extend `site_visits` via `visit_type`; `preservation_notices` stays a separate table. All rupee amounts `NUMERIC(15,2)`, never `FLOAT`; the FR-11.2 deduction chain is enforced by database `CHECK` constraints, not only application code. **Status: Draft — owner approval is §16 Q12, still open.** | Draft — `sprint_0001` task 1, 2026-08-30 | `physical-schema.md` Part B |
+| **D46** | **First migration set emitted** — 12 files under `apps/backend/migrations/`, `golang-migrate` naming, extracted verbatim from the schema document. Structurally verified (0 errors: no forward references, every up has a matching down, every table/type is dropped somewhere). **Never executed against a persistent database** — only CI's disposable, job-scoped Postgres (apply then roll back). Local dev Postgres provided via `docker-compose.yml` on port 5433 (deliberately not 5432). | Confirmed — `sprint_0001` task 2, 2026-08-30 | `apps/backend/migrations/README.md` |
+| **D47** | **OpenAPI v1 contract frozen and generated, not hand-written** — `api-contract/openapi.yaml`, generated from the migration DDL so contract and schema cannot drift (CI diffs on every run). Money crosses the wire as a decimal string, never a JSON number. `store_id`/`client_id` are never accepted from a client. `packages/types` provides generated TS types with its own drift check. Change-control note lives in the spec's own `info.description`, not a separate document. | Confirmed — `sprint_0001` task 3/4, 2026-08-30 | `api-contract/openapi.yaml` |
+| **D48** | **Monorepo, backend and mobile skeletons bootstrapped and verified** — pnpm workspace (5 packages, all with real manifests), ESLint/Prettier/`.editorconfig`, CI (4 jobs); Go 1.25 backend (`gin` v1.12, `pgx/v5` v5.10 — both require 1.25, superseding the earlier `go 1.22` line) that builds/vets/tests clean with real `httptest` coverage; React Native 0.75 mobile app with a 5-tab nav shell and an envelope-aware API client, typechecking clean under `exactOptionalPropertyTypes`. **Not verified:** GitHub Actions has not run the workflow; the mobile app has not run on a simulator/emulator (none available in this environment). | Confirmed — `sprint_0001` tasks 5/6/7, 2026-08-30 | `apps/backend/`, `apps/mobile/`, `.github/workflows/ci.yml` |
+| **D49** | **Engineering conventions decided (ADR-0007)** — Go 1.25; testing = `testing`+`testify` (backend, `-race`, no Postgres in unit tests) and Jest+RNTL (mobile, Detox deferred); the Stage 11 loss engine gets a shared Go/TS test fixture once built; formatting = Prettier (100-col) + `gofmt`; linting = ESLint 9 flat config, four rules added past `recommended`, each justified; branching = short-lived off `main`, squash merge, existing Conventional Commits practice continued; generated artifacts committed, CI proves currency. **Status: Proposed**, needs sign-off like every ADR here. | Proposed — `sprint_0001` task 8, 2026-08-30 | ADR-0007 |
+| **D50** | **Configuration and RS256 key custody decided (ADR-0008) — closes Q13** — environment-only config, fail-fast, all problems reported together; no provider secret ever reaches the mobile bundle; RS256 custody by environment (dev = local throwaway, CI = ephemeral, staging/prod = secret manager, provisional); 90-day rotation via a dual-`kid` overlap window that never forces a re-login, because refresh tokens are opaque and unaffected by a signing-key change; database application role gets `INSERT`/`SELECT` only on `audit_log`/`auth_events`, never owner privileges. **Status: Proposed.** | Proposed — `sprint_0001` task 9, 2026-08-30 | ADR-0008 |
+| **D51** | **Vendor tracker created** — every ADR-0002/0006 vendor listed with status; **all 14 rows `NOT STARTED`/`NOT DECIDED`**, account provisioning is an explicit owner action; India SMS DLT registration (R4) flagged as the one urgent item because of its multi-week lead time; a missing vendor key degrades a feature, never breaks the app, by design (offline-first was never allowed to depend on a network call on a critical path). | Confirmed — `sprint_0001` task 10, 2026-08-30 | `vendor-tracker.md` |
+| **D52** | **AI-4 is a post-launch fast-follow, not an MVP release gate — closes Q9 (`sprint_0001`'s own, distinct from this file's dashboard-nav Q9)** — `sprint_0014` stays scheduled where the roadmap already placed it; Stage 14 must work completely with sections C/D/H/I entered by the surveyor with no AI assist, as a **tested** requirement, not an incidental one. | Accepted — ADR-0009, 2026-08-30 | ADR-0009 |
+| **D53** | **MVP ships the server-side `.docx` engine only — the client-side TS engine (the other half of D22) is deferred post-MVP.** Every stage of *data capture* stays fully offline (constraint 7 unaffected); only final-document *rendering* needs connectivity in MVP. The shared template contract is still built to the full D22 spec now, so the client engine can be added later without a rewrite. | Accepted — ADR-0009, 2026-08-30 | ADR-0009 |
 
 ---
 
 ## 19. `documentation/` Reconciliation — Status
 
-The 2026-08-30 decisions (§18 D18–D37, then D38–D44) have been **applied to `documentation/`**.
+The 2026-08-30 decisions (§18 D18–D37, then D38–D44, then **D45–D53** — `sprint_0001`) have been **applied to `documentation/`**. See §19.3 for the `sprint_0001` round.
 
 ### 19.0 Identity model finalization — completed 2026-08-30 (ADR-0005 / ADR-0006, D38–D44)
 
@@ -714,10 +774,38 @@ The 2026-08-30 decisions (§18 D18–D37, then D38–D44) have been **applied to
 
 ### 19.2 Still pending (not doc edits — infra / manual)
 - [ ] Rename the physical git repo directory `SurveyAssist` → `SurvScribe` and update the git remote. *(Cannot be done from inside the working directory; manual step.)*
-- [ ] Bootstrap the monorepo: root `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `apps/backend/go.mod`, `.gitignore`, and `.gitkeep`/README stubs in `apps/*` and `packages/*`.
+- [x] ~~Bootstrap the monorepo~~ — **DONE, `sprint_0001`, 2026-08-30.** See §19.3.
 - [ ] `documentation/Screens/00_auth_terms/designs/00_auth_terms.svg` — legal-copy line still mentions "Biometric authentication keys". Low priority (rendered mockup asset); update when the terms screen is re-exported.
 - [ ] Split ADR-0001 into per-decision ADRs if/when finer traceability is wanted (currently one consolidated record covers D18–D37).
-- [ ] Pending vendor / schema / API-convention ADRs — see `documentation/decisions/README.md`.
+- [x] ~~Pending vendor / schema / API-convention ADRs~~ — ADR-0007, ADR-0008, ADR-0009 added; `vendor-tracker.md` added. See `documentation/decisions/README.md`.
+- [ ] Enable branch protection on `main` in GitHub repository settings (ADR-0007 §7) — an owner action, not a code change.
+- [ ] Owner sign-off on `physical-schema.md`, `api-contract/openapi.yaml`, ADR-0007, ADR-0008 (§16 Q12) — blocks `sprint_0003`.
+- [ ] Provision the vendor accounts in `vendor-tracker.md` — start India SMS DLT registration first (weeks of lead time).
+- [ ] Run `.github/workflows/ci.yml` for real (push/PR) — only run locally-equivalent so far.
+- [ ] Run the mobile app on an actual iOS simulator / Android emulator — no such toolchain in this environment.
+- [ ] Apply the migrations to a real, persistent database for the first time, per `apps/backend/migrations/README.md` — only CI's disposable database has seen them.
+
+### 19.3 `sprint_0001` — completed 2026-08-30 (D45–D53)
+
+**New documents**
+- [x] `documentation/architecture/physical-schema.md` **Part B** appended (§16–§39) — 25 tables, 9 flagged `[ADDITION]`, Q2 resolved. Document retitled and re-versioned (v2.0.0) with a two-part structure table at the top.
+- [x] `apps/backend/migrations/000001`–`000012` (`.up.sql`/`.down.sql` pairs) + `apps/backend/migrations/README.md` (runbook) + `apps/backend/deployments/docker-compose.yml` (local dev Postgres).
+- [x] `documentation/architecture/api-contract/openapi.yaml` (generated) + `.redocly.yaml` (lint config).
+- [x] `packages/types/` (generated `src/schema.d.ts` + hand-written `src/index.ts` + drift-check script), `packages/api-contracts/` (vendors the spec), `packages/ui/src/tokens.ts` (design-system tokens), `packages/config/` (shared tsconfig/eslint/prettier).
+- [x] `apps/backend/{cmd/api,internal/{config,server,handler,repository},pkg/{response,logger}}` — working Go skeleton, tested.
+- [x] `apps/mobile/src/{app,core,shared/api}` — working RN skeleton, typechecked.
+- [x] `.github/workflows/ci.yml`, `.editorconfig`, root `tsconfig.json`/`eslint.config.mjs`/`prettier.config.mjs`, `apps/{backend,mobile}/.env.example`.
+- [x] `documentation/decisions/ADR-0007-engineering-conventions.md` (Proposed), `ADR-0008-configuration-and-secrets.md` (Proposed), `ADR-0009-mvp-release-scope.md` (Accepted), `vendor-tracker.md`.
+
+**Amended**
+- [x] `documentation/decisions/README.md` — ADR-0007/0008/0009 and the vendor tracker indexed.
+- [x] `CLAUDE.md` — §0 header, §2.1a (new), §2.2–§2.5, §7.1, §7.2 (`.docx` engine row), §7.4 (key custody), §8 (full directory tree rewrite), §9 (Part B status, §9.2b, §9.3, §10.1), §13.2 (rewritten from "not yet established" to "established by ADR-0007"), §14 constraint 16, §15 (items 2, 3, 7, 8 marked resolved; items 13–16 added), §16 (Q9/Q11/Q13 closed; Q4 narrowed to the `[ADDITION]` list; Q18–Q20 added), §17 (items 1–5 marked done, items 10–11 added), §18 (D45–D53 added), and this §19.3.
+
+**Not done — deliberately, per this session's own rules**
+- No migration executed against a persistent database (§19.2).
+- No vendor account opened, no secret provisioned (§19.2) — explicitly an owner action.
+- No `git commit`/`push` — per this file's own git-safety rule, changes are left staged for the user to review and commit.
+- Q2 (dashboard/design-system nav labels doc-side reconciliation), Q6, Q8, Q14–Q20 remain open; none was silently resolved.
 
 ---
 

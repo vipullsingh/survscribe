@@ -1,0 +1,186 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A push that supersedes an in-flight run cancels it. CI minutes spent on a commit
+# nobody will merge are wasted.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+  GO_VERSION: "1.25"
+
+jobs:
+  # ---------------------------------------------------------------- contract
+  # Runs first and alone: if the contract has drifted from the schema, every other
+  # job is checking stale artifacts.
+  contract:
+    name: Schema and contract integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install workspace
+        run: pnpm install --frozen-lockfile
+
+      - name: Migration structure
+        # Not a PostgreSQL parser: catches forward references, unterminated statements
+        # and missing down-migrations. The real proof is the apply step below.
+        run: python apps/backend/scripts/check_migrations.py
+
+      - name: OpenAPI lint
+        run: pnpm exec redocly lint
+
+      - name: OpenAPI is regenerated from the current DDL
+        # The contract is generated from the migrations. If someone edits a migration
+        # and forgets to regenerate, the committed spec silently describes a database
+        # that no longer exists.
+        run: |
+          pip install pyyaml
+          python apps/backend/scripts/gen_openapi.py
+          git diff --exit-code -- documentation/architecture/api-contract/openapi.yaml \
+            || { echo "::error::openapi.yaml is stale. Run: pnpm contract:generate"; exit 1; }
+
+      - name: Generated types match the contract
+        run: pnpm --filter @survscribe/types run check-generated
+
+      - name: Vendored contract copy is in sync
+        run: pnpm --filter @survscribe/api-contracts run test
+
+  # ---------------------------------------------------------------- migrations
+  migrations:
+    name: Migrations apply to a clean database
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: survscribe
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: survscribe_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U survscribe -d survscribe_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # This is the only environment where migrations run automatically, and it is safe
+      # precisely because the database is created and destroyed with the job. Applying
+      # them anywhere else stays a deliberate human action -- see
+      # apps/backend/migrations/README.md.
+      - name: Apply every up-migration in order
+        run: |
+          for f in apps/backend/migrations/*.up.sql; do
+            echo "--- $f"
+            psql "postgres://survscribe:ci@localhost:5432/survscribe_ci" -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+
+      - name: Assert the expected object counts
+        run: |
+          psql "postgres://survscribe:ci@localhost:5432/survscribe_ci" -t -A -c "
+            SELECT 'tables=' || count(*) FROM information_schema.tables
+             WHERE table_schema='public' AND table_type='BASE TABLE';"
+          psql "postgres://survscribe:ci@localhost:5432/survscribe_ci" -t -A -c "
+            SELECT 'enums=' || count(*) FROM pg_type t
+             JOIN pg_namespace n ON n.oid=t.typnamespace
+             WHERE t.typtype='e' AND n.nspname='public';"
+          psql "postgres://survscribe:ci@localhost:5432/survscribe_ci" -v ON_ERROR_STOP=1 -c "
+            DO \$\$ BEGIN
+              IF (SELECT count(*) FROM information_schema.tables
+                   WHERE table_schema='public' AND table_type='BASE TABLE') <> 38 THEN
+                RAISE EXCEPTION 'expected 38 tables';
+              END IF;
+              IF (SELECT count(*) FROM permissions) <> 38 THEN
+                RAISE EXCEPTION 'expected 38 seeded permissions';
+              END IF;
+              IF (SELECT count(*) FROM roles WHERE is_system) <> 4 THEN
+                RAISE EXCEPTION 'expected 4 seeded system roles';
+              END IF;
+            END \$\$;"
+
+      - name: Roll every migration back down
+        # A down-migration nobody runs is a down-migration that does not work.
+        run: |
+          for f in $(ls -r apps/backend/migrations/*.down.sql); do
+            echo "--- $f"
+            psql "postgres://survscribe:ci@localhost:5432/survscribe_ci" -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+
+  # ---------------------------------------------------------------- backend
+  backend:
+    name: Go backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: apps/backend/go.sum
+
+      - name: Verify go.mod and go.sum are tidy
+        working-directory: apps/backend
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum \
+            || { echo "::error::go.mod/go.sum are not tidy. Run: go mod tidy"; exit 1; }
+
+      - name: Build
+        working-directory: apps/backend
+        run: go build ./...
+
+      - name: Vet
+        working-directory: apps/backend
+        run: go vet ./...
+
+      - name: Test
+        working-directory: apps/backend
+        run: go test -race -count=1 ./...
+
+  # ---------------------------------------------------------------- javascript
+  workspace:
+    name: Lint, typecheck and test the workspace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install workspace
+        run: pnpm install --frozen-lockfile
+
+      - name: Format check
+        run: pnpm run format:check
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Test
+        run: pnpm run test

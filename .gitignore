@@ -48,3 +48,12 @@ Thumbs.db
 # OS / Scratch / Temporary Files
 tmp/
 *.log
+
+# This is a pnpm workspace. An npm or yarn lockfile here means someone ran the wrong
+# package manager, and two lockfiles resolve to two different dependency trees.
+package-lock.json
+yarn.lock
+
+# Local database volumes and generated coverage
+coverage/
+*.mmdb
