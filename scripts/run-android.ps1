@@ -13,27 +13,45 @@ Write-Host "================================================" -ForegroundColor C
 Write-Host "   SurvScribe Android App Launcher              " -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 
-# Find Android Studio executable
-$studioPaths = @(
+# 1. Check Android Studio shortcut & installations
+$shortcutPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Android Studio\Android Studio.lnk"
+$studioExePaths = @(
+    "C:\Program Files\Android\Android Studio1\bin\studio64.exe",
     "C:\Program Files\Android\Android Studio\bin\studio64.exe",
-    "C:\Program Files\Android\Studio\bin\studio64.exe",
     "$env:LOCALAPPDATA\Programs\Android Studio\bin\studio64.exe"
 )
-$studioExe = $studioPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+$studioExe = $studioExePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
 
-if ($OpenStudio -or $Studio) {
-    Write-Host "`n[1/1] Launching Android Studio..." -ForegroundColor Yellow
-    if ($studioExe) {
-        Write-Host "Opening Android project in Android Studio ($AndroidProjectPath)..." -ForegroundColor Green
-        Start-Process -FilePath $studioExe -ArgumentList "`"$AndroidProjectPath`""
-        Exit 0
+function Launch-StudioGUI {
+    param([string]$Shortcut, [string]$ExePath, [string]$ProjectPath)
+    
+    # Kill any hung background process first
+    $bgProc = Get-Process studio64 -ErrorAction SilentlyContinue
+    if ($bgProc -and $bgProc.MainWindowHandle -eq [IntPtr]::Zero) {
+        Write-Host "Clearing background process..." -ForegroundColor Gray
+        Stop-Process -Id $bgProc.Id -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 1
+    }
+
+    if (Test-Path $Shortcut) {
+        Write-Host "Launching Android Studio via Start Shortcut..." -ForegroundColor Green
+        explorer.exe "$Shortcut"
+    } elsif ($ExePath) {
+        $binDir = Split-Path -Path $ExePath -Parent
+        Write-Host "Starting Android Studio ($ExePath)..." -ForegroundColor Green
+        Start-Process -FilePath $ExePath -ArgumentList "`"$ProjectPath`"" -WorkingDirectory $binDir
     } else {
-        Write-Host "Error: Android Studio executable not found in standard paths." -ForegroundColor Red
-        Exit 1
+        Write-Host "Warning: Android Studio path not found." -ForegroundColor Yellow
     }
 }
 
-# 1. Check ADB and Active Android Devices/Emulators
+if ($OpenStudio -or $Studio) {
+    Write-Host "`n[1/1] Launching Android Studio GUI..." -ForegroundColor Yellow
+    Launch-StudioGUI -Shortcut $shortcutPath -ExePath $studioExe -ProjectPath $AndroidProjectPath
+    Exit 0
+}
+
+# 2. Check ADB and Active Android Devices/Emulators
 Write-Host "`n[1/3] Checking Android Devices & Emulators..." -ForegroundColor Yellow
 $adbCmd = Get-Command "adb" -ErrorAction SilentlyContinue
 
@@ -62,16 +80,13 @@ if ($adbCmd) {
         }
     }
 } else {
-    Write-Host "Warning: 'adb' command not found in PATH. Ensure Android SDK platform-tools is installed." -ForegroundColor Yellow
+    Write-Host "Warning: 'adb' command not found in PATH." -ForegroundColor Yellow
 }
 
-# 2. Open Android Studio automatically if present & launch build
-if ($studioExe) {
-    Write-Host "`nOpening project in Android Studio ($studioExe)..." -ForegroundColor Gray
-    Start-Process -FilePath $studioExe -ArgumentList "`"$AndroidProjectPath`""
-}
+# 3. Launch Android Studio GUI
+Launch-StudioGUI -Shortcut $shortcutPath -ExePath $studioExe -ProjectPath $AndroidProjectPath
 
-# 3. Build and Launch React Native App on Android
+# 4. Build and Launch React Native App on Android
 Write-Host "`n[3/3] Building and launching React Native app on Android..." -ForegroundColor Yellow
 Push-Location "$ProjectRoot/apps/mobile"
 try {
