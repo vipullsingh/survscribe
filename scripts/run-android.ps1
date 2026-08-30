@@ -1,11 +1,37 @@
 # SurvScribe Android App Launcher Script
+param(
+    [switch]$OpenStudio,
+    [switch]$Studio
+)
+
 $ErrorActionPreference = "Continue"
 
 $ProjectRoot = Resolve-Path "$PSScriptRoot/.."
+$AndroidProjectPath = "$ProjectRoot/apps/mobile/android"
 
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "   SurvScribe Android App Launcher              " -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
+
+# Find Android Studio executable
+$studioPaths = @(
+    "C:\Program Files\Android\Android Studio\bin\studio64.exe",
+    "C:\Program Files\Android\Studio\bin\studio64.exe",
+    "$env:LOCALAPPDATA\Programs\Android Studio\bin\studio64.exe"
+)
+$studioExe = $studioPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+if ($OpenStudio -or $Studio) {
+    Write-Host "`n[1/1] Launching Android Studio..." -ForegroundColor Yellow
+    if ($studioExe) {
+        Write-Host "Opening Android project in Android Studio ($AndroidProjectPath)..." -ForegroundColor Green
+        Start-Process -FilePath $studioExe -ArgumentList "`"$AndroidProjectPath`""
+        Exit 0
+    } else {
+        Write-Host "Error: Android Studio executable not found in standard paths." -ForegroundColor Red
+        Exit 1
+    }
+}
 
 # 1. Check ADB and Active Android Devices/Emulators
 Write-Host "`n[1/3] Checking Android Devices & Emulators..." -ForegroundColor Yellow
@@ -39,8 +65,14 @@ if ($adbCmd) {
     Write-Host "Warning: 'adb' command not found in PATH. Ensure Android SDK platform-tools is installed." -ForegroundColor Yellow
 }
 
-# 2. Build and Launch React Native App on Android
-Write-Host "`n[2/3] Building and launching React Native app on Android..." -ForegroundColor Yellow
+# 2. Open Android Studio automatically if present & launch build
+if ($studioExe) {
+    Write-Host "`nOpening project in Android Studio ($studioExe)..." -ForegroundColor Gray
+    Start-Process -FilePath $studioExe -ArgumentList "`"$AndroidProjectPath`""
+}
+
+# 3. Build and Launch React Native App on Android
+Write-Host "`n[3/3] Building and launching React Native app on Android..." -ForegroundColor Yellow
 Push-Location "$ProjectRoot/apps/mobile"
 try {
     npx react-native run-android
