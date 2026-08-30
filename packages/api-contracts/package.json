@@ -1,0 +1,23 @@
+{
+  "name": "@survscribe/api-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ships the frozen SurvScribe OpenAPI v1 document as a workspace artifact for tooling (mock servers, client codegen, contract tests).",
+  "license": "UNLICENSED",
+  "files": [
+    "openapi.yaml"
+  ],
+  "exports": {
+    "./openapi.yaml": "./openapi.yaml"
+  },
+  "scripts": {
+    "sync": "node ./scripts/sync-spec.mjs",
+    "lint": "redocly lint openapi.yaml --config ../../.redocly.yaml",
+    "test": "node ./scripts/sync-spec.mjs --check",
+    "build": "node ./scripts/sync-spec.mjs",
+    "clean": "rimraf node_modules openapi.yaml"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.16.0"
+  }
+}

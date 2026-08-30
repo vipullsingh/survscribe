@@ -1,0 +1,29 @@
+{
+  "name": "@survscribe/types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript types generated from the SurvScribe OpenAPI v1 contract. Do not hand-edit.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "generate": "openapi-typescript ../../documentation/architecture/api-contract/openapi.yaml -o ./src/schema.d.ts",
+    "check-generated": "node ./scripts/check-generated.mjs",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node ./scripts/check-generated.mjs",
+    "build": "tsc --noEmit",
+    "clean": "rimraf node_modules"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^6.7.6",
+    "typescript": "^5.4.0"
+  }
+}
