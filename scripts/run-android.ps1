@@ -36,7 +36,7 @@ function Launch-StudioGUI {
     if (Test-Path $Shortcut) {
         Write-Host "Launching Android Studio via Start Shortcut..." -ForegroundColor Green
         explorer.exe "$Shortcut"
-    } elsif ($ExePath) {
+    } elseif ($ExePath) {
         $binDir = Split-Path -Path $ExePath -Parent
         Write-Host "Starting Android Studio ($ExePath)..." -ForegroundColor Green
         Start-Process -FilePath $ExePath -ArgumentList "`"$ProjectPath`"" -WorkingDirectory $binDir
