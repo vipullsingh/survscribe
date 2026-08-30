@@ -53,7 +53,7 @@ else
   echo "Warning: 'go' is not installed in PATH."
 fi
 
-# 5. Start Mobile Metro Bundler
-echo -e "\n[4/4] Starting Mobile React Native Metro Bundler..."
+# 5. Start Mobile Expo Dev Server
+echo -e "\n[4/4] Starting Mobile Expo Dev Server..."
 cd "$PROJECT_ROOT/apps/mobile"
-npx react-native start
+npx expo start

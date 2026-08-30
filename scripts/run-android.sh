@@ -21,7 +21,8 @@ else
   echo "Warning: 'adb' not found in PATH."
 fi
 
-# 2. Run React Native Android
-echo -e "\n[2/2] Building and launching React Native app on Android..."
+# 2. Build and run the Expo app on Android
+# `expo run:android` prebuilds the native project (gitignored) and builds with Gradle.
+echo -e "\n[2/2] Building and launching the Expo app on Android..."
 cd "$PROJECT_ROOT/apps/mobile"
-npx react-native run-android
+npx expo run:android

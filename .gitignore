@@ -23,12 +23,16 @@ bin/
 .env.production.local
 *.pem
 
-# React Native & Mobile
-apps/mobile/ios/Pods/
-apps/mobile/ios/build/
-apps/mobile/android/.gradle/
-apps/mobile/android/app/build/
-apps/mobile/android/app/release/
+# Expo / React Native (mobile)
+apps/mobile/.expo/
+apps/mobile/dist/
+apps/mobile/web-build/
+apps/mobile/expo-env.d.ts
+# Native projects are generated on demand by `expo prebuild` (Continuous Native
+# Generation) and are not committed. Run `pnpm --filter @survscribe/mobile prebuild`
+# to (re)create them locally.
+apps/mobile/ios/
+apps/mobile/android/
 .bundle/
 
 # IDEs & System Files

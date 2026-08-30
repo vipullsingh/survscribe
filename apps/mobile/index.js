@@ -1,6 +1,8 @@
-import { AppRegistry } from "react-native";
+import { registerRootComponent } from "expo";
 
 import App from "./src/app/App";
-import { name as appName } from "./app.json";
 
-AppRegistry.registerComponent(appName, () => App);
+// registerRootComponent calls AppRegistry.registerComponent("main", () => App) and,
+// in a native build, also wires the app into Expo's runtime. It replaces the bare
+// React Native index.js + app.json name registration.
+registerRootComponent(App);

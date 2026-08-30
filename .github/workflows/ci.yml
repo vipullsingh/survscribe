@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: "20"
+  # Expo SDK 57 requires Node >= 20.19.4; 22 LTS satisfies that and every other tool here.
+  NODE_VERSION: "22"
   GO_VERSION: "1.25"
 
 jobs:

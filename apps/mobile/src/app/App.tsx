@@ -6,6 +6,7 @@
  * feature screens arrive from sprint_0003 onward.
  */
 import React from "react";
+import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -31,6 +32,7 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 export default function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
+      <StatusBar style="dark" />
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={{

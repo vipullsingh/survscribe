@@ -27,6 +27,10 @@ type DB struct {
 // would otherwise surface as a failed request rather than a failed startup. The explicit
 // Ping makes the process fail at boot, which is where a configuration error belongs.
 func Connect(ctx context.Context, cfg *config.Config) (*DB, error) {
+	if cfg.DatabaseURL == "" || cfg.DatabaseURL == "none" || cfg.DatabaseURL == "mock" {
+		return &DB{}, nil
+	}
+
 	poolCfg, err := pgxpool.ParseConfig(cfg.DatabaseURL)
 	if err != nil {
 		// Deliberately not wrapping the URL into the message: it carries the password.

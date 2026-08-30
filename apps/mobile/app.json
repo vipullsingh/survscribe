@@ -1,4 +1,20 @@
 {
-  "name": "SurvScribe",
-  "displayName": "SurvScribe"
+  "expo": {
+    "name": "SurvScribe",
+    "slug": "survscribe",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "survscribe",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "com.survscribe.mobile",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.survscribe.mobile",
+      "edgeToEdgeEnabled": true
+    }
+  }
 }

@@ -77,7 +77,7 @@ Every task in `sprint_0001` is complete. This supersedes the "empty scaffold" an
 
 **Backend skeleton — `apps/backend`.** `cmd/api/main.go` (config → logger → DB connect-with-ping → server, clean SIGTERM/SIGINT shutdown; **no automatic migrations**); `internal/config` (fail-fast env loading, all problems reported at once); `internal/server` (Gin router, envelope middleware chain `RequestID → RealIP → Recovery → AccessLog`; `Authenticate → StoreScope → RequirePermission` are sprint_0003 seams, not yet wired); `internal/repository` (pgx pool with Ping-at-connect); `internal/handler` (`/healthz`); `pkg/response` (ADR-0004 envelope + typed error codes); `pkg/logger` (structured `log/slog`, JSON or text). **Verified**: `go build ./...`, `go vet ./...`, and `go test ./...` (real `httptest` coverage of the envelope, 404/405 handling, and the degraded-without-database health path) all pass. Manually verified: fails fast and legibly with no `DATABASE_URL`; fails fast and legibly against an unreachable Postgres. Go pinned to **1.25** (not 1.22 — `pgx/v5` v5.10.0 requires it; ADR-0007 §1 records and supersedes the earlier `go.mod` line).
 
-**Mobile skeleton — `apps/mobile`.** React Native 0.75 + TypeScript scaffold: `src/app/App.tsx` (navigation shell, the canonical 5-tab bottom nav, one named `PlaceholderScreen` per tab stating which sprint owns it — no lorem ipsum, per Design System §7.3); `src/core/env.ts` (build-time config; **no provider secret ever enters this file or the bundle** — see ADR-0008 §3); `src/shared/api/client.ts` (envelope-aware fetch wrapper, typed `ApiRequestError` with an `isOffline` discriminator for the future sync engine; auth-header attachment and refresh-on-401 are marked `sprint_0003` seams). **Verified**: typechecks clean with `exactOptionalPropertyTypes` on. **Not verified**: has not been run on an actual iOS simulator or Android emulator — no such device/toolchain is available in this environment. That check remains outstanding against `sprint_0001`'s acceptance criterion "runs on iOS simulator and Android emulator."
+**Mobile skeleton — `apps/mobile`.** **Expo (SDK 57 / React Native 0.86) + TypeScript** scaffold — migrated from bare React Native on 2026-08-30, see §18 D59 and §19.5. Continuous Native Generation: no `ios/`/`android/` folders committed (both gitignored; `expo prebuild` regenerates them). `index.js` uses `expo`'s `registerRootComponent`; `app.json` is an Expo config; `babel.config.js` uses `babel-preset-expo`; `metro.config.js` uses `expo/metro-config` with the pnpm-workspace watchFolders/symlink tweaks. `src/app/App.tsx` (navigation shell, the canonical 5-tab bottom nav via React Navigation, one named `PlaceholderScreen` per tab stating which sprint owns it — no lorem ipsum, per Design System §7.3); `src/core/env.ts` (build-time config; reads only `EXPO_PUBLIC_*` vars, which Expo inlines into the bundle; **no provider secret ever enters this file or the bundle** — see ADR-0008 §3); `src/shared/api/client.ts` (envelope-aware fetch wrapper, typed `ApiRequestError` with an `isOffline` discriminator for the future sync engine; auth-header attachment and refresh-on-401 are marked `sprint_0003` seams). **Verified 2026-08-30 (post-migration)**: `pnpm install`, `pnpm run format:check`, `pnpm run lint`, `pnpm run typecheck`, `pnpm run test` all exit 0 across all 5 JS/TS packages (`packages/ui`'s 23 RNTL tests still pass). **Not verified**: `expo` CLI (`expo start` / `expo prebuild` / `expo run:android`) has **not** been run — the local environment's Node is 20.17, below Expo SDK 57's required ≥ 20.19.4; and the app has not run on an iOS simulator or Android emulator (no such toolchain here). `sprint_0001`'s acceptance criterion "runs on iOS simulator and Android emulator" remains outstanding.
 
 **ADR-0007 (conventions).** Go 1.25; backend testing = `testing` + `testify`, `-race` in CI, no unit test may require Postgres; mobile testing = Jest + React Native Testing Library, Detox deferred; the deterministic loss engine held to a higher bar (shared Go/TS fixture, the §30.2 worked example as a committed regression case) once `sprint_0011` builds it; Prettier owns formatting (100-col), ESLint owns correctness (four added rules, each justified); short-lived branches off `main`, squash merge, Conventional Commits (continuing existing practice); generated artifacts are committed and CI proves they're current. **Status: Proposed** — needs project-owner sign-off like every other ADR in this repo.
 
@@ -291,8 +291,8 @@ Pipeline overview of all claims across the 15 stages; stage filter pills; claim 
 | Layer | Technology | Basis |
 | :-- | :-- | :-- |
 | **Product name** | **SurvScribe** across all aspects — code, packages, UI, docs, and the claim-ref prefix (`SS-YYYY-XXXXX`). Physical repo-dir rename `SurveyAssist`→`SurvScribe` + git-remote update still pending. | Q&A 2026-08-30 |
-| **Mobile client** | **React Native + TypeScript**. Feature-first layout (`apps/mobile/src/features/<feature>/{api,components,hooks,screens,store,types}`) + `src/infrastructure/` + `src/shared/`. Primary and only MVP client. | Q&A 2026-08-30 |
-| **Mobile local DB** | **WatermelonDB** (reactive ORM over **SQLite**), encrypted with **SQLCipher (AES-256)**. Backs the offline store + sync queue. | Q&A 2026-08-30 |
+| **Mobile client** | **React Native + Expo + TypeScript** (Expo SDK 57 / RN 0.86; migrated from bare RN 2026-08-30, §18 D59). Continuous Native Generation — `ios/`/`android/` are `expo prebuild` output, not committed. Navigation via React Navigation. Native modules Expo Go cannot host (WatermelonDB/SQLCipher, camera watermarking) require a custom Expo dev build. Feature-first layout (`apps/mobile/src/features/<feature>/{api,components,hooks,screens,store,types}`) + `src/infrastructure/` + `src/shared/`. Primary and only MVP client. | Q&A 2026-08-30; §18 D59 |
+| **Mobile local DB** | **WatermelonDB** (reactive ORM over **SQLite**), encrypted with **SQLCipher (AES-256)**. Backs the offline store + sync queue. Under Expo (D59) this needs an **Expo config plugin + a custom development build** — it does not run in Expo Go; wired up in the sprint that introduces the offline store. | Q&A 2026-08-30; §18 D59 |
 | **Desktop web** | **Deferred to post-MVP.** Screen-spec "Responsive Desktop Web View" sections are forward-looking design only. When built: React + shared `packages/` TS types. | Q&A 2026-08-30 |
 | **Backend** | **Go (Golang)** + **Gin** framework, **REST/JSON** API. **gRPC dropped from MVP.** Standard `cmd/ + internal/ + pkg/` layout. `pgx` driver + connection pooling. | Q&A 2026-08-30; `Requirement.MD` §2.2 |
 | **Backend concurrency** | Goroutine-powered concurrent media sync + chunked photo upload pipeline. | `Requirement.MD` §2.2 |
@@ -358,10 +358,12 @@ SurveyAssist/  (git dir; product name = SurvScribe — physical rename pending)
 │   │   ├── migrations/               # 12 pairs, .up/.down.sql — NEVER auto-executed; see README.md
 │   │   ├── deployments/docker-compose.yml  # local Postgres 16, port 5433, dev-only
 │   │   └── scripts/                  # gen_openapi.py, check_migrations.py
-│   └── mobile/                       # React Native 0.75 + TS — TYPECHECKS clean
+│   └── mobile/                       # Expo SDK 57 / React Native 0.86 + TS — lint/typecheck/test clean
 │       ├── package.json  tsconfig.json  metro.config.js  babel.config.js  .env.example
-│       ├── src/app/                  # App.tsx (5-tab nav shell) + PlaceholderScreen.tsx
-│       ├── src/core/env.ts           # build-time config; no secret ever lands here
+│       ├── app.json  index.js        # Expo config + registerRootComponent entry
+│       ├── (no ios/ android/)        # CNG — `expo prebuild` output, gitignored
+│       ├── src/app/                  # App.tsx (5-tab RN-Navigation shell) + PlaceholderScreen.tsx
+│       ├── src/core/env.ts           # reads EXPO_PUBLIC_* only; no secret ever lands here
 │       ├── src/shared/api/client.ts  # envelope-aware fetch client, typed ApiRequestError
 │       └── src/{features,infrastructure}/  # empty — feature work starts sprint_0003+
 │
@@ -576,7 +578,7 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 - **Field naming in specs:** `snake_case` data fields; `PascalCase` named UI components.
 - **Enums in specs:** Title Case value strings; role scopes UPPER_SNAKE; status codes UPPER_SNAKE (`LOCATION_DISCREPANCY_DETECTED`, `STATUS_DRAFT_OFFLINE`).
 - **Currency:** Indian numbering, `₹`, monospace, right-aligned.
-- **Scaffold layout intent:** Go backend `cmd/ + internal/ + pkg/`; mobile **feature-first** (`src/features/<feature>/{api,components,hooks,screens,store,types}`) + `src/infrastructure/` + `src/shared/`; shared code in `packages/`.
+- **Scaffold layout intent:** Go backend `cmd/ + internal/ + pkg/`; mobile is an **Expo project** (§18 D59) with a **feature-first** `src/` (`src/features/<feature>/{api,components,hooks,screens,store,types}` + `src/infrastructure/` + `src/shared/`) — the Expo migration did not change this layout; shared code in `packages/`.
 - **Monorepo:** pnpm workspaces + Turborepo (JS/TS); Go backend separate `go.mod`.
 - **ADRs:** to live in `documentation/decisions/`, one file per decision.
 
@@ -627,7 +629,7 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 11. **`auth_events` has no retention policy** — the table grows unbounded (§4 item 6). `physical-schema.md` §10.2 and §38 item 10 both flag this; `audit_log` has the same open question and is evidentiary, which raises the stakes.
 12. **`users.username` is accepted at login but captured by no signup step** — assumed NULL at signup, settable from Profile; unconfirmed (§4 item 5).
 13. **`physical-schema.md` Part B contains 9 tables the SRS never named** (`policy_sections`, `chronology_events`, `document_line_items`, `assessment_heads`, `discrepancy_flags`, `preliminary_survey_reports`, `pre_submission_audits`, `report_dispatches`, `document_damage_links`) — each is architecturally justified in the document itself and flagged `[ADDITION]`, but none is approved. Listed for review in `physical-schema.md` §38 and tracked here as debt until §16 Q12 closes.
-14. **The mobile app has not run on any simulator or emulator.** It typechecks; `sprint_0001`'s own acceptance criterion ("runs on iOS simulator and Android emulator") is unverified because no such toolchain exists in this development environment.
+14. **The mobile app has not run on any simulator or emulator, and the Expo CLI has not been run at all.** It lints, typechecks and tests clean; but `expo start` / `expo prebuild` / `expo run:android` were never executed — the migration environment's Node was 20.17, below Expo SDK 57's required ≥ 20.19.4 (§18 D59, §19.5). `sprint_0001`'s acceptance criterion ("runs on iOS simulator and Android emulator") is still unverified. First real Expo run must be done on Node ≥ 20.19.4 (CI's `NODE_VERSION` was bumped to `22` for this).
 15. **CI has never executed inside GitHub Actions.** `.github/workflows/ci.yml` exists and its four jobs were run locally, by hand, with equivalent commands and equivalent (0-error) results — but the workflow itself has not fired on a real push or pull request yet.
 16. **No migration has ever touched a persistent database.** Only CI's disposable, job-scoped Postgres has applied them (apply, then roll back). `sprint_0001` R8 and §16 Q12 require owner sign-off before that changes.
 
@@ -740,12 +742,13 @@ SVG artboards exist **only** for: `00_auth_login` (main, otp_tab, phone-otp moda
 | **D56** | **`.docx` template contract specified** — the section-block JSON envelope (matching `physical-schema.md` §33's `source`/`accepted_by_user_id`/`placeholders` shape, which is what makes FR-14.4's approval gate mechanically checkable); fixed 9-section order; the PSR as a distinct document sharing the same contract; Section F's fixed table shape; the four disclaimer blocks as non-removable, non-themeable; sign-off with SLA fields copied at sign-off (D35); a format-parity checklist for the deferred client engine. | Reviewed — `sprint_0002` task 5, 2026-08-30 | `docx-template-contract.md` |
 | **D57** | **Design kernel built** — `Button` (4 variants), `TextField`, `CurrencyText` in `packages/ui`, transcribed directly from `Design System.md` §§3–4. Verified without a simulator via 23 RNTL assertions against resolved styles (primary blue, type scale, monospace right-aligned ₹ grouping), not a screenshot. One documented gap: the design system's outer focus-ring shadow has no direct React Native primitive and is unimplemented. | Confirmed — `sprint_0002` task 4, 2026-08-30 | `packages/ui` |
 | **D58** | **Screen designs (task 6) not performed — flagged as genuinely out of scope**, not silently skipped: no Figma/design-tool access in this environment. Needs the project's human designer before `sprint_0003` screen work begins; `sprint_0002` R6 updated to reflect the design workstream now trailing the build rather than leading it. | Flagged, unresolved, 2026-08-30 | `sprint_0002` README §3, R6 |
+| **D59** | **Mobile app moved from bare React Native to an Expo project** (owner instruction, 2026-08-30). Expo SDK 57 / RN 0.86 / React 19.2; Continuous Native Generation — the committed bare-RN `apps/mobile/android/` folder (Kotlin `MainActivity`/`MainApplication`, gradle plugin) was **deleted**, and `ios/`/`android/` are now gitignored `expo prebuild` output. Config swapped to Expo: `app.json` (Expo config), `index.js` (`registerRootComponent`), `babel-preset-expo`, `expo/metro-config`. `src/core/env.ts` now reads `EXPO_PUBLIC_*` vars (Expo's bundle-inlining prefix); `.env.example` updated. Navigation stays React Navigation (no expo-router). `packages/ui` untouched (still RN 0.75 devDeps; its 23 tests still pass). Dev scripts (`scripts/run-*.ps1/.sh`) and CI `NODE_VERSION` (→ `22`, Expo needs Node ≥ 20.19.4) updated. D19/D20 unchanged in substance — Expo *is* React Native + TypeScript; WatermelonDB + SQLCipher will need an Expo config plugin + custom dev build. **Verified:** `pnpm install` + full workspace `format:check`/`lint`/`typecheck`/`test` pass. **Not verified:** the `expo` CLI never ran (env Node 20.17 < 20.19.4); no simulator/emulator run. | Confirmed — user instruction 2026-08-30 | §19.5; `apps/mobile/` |
 
 ---
 
 ## 19. `documentation/` Reconciliation — Status
 
-The 2026-08-30 decisions (§18 D18–D37, then D38–D44, then **D45–D53** — `sprint_0001`, then **D54–D58** — `sprint_0002`) have been **applied to `documentation/`**. See §19.3 for the `sprint_0001` round and §19.4 for `sprint_0002`.
+The 2026-08-30 decisions (§18 D18–D37, then D38–D44, then **D45–D53** — `sprint_0001`, then **D54–D58** — `sprint_0002`, then **D59** — bare RN → Expo migration) have been **applied to `documentation/`**. See §19.3 for the `sprint_0001` round, §19.4 for `sprint_0002`, and §19.5 for the Expo migration.
 
 ### 19.0 Identity model finalization — completed 2026-08-30 (ADR-0005 / ADR-0006, D38–D44)
 
@@ -850,6 +853,45 @@ The 2026-08-30 decisions (§18 D18–D37, then D38–D44, then **D45–D53** —
 - A live end-to-end sync integration test (real mobile client, real server endpoint) — the go/no-go rests on algorithmic analysis of real, executed code against a real scenario, not an integration test; `sprint_0005` should still validate the full pipeline.
 - Owner approval on either new architecture document — same `CLAUDE.md` §16 Q12 blocker as everything else.
 - No `git commit`/`push` — same rule as §19.3.
+
+### 19.5 Bare React Native → Expo migration — completed 2026-08-30 (D59)
+
+Owner instruction: *"from react native, move the mobile app completely to expo project."* Sub-choices were put to the owner: **keep React Navigation** (not expo-router), **delete the committed `android/` folder** and adopt Continuous Native Generation.
+
+**Changed — `apps/mobile/`**
+- [x] `package.json` — scripts (`expo start`/`run:android`/`run:ios`/`prebuild`); deps swapped to `expo@~57`, `expo-status-bar`, `react@19.2.3`, `react-native@0.86.3`, `react-native-screens@~4.26`, `react-native-safe-area-context@~5.7`; devDeps `babel-preset-expo`, `jest-expo` (jest preset `react-native` → `jest-expo`), `@types/react@~19.2.4`; `@react-native/*` toolchain deps removed; `@types/node` retained (needed by `env.ts`); `main` → `index.js`; `engines.node` → `>=20.19.4`.
+- [x] `app.json` — replaced `{name,displayName}` with an Expo config block (slug, scheme, bundleIdentifier/package `com.survscribe.mobile`, `newArchEnabled`).
+- [x] `index.js` — `AppRegistry.registerComponent` → `expo`'s `registerRootComponent`.
+- [x] `babel.config.js` — `@react-native/babel-preset` → `babel-preset-expo`.
+- [x] `metro.config.js` — `@react-native/metro-config` → `expo/metro-config`; kept pnpm-workspace `watchFolders`/`nodeModulesPaths`, added `unstable_enableSymlinks`.
+- [x] `tsconfig.json` — include `expo-env.d.ts`, exclude `.expo`.
+- [x] `src/core/env.ts` + `.env.example` — `SURVSCRIBE_*` → `EXPO_PUBLIC_SURVSCRIBE_*` (Expo only inlines the `EXPO_PUBLIC_` prefix).
+- [x] `src/app/App.tsx` — added `<StatusBar>` from `expo-status-bar`; navigation shell otherwise unchanged.
+- [x] `README.md` — rewritten for Expo / CNG / dev-build note.
+- [x] **Deleted** `apps/mobile/android/` (bare-RN Kotlin scaffold + gradle plugin), `git rm`-ed.
+
+**Changed — repo**
+- [x] `.gitignore` — RN section → Expo section (`.expo/`, `dist/`, `expo-env.d.ts`, and `apps/mobile/ios/` + `apps/mobile/android/` as CNG output).
+- [x] `scripts/run-android.ps1` / `run-android.sh` / `run-local.ps1` / `run-local.sh` — `react-native run-android`/`start` → `expo run:android`/`expo start`; `-OpenStudio` path now runs `expo prebuild --platform android` first.
+- [x] `.github/workflows/ci.yml` — `NODE_VERSION` `20` → `22` (Expo SDK 57 needs Node ≥ 20.19.4).
+- [x] `pnpm-lock.yaml` — regenerated.
+- [x] `documentation/Requirement.MD` §2.1 / §2.3, `README.md` — "React Native" → "React Native + Expo", with the SDK/CNG/dev-build detail.
+- [x] `CLAUDE.md` — §2.1a mobile-skeleton paragraph, §7.2 (Mobile client + Mobile local DB rows), §8 tree, §13.1, §15 item 14, §18 D59, this §19.5.
+
+**Verified (run locally this session, Node 20.17)**
+- `npx pnpm install` — clean (one benign `react-dom` peer warning from tooling, not used by the native app).
+- `pnpm run format:check`, `pnpm run lint`, `pnpm run typecheck`, `pnpm run test` — all exit 0 across all 5 JS/TS packages; `packages/ui`'s 23 RNTL tests still pass.
+- `app.json` parses; `babel.config.js` and `metro.config.js` load under Node (`expo/metro-config` resolves).
+
+**Not done / not verified — deliberately**
+- The `expo` CLI was **not** run (`expo start` / `prebuild` / `run:android` / `expo-doctor` / `expo config`) — this environment's Node is 20.17, below Expo SDK 57's required ≥ 20.19.4. First real Expo run needs Node ≥ 20.19.4.
+- No simulator / emulator run (no toolchain here) — `sprint_0001`'s "runs on iOS simulator and Android emulator" criterion is still open (§15 item 14).
+- `packages/ui` left on its RN 0.75 devDeps — it is lint/test-only and version-isolated; not touched to keep the diff focused.
+- WatermelonDB + SQLCipher Expo config plugin / custom dev build — deferred to the sprint that adds the offline store (noted in `.env.example`, `README.md`, §7.2).
+- `typescript` left at `^5.4.0` (resolves 5.9.3); Expo "expected `~6.0.3`" is a recommendation, and bumping the whole monorepo to TS 6 is out of scope.
+- No `git commit`/`push` — same rule as §19.3/§19.4; changes left staged for owner review.
+- Doc sweep of every "React Native" mention in screen specs / `User Stories.md` not done — Expo *is* React Native + TS, so those statements are not wrong; reconcile opportunistically.
+- Physical repo-dir rename `SurveyAssist` → `SurvScribe` still pending (unrelated, pre-existing — §19.2).
 
 ---
 

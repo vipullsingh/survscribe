@@ -1,4 +1,9 @@
-# SurvScribe Android App Launcher Script
+# SurvScribe Android App Launcher Script (Expo)
+#
+# Default:        boot an emulator if needed, then `npx expo run:android`
+#                 (prebuilds the gitignored native project and builds with Gradle).
+# -OpenStudio :   `npx expo prebuild --platform android`, then open the generated
+#                 apps/mobile/android project in Android Studio.
 param(
     [switch]$OpenStudio,
     [switch]$Studio
@@ -7,13 +12,30 @@ param(
 $ErrorActionPreference = "Continue"
 
 $ProjectRoot = Resolve-Path "$PSScriptRoot/.."
-$AndroidProjectPath = "$ProjectRoot/apps/mobile/android"
+$MobileAppPath = "$ProjectRoot/apps/mobile"
+$AndroidProjectPath = "$MobileAppPath/android"
 
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "   SurvScribe Android App Launcher              " -ForegroundColor Cyan
+Write-Host "   SurvScribe Android App Launcher (Expo)       " -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 
-# 1. Check Android Studio shortcut & installations
+# 0. Node version gate. Expo SDK 57 requires Node >= 20.19.4; anything older aborts
+#    inside the Expo CLI with a raw error, so check here and say so plainly.
+$nodeCmd = Get-Command "node" -ErrorAction SilentlyContinue
+if (-not $nodeCmd) {
+    Write-Host "Error: 'node' is not installed or not in PATH." -ForegroundColor Red
+    Exit 1
+}
+$nodeRaw = (& node --version).TrimStart("v")
+$nodeVer = [Version]$nodeRaw
+if ($nodeVer -lt [Version]"20.19.4") {
+    Write-Host "Error: Node $nodeRaw detected. Expo SDK 57 needs Node >= 20.19.4." -ForegroundColor Red
+    Write-Host "Install Node 20.19.4+ or 22 LTS, then re-run this script." -ForegroundColor Yellow
+    Exit 1
+}
+Write-Host "Node $nodeRaw OK." -ForegroundColor Green
+
+# 1. Locate Android Studio (only needed for -OpenStudio)
 $shortcutPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Android Studio\Android Studio.lnk"
 $studioExePaths = @(
     "C:\Program Files\Android\Android Studio1\bin\studio64.exe",
@@ -24,8 +46,7 @@ $studioExe = $studioExePaths | Where-Object { Test-Path $_ } | Select-Object -Fi
 
 function Launch-StudioGUI {
     param([string]$Shortcut, [string]$ExePath, [string]$ProjectPath)
-    
-    # Kill any hung background process first
+
     $bgProc = Get-Process studio64 -ErrorAction SilentlyContinue
     if ($bgProc -and $bgProc.MainWindowHandle -eq [IntPtr]::Zero) {
         Write-Host "Clearing background process..." -ForegroundColor Gray
@@ -46,13 +67,21 @@ function Launch-StudioGUI {
 }
 
 if ($OpenStudio -or $Studio) {
-    Write-Host "`n[1/1] Launching Android Studio GUI..." -ForegroundColor Yellow
+    Write-Host "`n[1/2] Generating the native Android project (expo prebuild)..." -ForegroundColor Yellow
+    Push-Location $MobileAppPath
+    try {
+        npx expo prebuild --platform android
+    } finally {
+        Pop-Location
+    }
+
+    Write-Host "`n[2/2] Opening the project in Android Studio..." -ForegroundColor Yellow
     Launch-StudioGUI -Shortcut $shortcutPath -ExePath $studioExe -ProjectPath $AndroidProjectPath
     Exit 0
 }
 
-# 2. Check ADB and Active Android Devices/Emulators
-Write-Host "`n[1/3] Checking Android Devices & Emulators..." -ForegroundColor Yellow
+# 2. Check ADB and active Android devices / emulators
+Write-Host "`n[1/2] Checking Android Devices & Emulators..." -ForegroundColor Yellow
 $adbCmd = Get-Command "adb" -ErrorAction SilentlyContinue
 
 if ($adbCmd) {
@@ -61,8 +90,7 @@ if ($adbCmd) {
         Write-Host "Found active Android device / emulator." -ForegroundColor Green
     } else {
         Write-Host "No running Android device or emulator detected." -ForegroundColor Yellow
-        
-        # Check standard Android SDK location for emulator executable
+
         $sdkPath = "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe"
         if (Test-Path $sdkPath) {
             $avds = & $sdkPath -list-avds
@@ -92,14 +120,11 @@ if ($adbCmd) {
     Write-Host "Warning: 'adb' command not found in PATH." -ForegroundColor Yellow
 }
 
-# 3. Launch Android Studio GUI
-Launch-StudioGUI -Shortcut $shortcutPath -ExePath $studioExe -ProjectPath $AndroidProjectPath
-
-# 4. Build and Launch React Native App on Android
-Write-Host "`n[3/3] Building and launching React Native app on Android..." -ForegroundColor Yellow
-Push-Location "$ProjectRoot/apps/mobile"
+# 3. Build and launch the Expo app on Android
+Write-Host "`n[2/2] Building and launching the Expo app on Android (expo run:android)..." -ForegroundColor Yellow
+Push-Location $MobileAppPath
 try {
-    npx react-native run-android
+    npx expo run:android
 } finally {
     Pop-Location
 }

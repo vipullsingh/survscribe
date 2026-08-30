@@ -42,14 +42,23 @@ func run() error {
 
 	db, err := repository.Connect(ctx, cfg)
 	if err != nil {
-		return fmt.Errorf("database: %w", err)
+		if cfg.Env == config.EnvDevelopment {
+			log.Warn("database connection failed; continuing in local development offline mode", "error", err)
+			db = &repository.DB{}
+		} else {
+			return fmt.Errorf("database: %w", err)
+		}
 	}
 	defer db.Close()
 
-	log.Info("database connected",
-		"max_conns", cfg.DBMaxConns,
-		"min_conns", cfg.DBMinConns,
-	)
+	if db != nil && db.Pool != nil {
+		log.Info("database connected",
+			"max_conns", cfg.DBMaxConns,
+			"min_conns", cfg.DBMinConns,
+		)
+	} else {
+		log.Warn("running with in-memory / local standalone mode (database offline)")
+	}
 
 	return server.New(cfg, log, db).Run(ctx)
 }

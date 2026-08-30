@@ -39,7 +39,8 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 ## 2. Target Platforms & Technical Architecture
 
 ### 2.1 Target Platforms & Form Factors (Mobile App First)
-1. **Primary Platform (MVP): React Native (TypeScript) Mobile Application (iOS & Android)**:
+1. **Primary Platform (MVP): React Native + Expo (TypeScript) Mobile Application (iOS & Android)**:
+   - Delivered as an **Expo** project (Expo SDK 57 / React Native 0.86) using Continuous Native Generation — the `ios/` and `android/` folders are produced by `expo prebuild` and are not committed. Native modules that Expo Go cannot host (WatermelonDB + SQLCipher, camera watermarking) run through a **custom Expo development build**.
    - Built with a **Mobile-First paradigm** ensuring **every single stage and screen has a dedicated, touch-optimized Mobile View**.
    - Ergonomically designed for on-the-go single-hand and two-hand field operations: bottom navigation bars, swipe gestures, floating action buttons (FAB), hardware GPS integration, native camera photo studio with automatic watermarking, push-to-talk voice memo recording, an offline **WatermelonDB (over SQLite)** database encrypted with SQLCipher (AES-256), and on-device report preview/export.
 2. **Companion Web Desktop Application — POST-MVP**:
@@ -102,7 +103,7 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 | Concern | Decision |
 | :--- | :--- |
 | Product name | **SurvScribe** across all aspects — code, packages, UI, documentation, and the internal claim-reference prefix (`SS-YYYY-XXXXX`). |
-| Mobile client (MVP) | **React Native + TypeScript**, feature-first source layout. |
+| Mobile client (MVP) | **React Native + Expo (TypeScript)**, feature-first source layout. Expo SDK 57 / RN 0.86, Continuous Native Generation (`expo prebuild`; `ios/`+`android/` not committed). Navigation via React Navigation. Native modules unavailable in Expo Go run through a custom Expo development build. |
 | Mobile local database | **WatermelonDB** (reactive ORM over SQLite), encrypted with **SQLCipher (AES-256)**. |
 | Desktop web | **Deferred to post-MVP.** |
 | Backend | **Go (Golang) + Gin**, **REST/JSON**. gRPC is **out of scope for the MVP**. `pgx` + PostgreSQL. |

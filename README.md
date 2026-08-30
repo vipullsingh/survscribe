@@ -49,7 +49,7 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 │
 ├── apps/                                             # Monorepo apps (scaffold — no code yet)
 │   ├── backend/                                      # Go + Gin REST API, state machine, server .docx engine
-│   └── mobile/                                       # React Native (TypeScript) field app
+│   └── mobile/                                       # React Native + Expo (TypeScript) field app
 ├── packages/                                         # Shared workspace packages (scaffold): api-contracts, config, types, ui
 └── README.md
 ```
@@ -60,7 +60,7 @@ The platform manages the complete **15-Stage General Claim Survey Process** (fro
 
 ## 🚀 Key Architectural Features
 
-- **Mobile-First Architecture**: Delivered as a **dedicated React Native (TypeScript) mobile application (iOS & Android)** with touch-first ergonomics, bottom action bars, single-hand usability, and native mobile views everywhere across all 15 stages.
+- **Mobile-First Architecture**: Delivered as a **dedicated React Native + Expo (TypeScript) mobile application (iOS & Android)** with touch-first ergonomics, bottom action bars, single-hand usability, and native mobile views everywhere across all 15 stages.
 - **High-Performance Golang Backend**: Fast, lightweight **REST/JSON** backend in **Go (Golang) + Gin** with goroutine-powered concurrent media sync, chunked photo uploads, claim state machine, and PostgreSQL (`pgx`). (gRPC is out of scope for the MVP.)
 - **Visual Design System**: Complete forensic-precision design system with Deep Cobalt primary (`#1E3A8A`, hover `#1E40AF`), Electric Azure accent (`#3B82F6`), high-contrast sunlight readability, monospace number formatting, and solid opaque surfaces (no heavy glassmorphism — see the Design System anti-pattern rules).
 - **Offline-First Resilience**: Full field data, photo capture, voice notes, and damage calculations with local SQLite caching and automatic bi-directional synchronization.

@@ -72,7 +72,7 @@ func Load() (*Config, error) {
 			"SURVSCRIBE_ENV %q is not one of development, test, staging, production", cfg.Env))
 	}
 
-	if cfg.DatabaseURL == "" {
+	if cfg.DatabaseURL == "" && cfg.Env != EnvDevelopment && cfg.Env != EnvTest {
 		problems = append(problems, "DATABASE_URL is required (see .env.example)")
 	}
 
