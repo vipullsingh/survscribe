@@ -1,0 +1,37 @@
+# SurvScribe -- LOCAL DEVELOPMENT ONLY
+#
+# A disposable PostgreSQL for a developer laptop. This file is not a deployment
+# template and must not be adapted into one: it has no TLS, no backups, no resource
+# limits, and its credentials are in the repository.
+#
+# Port 5433 is deliberate. The default 5432 is very often already bound by a local
+# Postgres holding real data, and a migration command aimed at the wrong 5432 is
+# exactly the accident the migrations runbook exists to prevent.
+#
+# Migrations are NEVER applied automatically -- not by this file, not on container
+# start. See ../migrations/README.md.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: survscribe-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: survscribe
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: survscribe_dev
+      # Deterministic collation so ORDER BY behaves the same on every developer machine.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "5433:5432"
+    volumes:
+      - survscribe_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U survscribe -d survscribe_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  survscribe_pgdata:
+    name: survscribe_pgdata_dev
