@@ -1,29 +1,4 @@
 {
-  "expo": {
-    "name": "SurvScribe",
-    "slug": "survscribe",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "scheme": "survscribe",
-    "userInterfaceStyle": "light",
-    "icon": "./assets/logo.png",
-    "splash": {
-      "image": "./assets/logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FFFFFF"
-    },
-    "platforms": ["ios", "android", "web"],
-    "ios": {
-      "bundleIdentifier": "com.survscribe.mobile",
-      "supportsTablet": true
-    },
-    "android": {
-      "package": "com.survscribe.mobile",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png",
-        "backgroundColor": "#FFFFFF"
-      }
-    }
-  }
+  "name": "SurvScribe",
+  "displayName": "SurvScribe"
 }
-

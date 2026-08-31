@@ -10,7 +10,7 @@
  * corresponding sprint ships the real feature.
  */
 import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -39,7 +39,9 @@ export default function App(): React.JSX.Element {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" />
+      {/* React Native 0.87 draws edge-to-edge on Android and no longer accepts a
+          StatusBar backgroundColor prop; only the content style is settable. */}
+      <StatusBar barStyle="dark-content" />
       {showSplash ? (
         <SplashScreen onFinish={() => setShowSplash(false)} />
       ) : (

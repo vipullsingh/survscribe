@@ -1,13 +1,17 @@
 /**
  * Runtime configuration for the mobile app.
  *
- * Expo inlines only variables prefixed `EXPO_PUBLIC_` into the JavaScript bundle at
- * build time (via babel-preset-expo). Nothing secret belongs here: a React Native
- * bundle is readable on any device it ships to, so an API key placed in this file is a
- * published API key. Credentials for SMS, email, maps, LLM and OCR providers stay on
- * the backend, which is why the app talks to those services only through our own API
- * (ADR-0002, ADR-0008).
+ * Values arrive through the virtual `@env` module, which react-native-dotenv inlines
+ * from apps/mobile/.env at build time (see babel.config.js). Nothing secret belongs
+ * here: a React Native bundle is readable on any device it ships to, so an API key
+ * placed in this file is a published API key. Credentials for SMS, email, maps, LLM and
+ * OCR providers stay on the backend, which is why the app talks to those services only
+ * through our own API (ADR-0002, ADR-0008).
+ *
+ * Because the values are inlined at build time, editing .env requires restarting Metro
+ * with --reset-cache.
  */
+import { SURVSCRIBE_API_BASE_URL, SURVSCRIBE_ENV } from "@env";
 
 export type AppEnvironment = "development" | "staging" | "production";
 
@@ -27,9 +31,8 @@ const DEFAULTS: Env = {
 
 export const env: Env = {
   ...DEFAULTS,
-  environment:
-    (process.env.EXPO_PUBLIC_SURVSCRIBE_ENV as AppEnvironment | undefined) ?? DEFAULTS.environment,
-  apiBaseUrl: process.env.EXPO_PUBLIC_SURVSCRIBE_API_BASE_URL ?? DEFAULTS.apiBaseUrl,
+  environment: (SURVSCRIBE_ENV as AppEnvironment | undefined) ?? DEFAULTS.environment,
+  apiBaseUrl: SURVSCRIBE_API_BASE_URL ?? DEFAULTS.apiBaseUrl,
 };
 
 export const isProduction = env.environment === "production";

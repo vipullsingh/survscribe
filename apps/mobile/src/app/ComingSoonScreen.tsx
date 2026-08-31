@@ -6,14 +6,7 @@
  * the design-system color palette.
  */
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { color, font, space } from "@survscribe/ui";
 
 const { width } = Dimensions.get("window");
@@ -25,10 +18,7 @@ interface Props {
   description?: string;
 }
 
-export function ComingSoonScreen({
-  title,
-  description,
-}: Props): React.JSX.Element {
+export function ComingSoonScreen({ title, description }: Props): React.JSX.Element {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
 
@@ -79,17 +69,15 @@ export function ComingSoonScreen({
         <Text style={styles.title}>{title}</Text>
 
         {/* Description */}
-        {description ? (
-          <Text style={styles.description}>{description}</Text>
-        ) : null}
+        {description ? <Text style={styles.description}>{description}</Text> : null}
 
         {/* Separator */}
         <View style={styles.separator} />
 
         {/* Info text */}
         <Text style={styles.infoText}>
-          We're building something great. This feature is currently under active
-          development and will be available in an upcoming release.
+          We're building something great. This feature is currently under active development and
+          will be available in an upcoming release.
         </Text>
 
         {/* Feature pills */}

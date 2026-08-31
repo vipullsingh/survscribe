@@ -1,0 +1,13 @@
+// This app is one package inside a pnpm workspace running with node-linker=hoisted
+// (repository-root .npmrc), so its npm dependencies install into the WORKSPACE root
+// node_modules, not apps/mobile/node_modules. The stock template paths ("../node_modules")
+// point at a directory that does not exist here, which fails as an opaque
+// "plugin com.facebook.react.settings not found" error rather than a missing-path one.
+//
+// From apps/mobile/android, the workspace root is three levels up.
+pluginManagement { includeBuild("../../../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+rootProject.name = 'SurvScribe'
+include ':app'
+includeBuild('../../../node_modules/@react-native/gradle-plugin')

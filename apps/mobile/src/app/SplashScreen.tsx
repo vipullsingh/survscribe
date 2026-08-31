@@ -6,14 +6,7 @@
  * of 2 seconds so the branding is always visible even on fast devices.
  */
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
 import { color, font } from "@survscribe/ui";
 
 const { width } = Dimensions.get("window");
@@ -73,18 +66,12 @@ export function SplashScreen({ onFinish }: Props): React.JSX.Element {
           },
         ]}
       >
-        <Image
-          source={require("../../assets/logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Image source={require("../../assets/logo.png")} style={styles.logo} resizeMode="contain" />
       </Animated.View>
 
       <Animated.View style={[styles.textWrap, { opacity: textOpacity }]}>
         <Text style={styles.title}>SurvScribe</Text>
-        <Text style={styles.subtitle}>
-          AI-Assisted Insurance Surveying
-        </Text>
+        <Text style={styles.subtitle}>AI-Assisted Insurance Surveying</Text>
       </Animated.View>
 
       {/* Subtle loading indicator */}
@@ -139,7 +126,13 @@ const LOGO_SIZE = width * 0.35;
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    // StyleSheet.absoluteFillObject was removed in React Native 0.87; absoluteFill is a
+    // registered style ID and cannot be spread into a style object.
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: color.surface,

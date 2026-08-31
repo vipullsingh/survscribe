@@ -2,45 +2,19 @@
   "extends": "@survscribe/config/tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
+    "lib": ["ES2022", "DOM"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": [
-      "react",
-      "jest",
-      "node"
-    ],
+    "types": ["react", "jest", "node"],
     "baseUrl": ".",
     "paths": {
-      "@app/*": [
-        "src/app/*"
-      ],
-      "@core/*": [
-        "src/core/*"
-      ],
-      "@features/*": [
-        "src/features/*"
-      ],
-      "@infrastructure/*": [
-        "src/infrastructure/*"
-      ],
-      "@shared/*": [
-        "src/shared/*"
-      ]
+      "@app/*": ["src/app/*"],
+      "@core/*": ["src/core/*"],
+      "@features/*": ["src/features/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "@shared/*": ["src/shared/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "index.js"
-  ],
-  "exclude": [
-    "node_modules",
-    "ios",
-    "android",
-    ".expo"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "index.js"],
+  "exclude": ["node_modules", "ios", "android"]
 }
