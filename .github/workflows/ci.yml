@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Expo SDK 57 requires Node >= 20.19.4; 22 LTS satisfies that and every other tool here.
+  # React Native 0.87.1 requires Node ^22.13.0 || ^24.3.0 || >= 26; 22 LTS satisfies
+  # that and every other tool here.
   NODE_VERSION: "22"
   GO_VERSION: "1.25"
 

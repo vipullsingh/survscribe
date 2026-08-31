@@ -23,17 +23,37 @@ bin/
 .env.production.local
 *.pem
 
-# Expo / React Native (mobile)
-apps/mobile/.expo/
+# React Native (mobile)
+# The native projects under apps/mobile/{android,ios} are SOURCE and are committed:
+# bare React Native has no `prebuild`, so permissions, the camera pipeline, Keychain /
+# Keystore custody and SQLCipher linkage all live in files that must be reviewable.
+# Only their build output is ignored.
 apps/mobile/dist/
-apps/mobile/web-build/
-apps/mobile/expo-env.d.ts
-# Native projects are generated on demand by `expo prebuild` (Continuous Native
-# Generation) and are not committed. Run `pnpm --filter @survscribe/mobile prebuild`
-# to (re)create them locally.
-apps/mobile/ios/
-apps/mobile/android/
-.bundle/
+# apps/mobile/.bundle/config is committed: it pins Bundler's install path for the
+# CocoaPods toolchain. Only the installed gems are ignored.
+vendor/bundle/
+*.jsbundle
+.metro-health-check*
+
+# Android build output
+**/android/build/
+**/android/app/build/
+**/android/.gradle/
+**/.cxx/
+**/android/local.properties
+*.iml
+*.hprof
+.kotlin/
+
+# iOS build output
+**/ios/Pods/
+**/ios/build/
+**/ios/.xcode.env.local
+**/*.xcuserstate
+**/xcuserdata/
+DerivedData/
+*.hmap
+*.ipa
 
 # IDEs & System Files
 .vscode/*

@@ -82,6 +82,13 @@ export default tseslint.config(
   {
     files: ["apps/mobile/**/*.{ts,tsx}", "src/**/*.{ts,tsx}"],
     languageOptions: { globals: reactNativeGlobals },
+    rules: {
+      // `require()` is React Native's documented API for static assets: Metro resolves
+      // the path at bundle time and hands Image a numeric asset id. An ES import of a
+      // .png is not the same thing, so the general ban on require() would be forcing a
+      // rewrite of correct, idiomatic code.
+      "@typescript-eslint/no-require-imports": "off",
+    },
   },
 
   {
