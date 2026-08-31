@@ -12,9 +12,9 @@ Tokens (`src/tokens.ts`) plus three base controls, built directly against Design
 
 Everything else — data tables, evidence cards, the 15-stage tracker, modals, the audit-finding box — is built against real screens starting `sprint_0003`, once the auth screens (the only ones with delivered SVG artboards) are implemented.
 
-## Verifying the kernel without a simulator
+## Verifying the kernel without a screenshot
 
-No iOS simulator or Android emulator is available in this development environment, so "does it render correctly" is answered with [React Native Testing Library](https://callstack.github.io/react-native-testing-library/) assertions against resolved styles, not a screenshot. `src/samples/KernelSampleScreen.tsx` renders every component together against a realistic worked example (the `physical-schema.md` §30.2 loss-quantification figures), and `src/__tests__/KernelSampleScreen.test.tsx` asserts the primary blue, the type scale, and monospace right-aligned rupee formatting directly — this is the "sample screen" `sprint_0002`'s acceptance criteria ask for.
+This package has no screens of its own to run on a device, so "does it render correctly" is answered with [React Native Testing Library](https://callstack.github.io/react-native-testing-library/) assertions against resolved styles, not a screenshot. `src/samples/KernelSampleScreen.tsx` renders every component together against a realistic worked example (the `physical-schema.md` §30.2 loss-quantification figures), and `src/__tests__/KernelSampleScreen.test.tsx` asserts the primary blue, the type scale, and monospace right-aligned rupee formatting directly — this is the "sample screen" `sprint_0002`'s acceptance criteria ask for. (An Android emulator is available in this environment as of the ADR-0011 migration and is used to run `apps/mobile` itself; this package's own kernel checks stay screenshot-free regardless, since RNTL is the more precise and faster-running assertion.)
 
 ```bash
 pnpm --filter @survscribe/ui test
@@ -26,4 +26,4 @@ Design System §4.1 specifies a focus state of `1.5px solid #1E3A8A` border **pl
 
 ## A note on this package's Jest config
 
-`jest.config.cjs` sets `transformIgnorePatterns: []` rather than the "react-native" preset's default. The preset's own pattern assumes a flat, hoisted `node_modules` layout; under pnpm every package actually resolves through `node_modules/.pnpm/<name>@<version>/node_modules/<name>/...`, so the preset's regex matches (and wrongly excludes from transform) the **outer** `node_modules/` segment before it ever reaches the inner one that names the package — on every OS, not only Windows. Transforming everything is the correct fix at this package's current size; revisit if the test suite grows large enough for the extra transform cost to matter.
+`jest.config.cjs` uses the `@react-native/jest-preset` (React Native 0.87 moved the preset out of the `react-native` package itself, per ADR-0011). It no longer needs a `transformIgnorePatterns` override: the repository runs pnpm with `node-linker=hoisted` (root `.npmrc`), so `node_modules` is flat and the preset's default pattern — written for exactly that layout — works unmodified. Under pnpm's default symlinked store this preset's pattern wrongly excludes packages from transform (it matches the outer `node_modules/` segment before reaching the inner one that names the package); that is precisely the class of failure `node-linker=hoisted` exists to avoid.
