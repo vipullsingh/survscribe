@@ -44,7 +44,7 @@ Each sprint has its own folder containing a `README.md` with its objective, task
 | :-- | :-- | :-- |
 | Problem solved | Eliminates administrative bottlenecks, prevents discrepancies, and accelerates preparation of **Preliminary Survey Reports (PSR)** and **Final Survey Reports (FSR)** for insurance loss assessment. | SRS §1.1; `README.md` |
 | Intended users | Licensed General Insurance Claim Surveyors and Loss Assessors (SLA) in India; surveyor firms. | SRS §1.1; CR-A5–A10 |
-| Primary user roles | `SURVEYOR` (the only role exercised in MVP), plus `REVIEWER`, `ADMIN`, `INSURER_VIEWER` as **schema-only metadata**; enforcement deferred. | SRS §5.1; AC 16.2.2; `CLAUDE.md` §5 |
+| Primary user roles | `SURVEYOR` (the only role a real user is registered into in MVP), plus `REVIEWER`, `ADMIN`, `INSURER_VIEWER` as full DB-driven roles from day one (ADR-0005 D39) — store isolation and permission checks are enforced on every endpoint in MVP; only **per-permission UI gating** and a role-administration UI are deferred. | SRS §5.1; AC 16.2.2; `CLAUDE.md` §5; ADR-0005 |
 | Core user journey | Sign in → dashboard → create claim (Stage 1) → work the 15-stage pipeline offline in the field → assemble the 9-section FSR with AI-drafted narrative → 4-point Human Approval Gate → 7-gate pre-submission audit → SHA-256 snapshot + dispatch. | SRS §3; Epics 0–16; `CLAUDE.md` §6.3 |
 | Value proposition | **Deterministic** loss math + **zero-hallucination, human-gated** AI narrative + **fully offline-first** field operation + **editable `.docx`** output, positioned strictly as assistive (never an insurer / adjudicator / IRDAI body). | SRS §1.2–1.3; `CLAUDE.md` §14 |
 
@@ -56,7 +56,9 @@ Regulatory positioning; AI never autonomous on numbers, decisions, or dispatch; 
 
 ## 2. Current Implementation Audit
 
-**Repository state (verified by file listing, not only by documentation):** documentation + design assets + a **partial monorepo skeleton**. There is **zero application source code, zero migrations, zero tests, zero CI**.
+> **Superseded by `sprint_0001`/`sprint_0002` — read this section as a historical snapshot, not current state.** Everything below was true when this roadmap was written, on 2026-08-30, before any sprint executed. The monorepo, backend skeleton, mobile skeleton, shared types, `packages/ui`, the physical schema + migrations, the OpenAPI contract, and CI configuration were all built the same day in `sprint_0001` and `sprint_0002` (`CLAUDE.md` §2.1a, §2.1b). **No product feature exists yet** — that headline claim is still accurate and is why the sprint sequence below still starts where it does. See `CLAUDE.md` §2 for the current, evidence-tagged state before relying on any “Not Started” in §2–§3 below as still true.
+
+**Repository state (verified by file listing, not only by documentation) — as of 2026-08-30, pre-bootstrap:** documentation + design assets + a **partial monorepo skeleton**. There is **zero application source code, zero migrations, zero tests, zero CI**.
 
 ### Present in the working tree
 
@@ -91,6 +93,8 @@ Regulatory positioning; AI never autonomous on numbers, decisions, or dispatch; 
 
 ## 3. Feature Inventory
 
+> **The following table (§3.1) predates `sprint_0001`/`sprint_0002` and several of its “Not Started”/“Partial” rows are now wrong as toolchain status, though right as feature status** (this document's own distinction, restated in the note below the status legend). As of 2026-08-30 post-bootstrap (`CLAUDE.md` §2.1a/§2.1b): monorepo tooling, the backend skeleton, the mobile skeleton, the shared types package, the physical schema + migrations, the OpenAPI contract, the CI workflow file, and the env/config strategy are all **built and verified** (though the CI workflow has never executed inside GitHub Actions itself, and no migration has touched a persistent database — see `CLAUDE.md` §15 items 15–16). `packages/ui` ships three real components (`Button`, `TextField`, `CurrencyText`), so it is **Partial**, not **Not Started**. §3.2–§3.4 (auth, offline core, workflow screens) remain genuinely **Not Started** as product features — no application code exists for any of them yet.
+
 **Status legend:** **Not Started** = no code · **Partial** = some scaffold exists. *(Nothing qualifies as Complete or Tested.)*
 **Priority legend:** **Critical** = the MVP cannot deliver its core value without it · **High** = strongly needed, a short deferral is tolerable · **Medium** = supporting · **Low** = enhancement.
 
@@ -104,7 +108,7 @@ Regulatory positioning; AI never autonomous on numbers, decisions, or dispatch; 
 | Backend service skeleton (Go + Gin) | Partial | `apps/backend/go.mod` + README | Critical | Module declaration only. Needs `cmd/server`, `internal/*`, config, router, envelope middleware. |
 | Mobile app skeleton (React Native + TS) | Not Started | `apps/mobile/README.md`; ADR-0001 D19 | Critical | No RN project at all. |
 | Shared domain types package | Not Started | `packages/types/README.md`; ADR-0004 | Critical | Should be generated from the OpenAPI contract. |
-| `.docx` template contract package | Not Started | `packages/docx-engine/README.md`; ADR-0001 D22 | High | The shared spec both engines must satisfy. |
+| `.docx` template contract | **Spec done** ; server-engine code Not Started | `documentation/architecture/docx-template-contract.md` (v1.0.0); ADR-0009 D53 | Critical | The contract itself is written and reviewed (`sprint_0002`). Per ADR-0009 the **only MVP engine is server-side Go**, living in `apps/backend` — there is no `packages/docx-engine` and none should be created; the pre-ADR-0009 evidence path this row used to cite never existed. |
 | `packages/ui` component library | Not Started | `Visual Theme & Design System.md` | High | Tokens, inputs, buttons, financial-figure formatting, camera HUD. |
 | Physical DB schema + migrations | Not Started | `architecture/README.md`; SRS §5.2 (10 core + 10 draft entities) | Critical | Blocks backend, sync, and types. |
 | OpenAPI v1 API contract | Not Started | `architecture/README.md`; ADR-0004 | Critical | Blocks parallel backend/mobile work. |
@@ -177,7 +181,7 @@ Regulatory positioning; AI never autonomous on numbers, decisions, or dispatch; 
 
 ### 3.5 Explicitly out of MVP (per existing documentation)
 
-Desktop / companion web app (ADR-0001 D24); RBAC enforcement (SRS §1.2); `INSURER_VIEWER` portal and access-governance UI (SRS §5.1); `REVIEWER`/`ADMIN` capability model; on-device / local LLM and Whisper implementations (interface slots only — SRS §1.2, §4.2).
+Desktop / companion web app (ADR-0001 D24); the `INSURER_VIEWER` portal UI and a role-administration UI (the underlying grants/roles are DB-driven and enforced from MVP — ADR-0005 D39, only their UI is deferred); a differentiated `REVIEWER`/`ADMIN` **UI experience** (their permissions and enforcement exist from MVP; they see the same screens as `SURVEYOR`, scoped by permission checks, not a separate interface); on-device / local LLM and Whisper implementations (interface slots only — SRS §1.2, §4.2).
 
 ---
 
@@ -191,7 +195,7 @@ The MVP is the **smallest product that lets one licensed surveyor take a claim f
 | :-- | :-- | :-- |
 | Foundation | Monorepo completion, physical schema + migrations, OpenAPI v1, shared types, CI, config/secrets strategy, adapter interfaces | Nothing can be built in parallel or safely without a frozen data contract and toolchain. |
 | Auth | Password login, 2-step registration, Terms screen, JWT/refresh backend, secure token storage, offline session + idle lock + 30-day cap | Without it there is no access; offline-first requires cached auth. |
-| Offline core | Encrypted local DB, sync engine, local media store, offline indicator, audit log, RBAC columns, 15-stage state machine | Offline-first is a hard constraint on **every** stage; audit log and RBAC columns are hard constraints. |
+| Offline core | Encrypted local DB, sync engine, local media store, offline indicator, audit log, RBAC tables + store-scoped enforcement, 15-stage state machine | Offline-first is a hard constraint on **every** stage; audit log and enforced store isolation are hard constraints (ADR-0005 D39), not just schema columns. |
 | Workflow capture | Dashboard; Stages 1, 2, 4, 5, 6, 7, 11, 12, 13 | The load-bearing steps that produce the numbers and facts the FSR is built from. |
 | Reports & governance | Requisition + PSR + PSR `.docx`; FSR assembly; 4-point Gate; client `.docx` engine; **authoritative server Go engine** + parity; Stage 15 gates + SHA-256 + dispatch log | The report **is** the product. The gates and disclaimers are non-negotiable (§14). |
 | Deterministic forensic audit | Stage 10 duplicate + rate-inflation rules + mandatory remark | Specified as deterministic; feeds Section H and the Stage 15 contradiction gate. |
@@ -213,7 +217,7 @@ AI-1 voice-to-text; AI-2 OCR (appointment letter and Stage 10 invoices); AI-5 de
 
 ### Out of Scope for MVP
 
-Desktop web app; RBAC enforcement; `INSURER_VIEWER` portal and governance UI; `REVIEWER`/`ADMIN` capability model; on-device LLM/Whisper implementations; direct insurer-portal upload integration.
+Desktop web app; the `INSURER_VIEWER` portal UI and role-administration UI (enforcement itself ships in MVP per ADR-0005 D39 — only these UIs are deferred); a differentiated `REVIEWER`/`ADMIN` UI experience; on-device LLM/Whisper implementations; direct insurer-portal upload integration.
 
 ---
 
@@ -337,7 +341,7 @@ The MVP is releasable when **all** of the following are true:
 6. **Report output:** the authoritative **server-side Go `.docx`** engine produces the 9-section FSR with the Section F table, photo annexure, sign-off block, and mandatory disclaimers; it matches the client draft within the parity spec; 9 sections with 50 plates generate in `< 5 s` on production infrastructure.
 7. **Submission lock:** on Stage 15 pass, a SHA-256 snapshot is stored, the dispatch log is recorded, and the report record is immutable thereafter.
 8. **Security:** SQLCipher AES-256 at rest (verified), Keychain/Keystore for tokens, TLS 1.3 enforced, the audit log and `auth_events` proven append-only, store scoping on every endpoint, no secrets in the repository, and a signed-off security review.
-9. **RBAC schema:** all entities carry the five RBAC columns, populated (enforcement deferred, and that deferral documented).
+9. **RBAC:** all entities carry the five RBAC columns, the DB-driven roles/permissions tables are seeded, and **store isolation is enforced on every endpoint** (ADR-0005 D39) — only per-permission UI gating and the role-administration UI are deferred, and that narrower deferral is what's documented.
 10. **Positioning:** no screen, export, or store listing implies SurvScribe is an insurer, intermediary, IRDAI-approved body, or autonomous decision-maker; the required disclaimers appear on every export.
 11. **Quality:** zero open Critical or High defects; device-matrix regression passed; accessibility report clean or Low-only; UAT executed and signed by a licensed surveyor.
 12. **Operations:** production deployment, backups, monitoring, crash reporting, rollback plan, and support rota in place; TestFlight / Play internal builds distributed.
@@ -350,7 +354,7 @@ The MVP is releasable when **all** of the following are true:
 
 **Could-Have, later:** AI-1 voice-to-text; AI-2 OCR with side-by-side verification; AI-5 depreciation-scale suggestions (needs a scale data source first); AI chronology and policy-clause assistants; dashboard smart-priority recommender and natural-language search; push notifications and statutory-deadline reminders; standalone `.docx`/Excel assessment-table export.
 
-**Explicitly out (per ADR-0001 / SRS):** desktop / companion web app (D24); RBAC enforcement; `INSURER_VIEWER` portal and access-governance UI; `REVIEWER` / `ADMIN` capability model; on-device LLM / local Whisper implementations (interface slots only); direct insurer-portal upload integration.
+**Explicitly out (per ADR-0001 / ADR-0005 / SRS):** desktop / companion web app (D24); the `INSURER_VIEWER` portal UI and role-administration UI (D39 ships the enforcement itself in MVP, only these UIs are deferred); a differentiated `REVIEWER` / `ADMIN` UI experience; on-device LLM / local Whisper implementations (interface slots only); direct insurer-portal upload integration.
 
 ---
 
@@ -361,7 +365,7 @@ The MVP is releasable when **all** of the following are true:
 | # | Risk | Impact | Mitigation |
 | :-- | :-- | :-- | :-- |
 | ~~R1~~ | ~~Offline bi-directional, field-level-merge sync~~ — **RESOLVED 2026-08-30.** Confirmed by source inspection: WatermelonDB's built-in sync has no field-level timestamp and resolves any locally-dirty column unconditionally in favour of local. `ADR-0010`: custom `field_updated_at` queue, WatermelonDB kept as local storage only. `sync-protocol.md` specifies the full protocol. | — | `ADR-0010`, `architecture/sync-protocol.md` |
-| R2 | **Dual `.docx` engine (client TS + server Go) parity** doubles report work and is permanent maintenance debt. | Rework, drift, benchmark misses. | Freeze `docx-template-contract.md` early; mandatory parity test suite. **Recommendation:** consider narrowing the MVP to "client draft = preview only, server = authoritative" under timeline pressure. |
+| R2 | ~~**Dual `.docx` engine (client TS + server Go) parity** doubles report work and is permanent maintenance debt.~~ **Narrowed by ADR-0009 (Accepted, 2026-08-30):** MVP builds the **server-side Go engine only**; the client TS engine is deferred post-MVP. This closes the parity-debt question this row originally raised, but it opens a **new, unflagged sequencing gap**: sprint_0009's Milestone M1 ("a surveyor exports a PSR .docx") lands before sprint_0013, where the only MVP-scope engine is built. | PSR export at M1 has no engine to render through, as currently sequenced. | **Needs Clarification** — not resolved here. Either pull a minimal server-side PSR renderer earlier (ahead of sprint_0013's full task 7), or move the M1 milestone criterion to whichever sprint the server engine actually lands in. See `sprint_0009` task 5 and `sprint_0013` task 7. |
 | R3 | **Deterministic loss engine** correctness (rounding, deduction order, underinsurance base) — legally consequential figures. | Wrong recommended amounts. | Pure package, TDD, worked-example fixture, **mandatory domain-expert sign-off** (Q8-equivalent) in sprint_0011. |
 | R4 | **Twilio India SMS DLT** template/entity registration lead time (often weeks). | OTP login slips. | Password login is Critical, OTP is Should-Have; registration starts in sprint_0001. |
 | R5 | **Cloud LLM data residency / privacy** for Indian insurance claim data (AI-4, Anthropic). | Compliance block on enabling AI-4. | Privacy review before sprint_0014 ships; keep AI-4 sandbox-only until cleared; strict prompt boundaries. |

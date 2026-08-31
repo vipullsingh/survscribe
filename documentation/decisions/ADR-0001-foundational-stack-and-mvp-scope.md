@@ -83,4 +83,5 @@ License Number, Category, and Base Location are **optional at registration**. FS
 - The SRS, User Stories, Visual Design System, and eight screen specs were updated to match these decisions (see the change set that introduced this ADR).
 - `CLAUDE.md` §3 / §7 / §11 / §18 record these as confirmed; `CLAUDE.md` §19 tracks the propagation checklist.
 - Remaining open items (concrete vendors, session token spec, physical schema, API conventions) are listed in `documentation/decisions/README.md` as pending ADRs.
-- Not yet done: rename the physical repo directory `SurveyAssist` → `SurvScribe` and update the git remote; bootstrap the monorepo (`package.json`, `pnpm-workspace.yaml`, `turbo.json`, `apps/backend/go.mod`, `.gitignore`).
+- Not yet done, as of this ADR's original date (2026-08-30): rename the physical repo directory `SurveyAssist` → `SurvScribe` and update the git remote; bootstrap the monorepo (`package.json`, `pnpm-workspace.yaml`, `turbo.json`, `apps/backend/go.mod`, `.gitignore`).
+  **Status update:** the monorepo bootstrap was completed the same day (`sprint_0001`, `CLAUDE.md` §2.1a/§18 D45–D48). The physical repo-directory rename remains the one open item — it cannot be done from inside the working directory and stays a manual follow-up (`CLAUDE.md` §16 Q1, §19.2).

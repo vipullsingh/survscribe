@@ -14,6 +14,7 @@ One record per significant, hard-to-reverse decision. Newest decisions get the n
 | [ADR-0008](ADR-0008-configuration-and-secrets.md) | Configuration, secrets & RS256 signing-key custody | Proposed | 2026-08-30 |
 | [ADR-0009](ADR-0009-mvp-release-scope.md) | MVP release scope: AI-4 timing & dual-`.docx` engine scope | Accepted | 2026-08-30 |
 | [ADR-0010](ADR-0010-sync-protocol-choice.md) | Sync protocol: custom field-level queue, not WatermelonDB's built-in sync | Accepted | 2026-08-30 |
+| [ADR-0011](ADR-0011-mobile-runtime-bare-react-native.md) | Mobile runtime: bare React Native, not Expo | Accepted | 2026-09-01 |
 
 See also [`vendor-tracker.md`](vendor-tracker.md) — account and credential status for every vendor ADR-0002/0006 selected (all currently `NOT STARTED`).
 
@@ -27,6 +28,14 @@ ADR-0005 amends three earlier records. Where they disagree, **ADR-0005 governs**
 | ADR-0003 | §1 | JWT claim set restated (`store_id`, `client_id`, `sid`, `roles`, `perms`, `pv`) |
 | ADR-0003 | §3.1 | Idle lock is **passcode only** — biometrics deferred per ADR-0001 D32 (resolves Q3) |
 | ADR-0004 | §4 | Tenant-isolation rule → `store_id UUID NOT NULL REFERENCES stores(id)` |
+
+ADR-0011 supersedes one earlier decision and amends two records:
+
+| Amended | Section | Change |
+| :-- | :-- | :-- |
+| ADR-0001 | D59 | **Superseded.** The mobile app returns to bare React Native; Expo is removed entirely |
+| ADR-0007 | §1 | Toolchain versions: React Native 0.87.1, React 19.2.3, React Navigation v7, pnpm `node-linker=hoisted` |
+| ADR-0008 | §3 | Mobile build-time configuration moves from Expo's `EXPO_PUBLIC_*` inlining to `react-native-dotenv` (`SURVSCRIBE_*` via the `@env` module) |
 
 ## Resolved ADR Tracker
 

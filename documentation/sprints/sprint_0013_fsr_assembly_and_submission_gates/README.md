@@ -62,7 +62,7 @@ Assemble the **9-section Final Survey Report**, enforce the **4-point Human Appr
 
 - sprint_0012: coverage opinion and salvage, which feed Sections F and I.
 - sprint_0011: the assessment figures underpinning Section F and gate 1.
-- sprint_0009: the client `.docx` engine and the approval-gate component.
+- sprint_0009: the approval-gate component, and (per the R2 sequencing gap flagged in the roadmap) possibly an early minimal server-side PSR renderer this sprint's full server engine (task 7) then has to absorb rather than build from scratch.
 - sprint_0002: `docx-template-contract.md` — the only thing keeping the two engines aligned.
 
 ---

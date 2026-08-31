@@ -39,8 +39,8 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 ## 2. Target Platforms & Technical Architecture
 
 ### 2.1 Target Platforms & Form Factors (Mobile App First)
-1. **Primary Platform (MVP): React Native + Expo (TypeScript) Mobile Application (iOS & Android)**:
-   - Delivered as an **Expo** project (Expo SDK 57 / React Native 0.86) using Continuous Native Generation — the `ios/` and `android/` folders are produced by `expo prebuild` and are not committed. Native modules that Expo Go cannot host (WatermelonDB + SQLCipher, camera watermarking) run through a **custom Expo development build**.
+1. **Primary Platform (MVP): React Native (TypeScript) Mobile Application (iOS & Android)**:
+   - Delivered as a **bare React Native** project (React Native 0.87.1 / React 19.2). The `ios/` and `android/` projects are **committed source**, not generated output, because the native configuration this product depends on — camera and location permissions, Keychain/Keystore custody, SQLCipher linkage — must be reviewable in version control (ADR-0011).
    - Built with a **Mobile-First paradigm** ensuring **every single stage and screen has a dedicated, touch-optimized Mobile View**.
    - Ergonomically designed for on-the-go single-hand and two-hand field operations: bottom navigation bars, swipe gestures, floating action buttons (FAB), hardware GPS integration, native camera photo studio with automatic watermarking, push-to-talk voice memo recording, an offline **WatermelonDB (over SQLite)** database encrypted with SQLCipher (AES-256), and on-device report preview/export.
 2. **Companion Web Desktop Application — POST-MVP**:
@@ -103,7 +103,7 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 | Concern | Decision |
 | :--- | :--- |
 | Product name | **SurvScribe** across all aspects — code, packages, UI, documentation, and the internal claim-reference prefix (`SS-YYYY-XXXXX`). |
-| Mobile client (MVP) | **React Native + Expo (TypeScript)**, feature-first source layout. Expo SDK 57 / RN 0.86, Continuous Native Generation (`expo prebuild`; `ios/`+`android/` not committed). Navigation via React Navigation. Native modules unavailable in Expo Go run through a custom Expo development build. |
+| Mobile client (MVP) | **React Native (TypeScript)**, feature-first source layout. React Native 0.87.1 / React 19.2; `ios/` and `android/` are committed source (no Continuous Native Generation). Navigation via React Navigation v7. Build-time configuration via `react-native-dotenv`. (ADR-0011) |
 | Mobile local database | **WatermelonDB** (reactive ORM over SQLite), encrypted with **SQLCipher (AES-256)**. |
 | Desktop web | **Deferred to post-MVP.** |
 | Backend | **Go (Golang) + Gin**, **REST/JSON**. gRPC is **out of scope for the MVP**. `pgx` + PostgreSQL. |
@@ -313,6 +313,8 @@ The platform directly answers the **Five Core Questions of Every Loss Assessment
 | **AI-3: Cross-Checking & Fraud Audit** | Detect duplicates, unlisted items, inflated rates | Claim bill + Invoices + Policy Schedule | Deterministic string matching and numeric variance checks. No guesswork. |
 | **AI-4: Report Draft Generator (CORE)** | Draft narrative sections (C, D, H, I) of PSR/FSR | Verified facts from Stages 1–13 | Strict prompt boundaries: AI is forbidden from inventing facts or dates. Missing data produces `[SURVEYOR TO VERIFY]` placeholder. |
 | **AI-5: Loss Assessment Calculator** | Calculate depreciation, average clause, excess | User-selected rates and asset ages | Pure deterministic formula engine. Zero probabilistic generation of numbers. |
+
+> **MVP release scope note (ADR-0009, Accepted):** "CORE" describes AI-4's role in the product vision, not its position in the MVP release gate. **AI-4 is a post-launch fast-follow, not an MVP blocker** — it is scheduled in `sprint_0014`, after every other stage. Stage 14 (`15_final_survey_report_generator`) must work completely with Sections C/D/H/I entered by the surveyor with no AI assist, as a tested MVP requirement in its own right.
 
 ### 4.2 Local / On-Device AI Architecture Strategy
 The system encapsulates all AI operations behind unified Go (Backend) and TypeScript (Mobile Client) interfaces:
