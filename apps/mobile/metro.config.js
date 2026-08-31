@@ -20,4 +20,11 @@ config.resolver.nodeModulesPaths = [
 config.resolver.unstable_enableSymlinks = true;
 config.resolver.disableHierarchicalLookup = false;
 
+// Ignore volatile build directories in node_modules from being watched/bundled.
+// This prevents the ENOENT crash when Metro's fallback watcher tries to watch deleted gradle class files.
+config.resolver.blockList = [
+  /.*\/node_modules\/.*\/build\/.*/,
+  /.*\/node_modules\/.*\/classes\/.*/,
+];
+
 module.exports = config;

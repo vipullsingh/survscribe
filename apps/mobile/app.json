@@ -6,15 +6,24 @@
     "orientation": "portrait",
     "scheme": "survscribe",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "platforms": ["ios", "android"],
+    "icon": "./assets/logo.png",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "platforms": ["ios", "android", "web"],
     "ios": {
       "bundleIdentifier": "com.survscribe.mobile",
       "supportsTablet": true
     },
     "android": {
       "package": "com.survscribe.mobile",
-      "edgeToEdgeEnabled": true
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#FFFFFF"
+      }
     }
   }
 }
+
