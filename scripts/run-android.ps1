@@ -1,9 +1,8 @@
-# SurvScribe Android App Launcher Script (Expo)
+# SurvScribe Android App Launcher Script (bare React Native)
 #
-# Default:        boot an emulator if needed, then `npx expo run:android`
-#                 (prebuilds the gitignored native project and builds with Gradle).
-# -OpenStudio :   `npx expo prebuild --platform android`, then open the generated
-#                 apps/mobile/android project in Android Studio.
+# Default:        boot an emulator if needed, then `npx react-native run-android`.
+# -OpenStudio :   open the committed apps/mobile/android project in Android Studio.
+#                 There is no prebuild step: the native project is source, not output.
 param(
     [switch]$OpenStudio,
     [switch]$Studio
@@ -16,11 +15,11 @@ $MobileAppPath = "$ProjectRoot/apps/mobile"
 $AndroidProjectPath = "$MobileAppPath/android"
 
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "   SurvScribe Android App Launcher (Expo)       " -ForegroundColor Cyan
+Write-Host "   SurvScribe Android App Launcher                " -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 
-# 0. Node version gate. Expo SDK 57 requires Node >= 20.19.4; anything older aborts
-#    inside the Expo CLI with a raw error, so check here and say so plainly.
+# 0. Node version gate. React Native 0.87.1 requires Node ^22.13.0 || ^24.3.0 || >=26;
+#    anything older fails deep inside Metro or Gradle, so check here and say so plainly.
 $nodeCmd = Get-Command "node" -ErrorAction SilentlyContinue
 if (-not $nodeCmd) {
     Write-Host "Error: 'node' is not installed or not in PATH." -ForegroundColor Red
@@ -28,9 +27,9 @@ if (-not $nodeCmd) {
 }
 $nodeRaw = (& node --version).TrimStart("v")
 $nodeVer = [Version]$nodeRaw
-if ($nodeVer -lt [Version]"20.19.4") {
-    Write-Host "Error: Node $nodeRaw detected. Expo SDK 57 needs Node >= 20.19.4." -ForegroundColor Red
-    Write-Host "Install Node 20.19.4+ or 22 LTS, then re-run this script." -ForegroundColor Yellow
+if ($nodeVer -lt [Version]"22.13.0") {
+    Write-Host "Error: Node $nodeRaw detected. React Native 0.87.1 needs Node >= 22.13.0." -ForegroundColor Red
+    Write-Host "Install Node 22.13+ or 24 LTS, then re-run this script." -ForegroundColor Yellow
     Exit 1
 }
 Write-Host "Node $nodeRaw OK." -ForegroundColor Green
@@ -67,15 +66,11 @@ function Launch-StudioGUI {
 }
 
 if ($OpenStudio -or $Studio) {
-    Write-Host "`n[1/2] Generating the native Android project (expo prebuild)..." -ForegroundColor Yellow
-    Push-Location $MobileAppPath
-    try {
-        npx expo prebuild --platform android
-    } finally {
-        Pop-Location
+    if (-not (Test-Path $AndroidProjectPath)) {
+        Write-Host "Error: $AndroidProjectPath does not exist." -ForegroundColor Red
+        Exit 1
     }
-
-    Write-Host "`n[2/2] Opening the project in Android Studio..." -ForegroundColor Yellow
+    Write-Host "`nOpening apps/mobile/android in Android Studio..." -ForegroundColor Yellow
     Launch-StudioGUI -Shortcut $shortcutPath -ExePath $studioExe -ProjectPath $AndroidProjectPath
     Exit 0
 }
@@ -120,11 +115,11 @@ if ($adbCmd) {
     Write-Host "Warning: 'adb' command not found in PATH." -ForegroundColor Yellow
 }
 
-# 3. Build and launch the Expo app on Android
-Write-Host "`n[2/2] Building and launching the Expo app on Android (expo run:android)..." -ForegroundColor Yellow
+# 3. Build and launch the app on Android
+Write-Host "`n[2/2] Building and launching on Android (react-native run-android)..." -ForegroundColor Yellow
 Push-Location $MobileAppPath
 try {
-    npx expo run:android
+    npx react-native run-android
 } finally {
     Pop-Location
 }

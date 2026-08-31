@@ -1,4 +1,4 @@
-# SurvScribe Local Development Launcher (Backend API + Expo Dev Server)
+# SurvScribe Local Development Launcher (Backend API + Metro Dev Server)
 param (
     [int]$Port = 8082,
     [switch]$ClearCache = $false,
@@ -85,14 +85,14 @@ if (-not $NoBackend) {
     }
 }
 
-# 3. Start Expo Dev Server on Port 8082 (avoiding Apache on 8081)
-Write-Host "`n[3/3] Starting Mobile Expo Dev Server on port $Port..." -ForegroundColor Yellow
+# 3. Start the Metro dev server on port 8082 (avoiding Apache on 8081)
+Write-Host "`n[3/3] Starting Metro on port $Port..." -ForegroundColor Yellow
 Push-Location $MobileDir
 try {
     if ($ClearCache) {
-        npx expo start --port $Port -c
+        npx react-native start --port $Port --reset-cache
     } else {
-        npx expo start --port $Port
+        npx react-native start --port $Port
     }
 } finally {
     Pop-Location
