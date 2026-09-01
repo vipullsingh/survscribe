@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812" width="375" height="812" style="background-color:#F8FAFC;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <defs><filter id="elev" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.05"/></filter></defs>
+  <rect width="375" height="812" fill="#F8FAFC"/>
+  <g transform="translate(24,18)" fill="#0F172A"><text x="0" y="12" font-size="13" font-weight="700">9:41</text>
+    <g transform="translate(285,2)"><rect x="0" y="5" width="3" height="5" rx="1"/><rect x="5" y="3" width="3" height="7" rx="1"/><rect x="10" y="1" width="3" height="9" rx="1"/><rect x="19" y="1" width="18" height="9" rx="2.5" fill="none" stroke="#0F172A" stroke-width="1.1"/><rect x="21" y="3" width="12" height="5" rx="1"/></g></g>
+  <g transform="translate(0,44)"><rect width="375" height="44" fill="#FFFFFF"/><line x1="0" y1="44" x2="375" y2="44" stroke="#E2E8F0"/>
+    <text x="20" y="28" font-size="15" font-weight="800" fill="#0F172A" letter-spacing="-0.4">Surv<tspan fill="#1E3A8A">Scribe</tspan></text>
+    <g transform="translate(220,13)"><rect width="135" height="18" rx="9" fill="#FFFBEB" stroke="#FDE68A"/><circle cx="11" cy="9" r="3" fill="#D97706"/><text x="19" y="12.5" font-size="9" font-weight="700" fill="#92400E">Average clause triggered</text></g></g>
+  <g transform="translate(0,88)"><rect width="375" height="58" fill="#FFFFFF"/><line x1="0" y1="58" x2="375" y2="58" stroke="#E2E8F0"/>
+    <text x="20" y="19" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="0.3" font-family="'JetBrains Mono',monospace">SS-2026-00101 · ABC MANUFACTURING PVT. LTD.</text>
+    <text x="20" y="37" font-size="13" font-weight="700" fill="#0F172A">Stage 11 of 15 · Loss Assessment &amp; Quantification</text>
+    <rect x="20" y="45" width="335" height="5" rx="2.5" fill="#F1F5F9"/><rect x="20" y="45" width="246" height="5" rx="2.5" fill="#1E3A8A"/></g>
+
+  <!-- KPIs -->
+  <g transform="translate(20,156)" font-family="'JetBrains Mono',monospace">
+    <rect x="0" y="0" width="163" height="44" rx="9" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="12" y="17" font-size="8" font-weight="800" fill="#64748B" font-family="'Plus Jakarta Sans'">TOTAL CLAIMED</text><text x="12" y="35" font-size="13" font-weight="800" fill="#0F172A">₹14,50,000</text>
+    <rect x="172" y="0" width="163" height="44" rx="9" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="184" y="17" font-size="8" font-weight="800" fill="#64748B" font-family="'Plus Jakarta Sans'">GROSS ASSESSED</text><text x="184" y="35" font-size="13" font-weight="800" fill="#0F172A">₹12,00,000</text>
+    <rect x="0" y="52" width="163" height="44" rx="9" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="12" y="69" font-size="8" font-weight="800" fill="#64748B" font-family="'Plus Jakarta Sans'">TOTAL DEDUCTIONS</text><text x="12" y="87" font-size="13" font-weight="800" fill="#0F172A">₹5,04,474</text>
+    <rect x="172" y="52" width="163" height="44" rx="9" fill="#0F172A"/>
+    <text x="184" y="69" font-size="8" font-weight="800" fill="#94A3B8" font-family="'Plus Jakarta Sans'">NET RECOMMENDED</text><text x="184" y="87" font-size="13" font-weight="800" fill="#FFFFFF">₹6,95,526</text></g>
+
+  <!-- Underinsurance bar -->
+  <g transform="translate(20,264)"><rect width="335" height="72" rx="9" fill="#FFFBEB" stroke="#FDE68A"/>
+    <text x="14" y="20" font-size="9" font-weight="800" fill="#92400E">UNDERINSURANCE / AVERAGE CLAUSE</text>
+    <text x="14" y="38" font-size="9.5" fill="#78350F">Sum Insured (Stage 2)</text><text x="321" y="38" text-anchor="end" font-size="10" font-weight="700" fill="#0F172A" font-family="'JetBrains Mono',monospace">₹6,80,00,000</text>
+    <text x="14" y="53" font-size="9.5" fill="#78350F">Value at Risk (surveyor)</text><text x="321" y="53" text-anchor="end" font-size="10" font-weight="700" fill="#0F172A" font-family="'JetBrains Mono',monospace">₹7,60,00,000</text>
+    <rect x="14" y="58" width="307" height="12" rx="4" fill="#FEF2F2" stroke="#FECACA"/>
+    <text x="167" y="67" text-anchor="middle" font-size="8" font-weight="800" fill="#991B1B">Underinsured · 89.5% — Average Clause applied</text></g>
+
+  <!-- Waterfall + levers -->
+  <g transform="translate(20,348)"><rect width="335" height="298" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="16" y="24" font-size="12" font-weight="700" fill="#0F172A">Line 1 · CNC Milling Center VMC-640</text>
+    <text x="16" y="40" font-size="9" fill="#64748B">Claimed ₹14,50,000 · Gross Assessed ₹12,00,000 (qty × verified rate)</text>
+    <g font-size="10">
+      <text x="16" y="62" font-weight="700" fill="#0F172A">Depreciation</text><text x="200" y="62" font-size="8" fill="#64748B">age 4 yr 7 mo</text>
+      <rect x="255" y="50" width="64" height="20" rx="5" fill="#F1F5F9"/><text x="287" y="64" text-anchor="middle" font-weight="800" fill="#0F172A" font-family="'JetBrains Mono',monospace">25.0%</text>
+      <text x="16" y="88" font-weight="700" fill="#0F172A">Betterment (new-for-old)</text>
+      <rect x="243" y="76" width="76" height="20" rx="5" fill="#F1F5F9"/><text x="311" y="90" text-anchor="end" font-weight="800" fill="#0F172A" font-family="'JetBrains Mono',monospace">₹50,000</text>
+      <text x="16" y="114" font-weight="700" fill="#0F172A">Salvage realization</text>
+      <rect x="243" y="102" width="76" height="20" rx="5" fill="#F1F5F9"/><text x="311" y="116" text-anchor="end" font-weight="800" fill="#0F172A" font-family="'JetBrains Mono',monospace">₹40,000</text>
+      <text x="16" y="140" font-weight="700" fill="#0F172A">Policy Excess (5% min ₹25,000)</text><text x="311" y="140" text-anchor="end" font-weight="800" fill="#0F172A" font-family="'JetBrains Mono',monospace">₹25,000</text>
+    </g>
+    <line x1="14" y1="150" x2="321" y2="150" stroke="#E2E8F0"/>
+    <g font-size="10" font-family="'JetBrains Mono',monospace">
+      <text x="16" y="168" font-family="'Plus Jakarta Sans'" fill="#475569">Gross Assessed</text><text x="321" y="168" text-anchor="end" font-weight="700" fill="#0F172A">12,00,000.00</text>
+      <text x="16" y="185" font-family="'Plus Jakarta Sans'" fill="#991B1B">less Depreciation (25.0%)</text><text x="321" y="185" text-anchor="end" fill="#991B1B">−3,00,000.00</text>
+      <text x="16" y="202" font-family="'Plus Jakarta Sans'" fill="#991B1B">less Betterment</text><text x="321" y="202" text-anchor="end" fill="#991B1B">−50,000.00</text>
+    </g>
+    <rect x="1" y="209" width="333" height="20" fill="#F8FAFC"/>
+    <text x="16" y="223" font-size="10" font-weight="800" fill="#0F172A">Net of Depreciation</text><text x="321" y="223" text-anchor="end" font-size="10" font-weight="800" fill="#0F172A" font-family="'JetBrains Mono',monospace">8,50,000.00</text>
+    <g font-size="10" font-family="'JetBrains Mono',monospace">
+      <text x="16" y="245" font-family="'Plus Jakarta Sans'" fill="#991B1B">less Underinsurance</text><text x="321" y="245" text-anchor="end" fill="#991B1B">−89,473.68</text>
+      <text x="16" y="262" font-family="'Plus Jakarta Sans'" fill="#991B1B">less Salvage · less Excess</text><text x="321" y="262" text-anchor="end" fill="#991B1B">−65,000.00</text>
+    </g>
+    <line x1="14" y1="270" x2="321" y2="270" stroke="#0F172A" stroke-width="2"/>
+    <text x="16" y="288" font-size="12" font-weight="800" fill="#0F172A">Net Recommended</text><text x="321" y="288" text-anchor="end" font-size="12" font-weight="800" fill="#1E3A8A" font-family="'JetBrains Mono',monospace">6,95,526.32</text></g>
+
+  <!-- Remark -->
+  <g transform="translate(20,656)"><rect width="335" height="40" rx="8" fill="#FEF2F2" stroke="#FECACA"/>
+    <text x="14" y="17" font-size="8" font-weight="800" fill="#991B1B">JUSTIFICATION REMARK — MANDATORY (assessed &lt; claimed)</text>
+    <text x="14" y="31" font-size="9" fill="#0F172A">Rate restricted to OEM quotation; spindle upgrade treated as betterment.</text></g>
+
+  <g transform="translate(0,704)"><rect width="375" height="108" fill="#FFFFFF"/><line x1="0" y1="0" x2="375" y2="0" stroke="#E2E8F0"/>
+    <text x="20" y="26" font-size="11" font-weight="800" fill="#0F172A">Net Recommended (this head)</text>
+    <text x="355" y="26" text-anchor="end" font-size="15" font-weight="800" fill="#1E3A8A" font-family="'JetBrains Mono',monospace">₹6,95,526.32</text>
+    <rect x="20" y="40" width="335" height="42" rx="6" fill="#1E3A8A"/>
+    <text x="187" y="66" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">Save Assessment &amp; Next: Salvage Manager  →</text></g>
+</svg>

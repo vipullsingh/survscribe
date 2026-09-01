@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812" width="375" height="812" style="background-color:#F8FAFC;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <rect width="375" height="812" fill="#F8FAFC"/>
+  <g transform="translate(24,18)" fill="#0F172A"><text x="0" y="12" font-size="13" font-weight="700">9:41</text>
+    <g transform="translate(285,2)"><rect x="0" y="5" width="3" height="5" rx="1"/><rect x="5" y="3" width="3" height="7" rx="1"/><rect x="10" y="1" width="3" height="9" rx="1"/><rect x="19" y="1" width="18" height="9" rx="2.5" fill="none" stroke="#0F172A" stroke-width="1.1"/><rect x="21" y="3" width="12" height="5" rx="1"/></g></g>
+  <g transform="translate(0,44)"><rect width="375" height="44" fill="#FFFFFF"/><line x1="0" y1="44" x2="375" y2="44" stroke="#E2E8F0"/>
+    <text x="20" y="28" font-size="15" font-weight="800" fill="#0F172A" letter-spacing="-0.4">Surv<tspan fill="#1E3A8A">Scribe</tspan></text>
+    <g transform="translate(276,13)"><rect width="79" height="18" rx="9" fill="#F0FDF4" stroke="#BBF7D0"/><circle cx="11" cy="9" r="3" fill="#059669"/><text x="19" y="12.5" font-size="9" font-weight="700" fill="#065F46">Submitted</text></g></g>
+  <g transform="translate(0,88)"><rect width="375" height="58" fill="#FFFFFF"/><line x1="0" y1="58" x2="375" y2="58" stroke="#E2E8F0"/>
+    <text x="20" y="19" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="0.3" font-family="'JetBrains Mono',monospace">SS-2026-00101 · ABC MANUFACTURING PVT. LTD.</text>
+    <text x="20" y="37" font-size="13" font-weight="700" fill="#0F172A">Stage 15 of 15 · Internal Review &amp; Submission</text>
+    <rect x="20" y="45" width="335" height="5" rx="2.5" fill="#F1F5F9"/><rect x="20" y="45" width="335" height="5" rx="2.5" fill="#059669"/></g>
+
+  <!-- Success card -->
+  <g transform="translate(20,196)"><rect width="335" height="252" rx="14" fill="#0F172A"/>
+    <circle cx="167" cy="52" r="26" fill="#065F46"/>
+    <path d="M155 52l8 8 18-20" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="167" y="104" text-anchor="middle" font-size="17" font-weight="800" fill="#FFFFFF">Report Submitted</text>
+    <text x="167" y="126" text-anchor="middle" font-size="10" fill="#94A3B8">Claim SS-2026-00101 · status COMPLETED_SUBMITTED.</text>
+    <text x="167" y="140" text-anchor="middle" font-size="10" fill="#94A3B8">FSR dispatched to New India Assurance. File locked read-only.</text>
+    <rect x="20" y="152" width="295" height="36" rx="6" fill="#111C33"/>
+    <text x="30" y="168" font-size="7.5" fill="#64748B" font-family="'JetBrains Mono',monospace">SHA-256 IMMUTABLE SNAPSHOT</text>
+    <text x="30" y="181" font-size="7.5" fill="#94A3B8" font-family="'JetBrains Mono',monospace">9f2c1a7b4e8d0c63a15f79b2d4e6c8a01f3b5d7e9c2a4b6d8f0e1c3a5b7d9f2e4</text>
+    <rect x="20" y="200" width="295" height="38" rx="6" fill="#1E3A8A"/>
+    <text x="167" y="224" text-anchor="middle" font-size="11.5" font-weight="700" fill="#FFFFFF">Download submitted FSR-SS-2026-00101.docx</text></g>
+
+  <!-- Dispatch log -->
+  <g transform="translate(20,468)"><rect width="335" height="130" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="16" y="24" font-size="12" font-weight="700" fill="#0F172A">Dispatch Log</text>
+    <g font-size="9.5">
+      <text x="16" y="46" fill="#0F172A">Email + .docx → claims.mumbai@newindia.co.in</text>
+      <text x="319" y="46" text-anchor="end" font-size="8" font-weight="800" fill="#065F46">SENT 01 SEP 09:14</text>
+      <text x="16" y="68" fill="#0F172A">CC: Broker (Iyer &amp; Co.), Branch Manager</text>
+      <text x="319" y="68" text-anchor="end" font-size="8" font-weight="800" fill="#065F46">SENT</text>
+      <text x="16" y="90" fill="#0F172A">7 audit gates passed · Human Approval Gate recorded</text>
+      <text x="319" y="90" text-anchor="end" font-size="8" font-weight="800" fill="#065F46">LOGGED</text>
+      <text x="16" y="112" fill="#0F172A">Archive snapshot &amp; version lock</text>
+      <text x="319" y="112" text-anchor="end" font-size="8" font-weight="800" fill="#065F46">LOCKED</text>
+    </g></g>
+
+  <g transform="translate(0,748)"><rect width="375" height="64" fill="#FFFFFF"/><line x1="0" y1="0" x2="375" y2="0" stroke="#E2E8F0"/>
+    <rect x="20" y="12" width="335" height="42" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+    <text x="187" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#1E3A8A">Return to Dashboard</text></g>
+</svg>

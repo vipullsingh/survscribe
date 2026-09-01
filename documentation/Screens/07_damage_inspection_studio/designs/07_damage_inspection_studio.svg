@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812" width="375" height="812" style="background-color:#F8FAFC;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <defs><filter id="elev" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.05"/></filter></defs>
+  <rect width="375" height="812" fill="#F8FAFC"/>
+  <g transform="translate(24,18)" fill="#0F172A"><text x="0" y="12" font-size="13" font-weight="700">9:41</text>
+    <g transform="translate(285,2)"><rect x="0" y="5" width="3" height="5" rx="1"/><rect x="5" y="3" width="3" height="7" rx="1"/><rect x="10" y="1" width="3" height="9" rx="1"/><rect x="19" y="1" width="18" height="9" rx="2.5" fill="none" stroke="#0F172A" stroke-width="1.1"/><rect x="21" y="3" width="12" height="5" rx="1"/></g></g>
+  <g transform="translate(0,44)"><rect width="375" height="44" fill="#FFFFFF"/><line x1="0" y1="44" x2="375" y2="44" stroke="#E2E8F0"/>
+    <text x="20" y="28" font-size="15" font-weight="800" fill="#0F172A" letter-spacing="-0.4">Surv<tspan fill="#1E3A8A">Scribe</tspan></text>
+    <g transform="translate(255,13)"><rect width="100" height="18" rx="9" fill="#FFFBEB" stroke="#FDE68A"/><circle cx="11" cy="9" r="3" fill="#D97706"/><text x="19" y="12.5" font-size="9" font-weight="700" fill="#92400E">13 photos cached</text></g></g>
+  <g transform="translate(0,88)"><rect width="375" height="58" fill="#FFFFFF"/><line x1="0" y1="58" x2="375" y2="58" stroke="#E2E8F0"/>
+    <text x="20" y="19" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="0.3" font-family="'JetBrains Mono',monospace">SS-2026-00101 · ABC MANUFACTURING PVT. LTD.</text>
+    <text x="20" y="37" font-size="13" font-weight="700" fill="#0F172A">Stage 6 of 15 · Damage Documentation Studio</text>
+    <rect x="20" y="45" width="335" height="5" rx="2.5" fill="#F1F5F9"/><rect x="20" y="45" width="134" height="5" rx="2.5" fill="#1E3A8A"/></g>
+
+  <!-- Category carousel -->
+  <g transform="translate(20,156)">
+    <rect x="0" y="0" width="60" height="26" rx="13" fill="#FFFFFF" stroke="#CBD5E1"/><text x="30" y="17" text-anchor="middle" font-size="10.5" font-weight="600" fill="#475569">Building</text>
+    <rect x="68" y="0" width="128" height="26" rx="13" fill="#1E3A8A"/><text x="132" y="17" text-anchor="middle" font-size="10.5" font-weight="700" fill="#FFFFFF">Plant &amp; Machinery</text>
+    <rect x="204" y="0" width="64" height="26" rx="13" fill="#FFFFFF" stroke="#CBD5E1"/><text x="236" y="17" text-anchor="middle" font-size="10.5" font-weight="600" fill="#475569">Electrical</text>
+    <rect x="276" y="0" width="52" height="26" rx="13" fill="#FFFFFF" stroke="#CBD5E1"/><text x="302" y="17" text-anchor="middle" font-size="10.5" font-weight="600" fill="#475569">Stock</text></g>
+
+  <!-- Capture buttons -->
+  <g transform="translate(20,194)">
+    <rect x="0" y="0" width="163" height="64" rx="9" fill="#1E3A8A"/>
+    <g transform="translate(24,14)" fill="none" stroke="#FFFFFF" stroke-width="1.7"><rect x="0" y="4" width="20" height="15" rx="2"/><path d="M5 4l1.6-3h6.8L15 4"/><circle cx="10" cy="11.5" r="3.4" stroke="#93C5FD"/></g>
+    <text x="52" y="30" font-size="12" font-weight="700" fill="#FFFFFF">Smart Camera</text>
+    <text x="52" y="45" font-size="8" fill="#C7D2FE">GPS + timestamp + SLA watermark</text>
+    <rect x="172" y="0" width="163" height="64" rx="9" fill="#FFFFFF" stroke="#CBD5E1"/>
+    <g transform="translate(196,14)" fill="none" stroke="#1E3A8A" stroke-width="1.7"><rect x="6" y="0" width="8" height="14" rx="4"/><path d="M2 12a8 8 0 0 0 16 0M10 20v3" stroke-linecap="round"/></g>
+    <text x="224" y="38" font-size="12" font-weight="700" fill="#1E3A8A">Voice Field Note</text></g>
+
+  <!-- Watermark strip -->
+  <g transform="translate(20,272)"><rect width="335" height="52" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <text x="14" y="18" font-size="8.5" fill="#0F172A" font-family="'JetBrains Mono',monospace" font-weight="700">SurvScribe Certified SLA Evidence · Claim SS-2026-00101</text>
+    <text x="14" y="32" font-size="8.5" fill="#475569" font-family="'JetBrains Mono',monospace">Lat 19.1176° N, Lng 72.8693° E (±3.2 m) · 2026-08-30 10:24</text>
+    <text x="14" y="45" font-size="8.5" fill="#475569" font-family="'JetBrains Mono',monospace">Category: Individual Damaged Asset · Surveyor SLA-10294</text></g>
+
+  <text x="20" y="352" font-size="10.5" font-weight="800" fill="#475569" letter-spacing="0.3">DAMAGED PROPERTY REGISTER · 3 ITEMS</text>
+
+  <!-- Item cards -->
+  <g transform="translate(20,364)">
+    <rect width="335" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="14" y="24" font-size="12" font-weight="700" fill="#0F172A">Main Transformer Unit 500 kVA</text>
+    <rect x="252" y="12" width="70" height="16" rx="4" fill="#FEF2F2" stroke="#FECACA"/><text x="287" y="24" text-anchor="middle" font-size="8.5" font-weight="800" fill="#991B1B">Total Loss</text>
+    <text x="14" y="41" font-size="9.5" fill="#64748B">Kirloskar / oil-cooled / 2019 · Rec: Replace</text>
+    <text x="14" y="59" font-size="9.5" fill="#475569">4 photos attached · Watermarks verified</text>
+    <g transform="translate(0,82)"><rect width="335" height="70" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+      <text x="14" y="24" font-size="12" font-weight="700" fill="#0F172A">CNC Milling Center VMC-640</text>
+      <rect x="243" y="12" width="79" height="16" rx="4" fill="#FFFBEB" stroke="#FDE68A"/><text x="282" y="24" text-anchor="middle" font-size="8.5" font-weight="800" fill="#92400E">Severe Burn</text>
+      <text x="14" y="41" font-size="9.5" fill="#64748B">Haas VF-4 / 12,000 RPM / SN HV-4471 · Rec: Repairable</text>
+      <text x="14" y="59" font-size="9.5" fill="#475569">6 photos attached · Watermarks verified</text></g>
+    <rect x="0" y="164" width="335" height="30" rx="6" fill="#FFFFFF" stroke="#CBD5E1" stroke-dasharray="3 3"/>
+    <text x="167" y="183" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1E3A8A">+ Add Damage Item</text></g>
+
+  <!-- Sticky CTA + bottom nav -->
+  <g transform="translate(0,690)"><rect width="375" height="58" fill="#FFFFFF"/><line x1="0" y1="0" x2="375" y2="0" stroke="#E2E8F0"/>
+    <rect x="20" y="10" width="335" height="40" rx="6" fill="#1E3A8A"/>
+    <text x="187" y="35" text-anchor="middle" font-size="12.5" font-weight="700" fill="#FFFFFF">Save &amp; Proceed to Ownership Verification  →</text></g>
+  <g transform="translate(0,748)"><rect width="375" height="64" fill="#FFFFFF"/><line x1="0" y1="0" x2="375" y2="0" stroke="#E2E8F0"/>
+    <g transform="translate(28,14)"><path d="M2 9l8-7 8 7v8a1 1 0 0 1-1 1h-3v-5H6v5H3a1 1 0 0 1-1-1V9Z" fill="none" stroke="#94A3B8" stroke-width="1.6"/><text x="10" y="30" text-anchor="middle" font-size="9" font-weight="600" fill="#94A3B8">Dashboard</text></g>
+    <g transform="translate(100,14)"><rect x="2" y="2" width="16" height="16" rx="2" fill="none" stroke="#94A3B8" stroke-width="1.6"/><path d="M6 7h8M6 11h8" stroke="#94A3B8" stroke-width="1.6"/><text x="10" y="30" text-anchor="middle" font-size="9" font-weight="600" fill="#94A3B8">Claims</text></g>
+    <g transform="translate(170,14)"><rect x="1" y="5" width="18" height="13" rx="2" fill="none" stroke="#1E3A8A" stroke-width="1.6"/><circle cx="10" cy="11.5" r="3.4" fill="none" stroke="#1E3A8A" stroke-width="1.6"/><text x="10" y="30" text-anchor="middle" font-size="9" font-weight="700" fill="#1E3A8A">Field Studio</text></g>
+    <g transform="translate(246,14)"><path d="M4 2h7l4 4v12H4z" fill="none" stroke="#94A3B8" stroke-width="1.6"/><path d="M7 9h6M7 13h6" stroke="#94A3B8" stroke-width="1.6"/><text x="9" y="30" text-anchor="middle" font-size="9" font-weight="600" fill="#94A3B8">Reports</text></g>
+    <g transform="translate(316,14)"><circle cx="10" cy="6" r="3.6" fill="none" stroke="#94A3B8" stroke-width="1.6"/><path d="M3 19c1.4-4 4.4-6 7-6s5.6 2 7 6" fill="none" stroke="#94A3B8" stroke-width="1.6"/><text x="10" y="30" text-anchor="middle" font-size="9" font-weight="600" fill="#94A3B8">Profile</text></g></g>
+</svg>

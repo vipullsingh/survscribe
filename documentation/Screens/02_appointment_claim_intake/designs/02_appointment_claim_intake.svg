@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812" width="375" height="812" style="background-color:#F8FAFC;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <defs><filter id="elev" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.04"/></filter></defs>
+  <rect width="375" height="812" fill="#F8FAFC"/>
+
+  <!-- Status bar -->
+  <g transform="translate(24,18)" fill="#0F172A"><text x="0" y="12" font-size="13" font-weight="700">9:41</text>
+    <g transform="translate(285,2)"><rect x="0" y="5" width="3" height="5" rx="1"/><rect x="5" y="3" width="3" height="7" rx="1"/><rect x="10" y="1" width="3" height="9" rx="1"/><rect x="19" y="1" width="18" height="9" rx="2.5" fill="none" stroke="#0F172A" stroke-width="1.1"/><rect x="21" y="3" width="12" height="5" rx="1"/></g></g>
+
+  <!-- App bar -->
+  <g transform="translate(0,44)"><rect width="375" height="44" fill="#FFFFFF"/><line x1="0" y1="44" x2="375" y2="44" stroke="#E2E8F0"/>
+    <text x="20" y="28" font-size="15" font-weight="800" fill="#0F172A" letter-spacing="-0.4">Surv<tspan fill="#1E3A8A">Scribe</tspan></text>
+    <g transform="translate(279,13)"><rect width="76" height="18" rx="9" fill="#F0FDF4" stroke="#BBF7D0"/><circle cx="11" cy="9" r="3" fill="#059669"/><text x="19" y="12.5" font-size="9" font-weight="700" fill="#065F46">Synced</text></g></g>
+
+  <!-- Context / stage bar -->
+  <g transform="translate(0,88)"><rect width="375" height="58" fill="#FFFFFF"/><line x1="0" y1="58" x2="375" y2="58" stroke="#E2E8F0"/>
+    <text x="20" y="19" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="0.3" font-family="'JetBrains Mono',monospace">NEW SURVEY · DRAFT</text>
+    <text x="20" y="37" font-size="13" font-weight="700" fill="#0F172A">Stage 1 of 15 · Appointment &amp; Claim Intake</text>
+    <rect x="20" y="45" width="335" height="5" rx="2.5" fill="#F1F5F9"/><rect x="20" y="45" width="22" height="5" rx="2.5" fill="#1E3A8A"/></g>
+
+  <!-- Scan card -->
+  <g transform="translate(20,160)" filter="url(#elev)"><rect width="335" height="120" rx="10" fill="#F8FAFF" stroke="#93C5FD" stroke-dasharray="4 3"/></g>
+  <g transform="translate(20,160)">
+    <rect x="147" y="16" width="40" height="40" rx="10" fill="#EFF6FF"/>
+    <g transform="translate(157,26)" stroke="#1E3A8A" stroke-width="1.7" fill="none"><rect x="0" y="4" width="20" height="15" rx="2"/><path d="M5 4l1.6-3h6.8L15 4"/><circle cx="10" cy="11.5" r="3.4"/></g>
+    <text x="167" y="76" text-anchor="middle" font-size="13" font-weight="700" fill="#0F172A">Scan Appointment Letter</text>
+    <text x="167" y="93" text-anchor="middle" font-size="10" fill="#64748B">Photograph the insurer letter or pick a PDF — AI-2 parses it</text>
+    <rect x="107" y="102" width="120" height="30" rx="6" fill="#1E3A8A"/>
+    <text x="167" y="121" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">Run AI extraction</text>
+  </g>
+
+  <!-- Duplicate warning -->
+  <g transform="translate(20,292)"><rect width="335" height="44" rx="8" fill="#FFFBEB" stroke="#FDE68A"/>
+    <path d="M14 14l8 14H6Z" fill="none" stroke="#D97706" stroke-width="1.6" stroke-linejoin="round" transform="translate(0,4)"/>
+    <text x="34" y="19" font-size="10" font-weight="700" fill="#92400E">Possible duplicate — Policy FIP/0042158/2026 + this loss date</text>
+    <text x="34" y="33" font-size="10" fill="#92400E">already exists as SS-2026-00074. Confirm before creating.</text></g>
+
+  <!-- Accordion: Section 1 open -->
+  <g transform="translate(20,348)"><rect width="335" height="176" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <rect x="14" y="14" width="20" height="20" rx="5" fill="#EFF6FF"/><text x="24" y="28" text-anchor="middle" font-size="11" font-weight="800" fill="#1E3A8A">1</text>
+    <text x="44" y="28" font-size="12.5" font-weight="700" fill="#0F172A">Insurer Particulars</text>
+    <text x="315" y="28" font-size="14" font-weight="700" fill="#64748B">–</text>
+    <line x1="14" y1="46" x2="321" y2="46" stroke="#F1F5F9"/>
+    <text x="14" y="66" font-size="10" font-weight="700" fill="#334155">Appointing Insurer</text>
+    <rect x="14" y="72" width="307" height="34" rx="6" fill="#F6FEF9" stroke="#BBF7D0"/>
+    <text x="24" y="93" font-size="11.5" fill="#0F172A">New India Assurance Co. Ltd.</text>
+    <rect x="282" y="82" width="32" height="14" rx="3" fill="#F0FDF4" stroke="#BBF7D0"/><text x="298" y="92" text-anchor="middle" font-size="8" font-weight="800" fill="#065F46">98%</text>
+    <text x="14" y="126" font-size="10" font-weight="700" fill="#334155">Insurer Claim Ref No</text>
+    <rect x="14" y="132" width="307" height="34" rx="6" fill="#F6FEF9" stroke="#BBF7D0"/>
+    <text x="24" y="153" font-size="11.5" fill="#0F172A" font-family="'JetBrains Mono',monospace">27120031250400001234</text>
+    <rect x="282" y="142" width="32" height="14" rx="3" fill="#F0FDF4" stroke="#BBF7D0"/><text x="298" y="152" text-anchor="middle" font-size="8" font-weight="800" fill="#065F46">96%</text>
+  </g>
+
+  <!-- Collapsed accordion rows -->
+  <g transform="translate(20,532)" font-size="12.5" font-weight="700" fill="#0F172A">
+    <rect width="335" height="40" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/><text x="44" y="25">Policy &amp; Insured Basics</text><text x="315" y="25" font-size="14" fill="#64748B">+</text>
+    <rect x="14" y="10" width="20" height="20" rx="5" fill="#F1F5F9"/><text x="24" y="24" text-anchor="middle" font-size="11" font-weight="800" fill="#64748B">2</text>
+    <g transform="translate(0,48)"><rect width="335" height="40" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/><text x="44" y="25">Loss Particulars</text><text x="315" y="25" font-size="14" fill="#64748B">+</text>
+      <rect x="14" y="10" width="20" height="20" rx="5" fill="#F1F5F9"/><text x="24" y="24" text-anchor="middle" font-size="11" font-weight="800" fill="#64748B">3</text></g>
+  </g>
+
+  <!-- Urgency tags -->
+  <g transform="translate(20,676)"><text x="0" y="8" font-size="10" font-weight="700" fill="#334155">Urgency</text>
+    <rect x="0" y="16" width="104" height="28" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/><text x="52" y="34" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">Normal</text>
+    <rect x="114" y="16" width="104" height="28" rx="6" fill="#1E3A8A"/><text x="166" y="34" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">Urgent</text>
+    <rect x="228" y="16" width="107" height="28" rx="6" fill="#FFFFFF" stroke="#FECACA"/><text x="281" y="34" text-anchor="middle" font-size="11" font-weight="700" fill="#DC2626">CAT Event</text></g>
+
+  <!-- Sticky CTA -->
+  <g transform="translate(0,748)"><rect width="375" height="64" fill="#FFFFFF"/><line x1="0" y1="0" x2="375" y2="0" stroke="#E2E8F0"/>
+    <rect x="20" y="12" width="335" height="42" rx="6" fill="#1E3A8A"/>
+    <text x="187" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">Save &amp; Next: Policy Review  →</text></g>
+</svg>

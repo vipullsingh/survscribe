@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 375 812" width="375" height="812" style="background-color:#F8FAFC;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <defs><filter id="elev" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.05"/></filter></defs>
+  <rect width="375" height="812" fill="#F8FAFC"/>
+  <g transform="translate(24,18)" fill="#0F172A"><text x="0" y="12" font-size="13" font-weight="700">9:41</text>
+    <g transform="translate(285,2)"><rect x="0" y="5" width="3" height="5" rx="1"/><rect x="5" y="3" width="3" height="7" rx="1"/><rect x="10" y="1" width="3" height="9" rx="1"/><rect x="19" y="1" width="18" height="9" rx="2.5" fill="none" stroke="#0F172A" stroke-width="1.1"/><rect x="21" y="3" width="12" height="5" rx="1"/></g></g>
+  <g transform="translate(0,44)"><rect width="375" height="44" fill="#FFFFFF"/><line x1="0" y1="44" x2="375" y2="44" stroke="#E2E8F0"/>
+    <text x="20" y="28" font-size="15" font-weight="800" fill="#0F172A" letter-spacing="-0.4">Surv<tspan fill="#1E3A8A">Scribe</tspan></text>
+    <g transform="translate(279,13)"><rect width="76" height="18" rx="9" fill="#F0FDF4" stroke="#BBF7D0"/><circle cx="11" cy="9" r="3" fill="#059669"/><text x="19" y="12.5" font-size="9" font-weight="700" fill="#065F46">Synced</text></g></g>
+  <g transform="translate(0,88)"><rect width="375" height="58" fill="#FFFFFF"/><line x1="0" y1="58" x2="375" y2="58" stroke="#E2E8F0"/>
+    <text x="20" y="19" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="0.3" font-family="'JetBrains Mono',monospace">SS-2026-00101 · ABC MANUFACTURING PVT. LTD.</text>
+    <text x="20" y="37" font-size="13" font-weight="700" fill="#0F172A">Stage 4 of 15 · Risk &amp; Loss Location Verification</text>
+    <rect x="20" y="45" width="335" height="5" rx="2.5" fill="#F1F5F9"/><rect x="20" y="45" width="89" height="5" rx="2.5" fill="#1E3A8A"/></g>
+
+  <!-- Capture GPS -->
+  <g transform="translate(20,160)"><rect width="335" height="48" rx="8" fill="#1E3A8A"/>
+    <g transform="translate(120,14)" fill="none" stroke="#FFFFFF" stroke-width="1.7"><path d="M8 20c4-4 6-7 6-10a6 6 0 1 0-12 0c0 3 2 6 6 10Z"/><circle cx="8" cy="8" r="2.3" stroke="#93C5FD"/></g>
+    <text x="152" y="30" font-size="12.5" font-weight="700" fill="#FFFFFF">Capture GPS Location</text></g>
+
+  <!-- Coords + gate -->
+  <g transform="translate(20,220)"><rect width="335" height="74" rx="8" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <text x="14" y="24" font-size="10.5" fill="#0F172A" font-family="'JetBrains Mono',monospace"><tspan fill="#64748B">Lat </tspan>19.117642° N   <tspan fill="#64748B">Lng </tspan>72.869331° E</text>
+    <text x="14" y="42" font-size="10.5" fill="#0F172A" font-family="'JetBrains Mono',monospace"><tspan fill="#64748B">Accuracy </tspan>±3.2 m   <tspan fill="#64748B">Alt </tspan>14.2 m</text>
+    <rect x="14" y="50" width="307" height="18" rx="5" fill="#F0FDF4" stroke="#BBF7D0"/>
+    <text x="24" y="63" font-size="9.5" font-weight="700" fill="#065F46">ACCEPTED · accuracy within the ≤ 10 m target</text></g>
+
+  <!-- Map -->
+  <g transform="translate(20,306)"><rect width="335" height="110" rx="8" fill="#E8EEF6" stroke="#E2E8F0"/>
+    <g stroke="#00000010"><line x1="0" y1="27" x2="335" y2="27"/><line x1="0" y1="55" x2="335" y2="55"/><line x1="0" y1="83" x2="335" y2="83"/><line x1="84" y1="0" x2="84" y2="110"/><line x1="167" y1="0" x2="167" y2="110"/><line x1="251" y1="0" x2="251" y2="110"/></g>
+    <path d="M150 40a8 8 0 1 0-16 0c0 6 8 14 8 14s8-8 8-14Z" fill="#1E3A8A" transform="rotate(0 142 44)"/>
+    <path d="M220 68a8 8 0 1 0-16 0c0 6 8 14 8 14s8-8 8-14Z" fill="#DC2626"/>
+    <rect x="8" y="86" width="180" height="16" rx="4" fill="#FFFFFF" opacity="0.85"/>
+    <text x="14" y="98" font-size="8.5" font-weight="700" fill="#475569" font-family="'JetBrains Mono',monospace">● surveyor · ● policy risk · Δ 148 m</text></g>
+
+  <!-- Address comparison -->
+  <g transform="translate(20,428)"><rect width="335" height="110" rx="10" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <text x="16" y="22" font-size="12" font-weight="700" fill="#0F172A">Address Comparison</text>
+    <text x="16" y="42" font-size="8.5" font-weight="800" fill="#475569">POLICY RISK ADDRESS</text>
+    <text x="16" y="56" font-size="10" fill="#334155">Plot D-14, MIDC Andheri East, Mumbai 400093</text>
+    <text x="16" y="76" font-size="8.5" font-weight="800" fill="#475569">REVERSE-GEOCODED (ACTUAL)</text>
+    <text x="16" y="90" font-size="10" fill="#334155">Plot D-14/1, MIDC Cross Rd B, Andheri East, 400093</text>
+  </g>
+  <g transform="translate(20,546)"><rect width="335" height="30" rx="7" fill="#FFFBEB" stroke="#FDE68A"/>
+    <text x="14" y="19" font-size="9.5" font-weight="700" fill="#92400E">AI address match: 92% — minor sub-plot / street-name variation</text></g>
+
+  <!-- Discrepancy toggle + justification -->
+  <g transform="translate(20,588)">
+    <text x="0" y="14" font-size="11" font-weight="700" fill="#0F172A">Flag location discrepancy to insurer</text>
+    <rect x="295" y="2" width="40" height="22" rx="11" fill="#DC2626"/><circle cx="324" cy="13" r="9" fill="#FFFFFF"/>
+    <rect x="0" y="30" width="335" height="80" rx="8" fill="#FEF2F2" stroke="#FECACA"/>
+    <text x="14" y="50" font-size="8.5" font-weight="800" fill="#991B1B">DISCREPANCY JUSTIFICATION — MANDATORY</text>
+    <text x="14" y="68" font-size="10" fill="#0F172A">Loss occurred in leased annexe shed (Plot D-14/1) adjoining</text>
+    <text x="14" y="82" font-size="10" fill="#0F172A">the insured premises. Interim notice to insurer prepared for</text>
+    <text x="14" y="96" font-size="10" fill="#0F172A">risk-location variance confirmation.</text></g>
+
+  <g transform="translate(0,748)"><rect width="375" height="64" fill="#FFFFFF"/><line x1="0" y1="0" x2="375" y2="0" stroke="#E2E8F0"/>
+    <rect x="20" y="12" width="335" height="42" rx="6" fill="#1E3A8A"/>
+    <text x="187" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">Confirm Location &amp; Proceed to Cause  →</text></g>
+</svg>
